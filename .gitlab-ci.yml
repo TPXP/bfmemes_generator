@@ -10,3 +10,16 @@ pages:
     expire_in: 1 week
   only:
     - master
+  environment:
+    name: Development
+    url: https://neurchi.gitlab.io/bfmemes
+
+deploy to production:
+  stage: deploy
+  script:
+   - echo TODO
+  only:
+   - prod
+  environment:
+    name: Production
+    url: https://bfmemes.com
