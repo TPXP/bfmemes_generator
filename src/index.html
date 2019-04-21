@@ -273,7 +273,7 @@
     canvas.addEventListener('touchstart',function (event) {
       //Same processing than mouse for main finger
       mouseDownHandler(event.touches[0]);
-      //Juste save second finger position if used
+      // Just save second finger position if used
       if(event.touches.length>1) {
         let rect = canvas.getBoundingClientRect();
         secondFingerX = Math.floor(event.touches[1].clientX - rect.left);
@@ -296,8 +296,8 @@
         let f2Y = Math.floor(event.touches[1].clientY - rect.top);
 
         //Also the distance between fingers, the last known distance and the center
-        let lastDist = Math.sqrt(Math.pow(Math.abs(lastX - secondFingerX), 2) + Math.pow(Math.abs(lastY - secondFingerY), 2));
-        let newDist = Math.sqrt(Math.pow(Math.abs(f1X - f2X), 2) + Math.pow(Math.abs(f1Y - f2Y), 2));
+        let lastDist = Math.sqrt(Math.pow(lastX - secondFingerX, 2) + Math.pow(lastY - secondFingerY, 2));
+        let newDist = Math.sqrt(Math.pow(f1X - f2X, 2) + Math.pow(f1Y - f2Y, 2));
         let centerX = (f1X + f2X) / 2;
         let centerY = (f1Y + f2Y) / 2;
 
