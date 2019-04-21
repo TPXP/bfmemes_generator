@@ -9,7 +9,8 @@ echo "** Writing deployment commands"
 
 ## Delete old versions
 LAST_MONTH=$(date --date='last month' +%s)
-rm /tmp/command_list
+[[ -f /tmp/command_list ]] && rm /tmp/command_list
+touch /tmp/command_list
 
 N_PRESERVED=0
 
@@ -43,7 +44,7 @@ for file in *;do
 		'') continue ;;
 	esac
 	echo "put $file" >> /tmp/command_list
-done < deploy_list
+done
 
 ## Change the symlinks
 echo "cd .."                  >> /tmp/command_list
