@@ -27,6 +27,9 @@
         }
         #canvasWrapper{
             padding:0;
+            overflow: hidden; /* Actually, nothing is hidden since the canvas is scaled,
+            but the browser takes the initial size of the item for size computations (hence the interest of a
+            wrapper to avoid the scrolling and other weird graphical glitches) */
         }
         canvas{
             transform-origin: top left;
