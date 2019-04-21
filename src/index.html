@@ -289,8 +289,8 @@
     canvasWrapper.addEventListener('mousemove', mouseMoveHandler);
     canvasWrapper.addEventListener('wheel', wheelHandler, false);
 
-    canvas.addEventListener('touchend', mouseUpHandler);
-    canvas.addEventListener('touchcancel', mouseUpHandler);
+    canvasWrapper.addEventListener('touchend', mouseUpHandler);
+    canvasWrapper.addEventListener('touchcancel', mouseUpHandler);
 
     canvasWrapper.addEventListener('touchstart',function (event) {
       // Same processing than mouse for main finger
