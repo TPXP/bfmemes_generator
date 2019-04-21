@@ -95,7 +95,8 @@
   <script>
     const canvas = document.getElementsByTagName("canvas")[0];
     const ctx = canvas.getContext('2d');
-    let image = null;
+    let imageLogo = null;
+    let imageAlerte = null;
     let bgd = null;
     function reDraw() {
       ctx.fillStyle='#000';
@@ -104,14 +105,13 @@
       if(bgd)
         ctx.drawImage(bgd, 0, 0, 1280, 720);
 
-      /* Bandeau du bas: 75px */
-      ctx.fillStyle = '#e7f6ed';
-      ctx.fillRect(0, 720-75, 1280, 75);
+      /* Bandeau du bas: 100px */
+      ctx.fillStyle = '#F0EFEE';
+      ctx.fillRect(0, 720-125, 1280, 100);
 
       /* Bandeau du haut: 100px */
       ctx.fillStyle = '#1e2677';
-      ctx.fillRect(0, 720-172, 1280, 97);
-
+      ctx.fillRect(230, 720-251, 1280, 113);
 
       // DIRECT
       ctx.fillRect(0, 25, 290, 50);
@@ -144,9 +144,9 @@
       if(headline) {
         ctx.font = 'condensed bold 60px sans-serif';
         if(document.getElementById('fit-head').checked)
-          ctx.fillText(headline, 130, 618, 1140);
+          ctx.fillText(headline, 250, 548, 1010);
         else
-          ctx.fillText(headline, 130, 618);
+          ctx.fillText(headline, 250, 548);
       }
 
       const subtitle = document.getElementById('subtitle').value;
@@ -154,14 +154,17 @@
         ctx.fillStyle = '#000';
         ctx.font = 'condensed 30px sans-serif';
         if(document.getElementById('fit-sub').checked)
-          ctx.fillText(subtitle, 130, 693, 1140);
+          ctx.fillText(subtitle, 240, 660, 1030);
         else
-          ctx.fillText(subtitle, 130, 693);
+          ctx.fillText(subtitle, 240, 660);
       }
 
       // Overlay
-      if(image)
-        ctx.drawImage(image ,0, 720-image.height);
+      if(imageAlerte)
+        ctx.drawImage(imageAlerte, 75, 595);
+
+      if(imageLogo)
+        ctx.drawImage(imageLogo, 73, 450);
     }
     const inputs = document.getElementsByTagName('input');
     for(let a=0; a<inputs.length;a++){
@@ -205,14 +208,23 @@
       input.oninput = reDraw;
     }
     reDraw();
-    const imgtag = new Image();
-    imgtag.onload = function(){
+    const imgTagAlerte = new Image();
+    imgTagAlerte.onload = function(){
       createImageBitmap(this).then((i) => {
-        image = i;
+        imageAlerte = i;
         reDraw();
       });
     };
-    imgtag.src = 'banner.png';
+    imgTagAlerte.src = 'alerteInfo.jpeg';
+
+    const imgTagLogo = new Image();
+    imgTagLogo.onload = function(){
+      createImageBitmap(this).then((i) => {
+        imageLogo = i;
+        reDraw();
+      });
+    };
+    imgTagLogo.src = 'bfmemes.png';
 
     document.getElementsByTagName('button')[0].onclick = function(e) {
       e.preventDefault();
