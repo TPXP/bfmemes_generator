@@ -1,12 +1,11 @@
 pages:
   stage: deploy
   script:
-    - mkdir .public
-    - cp -r * .public
-    - mv .public public
+    - mkdir website
+    - cp -r src/* website
   artifacts:
     paths:
-      - public
+      - website
     expire_in: 1 week
   only:
     - master
@@ -16,8 +15,13 @@ pages:
 
 deploy to production:
   stage: deploy
+  image: debian:9.8
+  before_script:
+    - apt-get update
+    - apt-get upgrade -y
+    - apt-get install -y openssh-client sshpass
   script:
-   - echo TODO
+    - bash deploy.sh
   only:
    - prod
   environment:
