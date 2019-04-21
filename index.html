@@ -9,40 +9,15 @@
     <meta property="og:description"        content="Générez facilement et rapidement votre propre BFMème!" />
     <meta property="og:image"              content="https://neurchi.gitlab.io/bfmemes/logo.jpg" />
     <link rel="icon" href="logo.jpg" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
         body{
-            font-family: sans-serif;
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-            justify-content: space-between;
+            overflow-x: hidden;
         }
-        div {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            margin:20px;
-            align-items: center;
-            justify-content: center;
-        }
-        form{
-            display: flex;
-            flex-direction: column;
-            flex:99;
-            min-width: 250px;
-            margin-bottom: 20px;
-        }
-        form * {
-            margin:10px;
-        }
-        canvas{
-            border:1px solid black;
-        }
-        @media(min-width:1550px) {
-            form{
-                margin-right: 20px;
-            }
+        #mainContainer{
+            min-height: calc(100vh - 170px);
+            margin:25px;
         }
         footer{
             filter:invert(1);
@@ -69,20 +44,48 @@
     </style>
 </head>
 <body>
-<div>
-    <form>
+<div class="row" id="mainContainer">
+    <form class="form-horizontal col-sm-12 col-md-4">
         <h1>BFMemes Generator&trade;</h1>
-        <label for="headline">Gros titre</label>
-        <input type="text" id="headline" />
-        <label for="fit-head"><input type="checkbox" id="fit-head" /> Faire rentrer mon titre dans le cadre</label>
-        <label for="subtitle">Alerte INFO</label>
-        <input type="text" id="subtitle" />
-        <label for="fit-sub"><input type="checkbox" id="fit-sub" /> Faire rentrer mon alerte info dans le cadre</label>
-        <label for="image">Image</label>
-        <input type="file" id="image" />
-        <button>Télécharger</button>
+        <hr />
+        <div class="form-group">
+            <label for="headline">Gros titre</label>
+            <input type="text" class="form-control" id="headline" placeholder="Gros titre">
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="fit-head">
+                <label class="form-check-label" for="fit-head">
+                    Faire rentrer mon titre dans le cadre
+                </label>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label for="subtitle">Alerte INFO</label>
+            <input type="text" class="form-control" id="subtitle" placeholder="Alerte INFO">
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="fit-sub">
+                <label class="form-check-label" for="fit-sub">
+                    Faire rentrer mon alerte info dans le cadre
+                </label>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input type="file" class="form-control-file" id="image" />
+        </div>
+        <button type="button" class="btn btn-lg btn-block mt-5 btn-success">
+            <i class="material-icons">cloud_download</i>
+            Télécharger
+        </button>
     </form>
-    <canvas width="1280" height="720"></canvas>
+    <div id="canvasWrapper" class="col-sm-12 col-md-8">
+        <canvas width="1280" height="720"></canvas>
+    </div>
 </div>
 <footer>
     <a href="https://www.lafrenchtech.com" target="_blank">
@@ -92,23 +95,29 @@
   <script>
     const canvas = document.getElementsByTagName("canvas")[0];
     const ctx = canvas.getContext('2d');
-    let image = null;
+    let imageLogo = null;
+    let imageAlerte = null;
     let bgd = null;
+    let sx, sy, dx, dy;
+    let sWidth, sHeight, dWidth, dHeight;
+
     function reDraw() {
       ctx.fillStyle='#000';
       ctx.fillRect(0,0, 1280, 720);
 
       if(bgd)
-        ctx.drawImage(bgd, 0, 0, 1280, 720);
+        ctx.drawImage(bgd, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 
-      /* Bandeau du bas: 75px */
-      ctx.fillStyle = '#e7f6ed';
-      ctx.fillRect(0, 720-75, 1280, 75);
+      /* Bandeau du bas: 100px */
+      ctx.fillStyle = '#F0EFEE';
+      ctx.fillRect(0, 595, 1280, 100);
 
       /* Bandeau du haut: 100px */
-      ctx.fillStyle = '#1e2677';
-      ctx.fillRect(0, 720-172, 1280, 97);
-
+      let gradient = ctx.createLinearGradient(0, 469, 0, 582);
+      gradient.addColorStop(0,"#1B296F");
+      gradient.addColorStop(1,"#2C4190");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(230, 469, 1280, 113);
 
       // DIRECT
       ctx.fillRect(0, 25, 290, 50);
@@ -141,9 +150,9 @@
       if(headline) {
         ctx.font = 'condensed bold 60px sans-serif';
         if(document.getElementById('fit-head').checked)
-          ctx.fillText(headline, 130, 618, 1140);
+          ctx.fillText(headline, 250, 548, 1010);
         else
-          ctx.fillText(headline, 130, 618);
+          ctx.fillText(headline, 250, 548);
       }
 
       const subtitle = document.getElementById('subtitle').value;
@@ -151,14 +160,17 @@
         ctx.fillStyle = '#000';
         ctx.font = 'condensed 30px sans-serif';
         if(document.getElementById('fit-sub').checked)
-          ctx.fillText(subtitle, 130, 693, 1140);
+          ctx.fillText(subtitle, 240, 660, 1030);
         else
-          ctx.fillText(subtitle, 130, 693);
+          ctx.fillText(subtitle, 240, 660);
       }
 
       // Overlay
-      if(image)
-        ctx.drawImage(image ,0, 720-image.height);
+      if(imageAlerte)
+        ctx.drawImage(imageAlerte, 75, 595);
+
+      if(imageLogo)
+        ctx.drawImage(imageLogo, 73, 450);
     }
     const inputs = document.getElementsByTagName('input');
     for(let a=0; a<inputs.length;a++){
@@ -173,23 +185,15 @@
               const imgtag = new Image();
               imgtag.onload = function(){
                 // Finally, create a bitmap with it. Easy, right?
+                sWidth = dWidth = imgtag.width;
+                sHeight = dHeight = imgtag.height;
+                sx = sy = 0;
+                //By default the image will be centered
+                dx = (canvas.width-sWidth)/2;
+                dy = (canvas.height-sHeight)/2;
 
-                let sx = 0, sy = 0, sWidth = imgtag.width, sHeight = imgtag.height;
-                // A bit of math to make sure the image covers everything
-                if(imgtag.height / imgtag.width > 720/1280){
-                  // We need to crop vertically
-                  sHeight = Math.floor(imgtag.width / 1280 * 720);
-                  sy = Math.floor((imgtag.height - sHeight) / 2);
-                } else {
-                  // We need to crop horizontally
-                  sWidth = Math.floor(imgtag.height / 720 * 1280);
-                  sx = Math.floor((imgtag.width- sWidth) / 2);
-                }
-
-                createImageBitmap(this, sx, sy, sWidth, sHeight).then((i) => {
-                  bgd = i;
-                  reDraw();
-                });
+                bgd = imgtag;
+                reDraw();
               };
               imgtag.src = e.target.result;
             };
@@ -202,14 +206,19 @@
       input.oninput = reDraw;
     }
     reDraw();
-    const imgtag = new Image();
-    imgtag.onload = function(){
-      createImageBitmap(this).then((i) => {
-        image = i;
-        reDraw();
-      });
+    const imgTagAlerte = new Image();
+    imgTagAlerte.onload = function(){
+      imageAlerte = imgTagAlerte;
+      reDraw();
     };
-    imgtag.src = 'banner.png';
+    imgTagAlerte.src = 'alerteInfo.jpeg';
+
+    const imgTagLogo = new Image();
+    imgTagLogo.onload = function(){
+      imageLogo = imgTagLogo;
+      reDraw();
+    };
+    imgTagLogo.src = 'bfmemes.png';
 
     document.getElementsByTagName('button')[0].onclick = function(e) {
       e.preventDefault();
@@ -220,6 +229,126 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+    };
+
+    /*** Zoom Handling ***/
+    //Last known position of the mouse/main finger
+    let lastX, lastY;
+    //Last known position of the second finger if relevant
+    let secondFingerX, secondFingerY;
+    let mouseDown = false;
+    const scaleFactor = 1.1;
+
+    canvas.addEventListener('mousedown', mouseDownHandler);
+    canvas.addEventListener('mouseup', mouseUpHandler);
+    canvas.addEventListener('mousemove', mouseMoveHandler);
+    canvas.addEventListener('wheel', wheelHandler, false);
+
+    canvas.addEventListener('touchstart',function (event) {
+      //Same processing than mouse for main finger
+      mouseDownHandler(event.touches[0]);
+      //Juste save second finger position if used
+      if(event.touches.length>1) {
+        let rect = canvas.getBoundingClientRect();
+        secondFingerX = Math.floor(event.touches[1].clientX - rect.left);
+        secondFingerY = Math.floor(event.touches[1].clientY - rect.top);
+      }
+      //Use preventDefault everytime handling canvas event for mobile
+      event.preventDefault();
+    });
+
+    canvas.addEventListener('touchmove',function (event) {
+      //Use finger as mouse when their is only one
+      if(event.touches.length===1)
+        mouseMoveHandler(event.touches[0]);
+      else {
+        //Else calculate position on canvas for both
+        let rect = canvas.getBoundingClientRect();
+        let f1X = Math.floor(event.touches[0].clientX - rect.left);
+        let f1Y = Math.floor(event.touches[0].clientY - rect.top);
+        let f2X = Math.floor(event.touches[1].clientX - rect.left);
+        let f2Y = Math.floor(event.touches[1].clientY - rect.top);
+
+        //Also the distance between fingers, the last known distance and the center
+        let lastDist = Math.sqrt(Math.pow(Math.abs(lastX - secondFingerX), 2) + Math.pow(Math.abs(lastY - secondFingerY), 2));
+        let newDist = Math.sqrt(Math.pow(Math.abs(f1X - f2X), 2) + Math.pow(Math.abs(f1Y - f2Y), 2));
+        let centerX = (f1X + f2X) / 2;
+        let centerY = (f1Y + f2Y) / 2;
+
+        //Simple cond to avoid zooming too fast when using 2 finger
+        if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
+          //fingers mooving away
+          if (lastDist < newDist) {
+            zoomIn(centerX, centerY);
+          } //fingers gets closer
+          else {
+            zoomOut(centerX, centerY);
+          }
+          //Then save current position for next zoom
+          lastX = f1X;
+          lastY = f1Y;
+          secondFingerX = f2X;
+          secondFingerY = f2Y;
+          reDraw();
+        }
+      }
+      event.preventDefault();
+    });
+
+    //Save current position when click is triggered
+    function mouseDownHandler(event) {
+      let rect = canvas.getBoundingClientRect();
+      lastX = Math.floor(event.clientX - rect.left);
+      lastY = Math.floor(event.clientY - rect.top);
+      mouseDown = true;
+    }
+
+    function mouseUpHandler(event) {
+      mouseDown = false;
+    }
+
+    //Update draw positions when mooving mouse and then redraw
+    function mouseMoveHandler(event) {
+      if(mouseDown) {
+        let rect = canvas.getBoundingClientRect();
+        let currentX = Math.floor(event.clientX - rect.left);
+        let currentY = Math.floor(event.clientY - rect.top);
+        dx += currentX - lastX;
+        dy += currentY - lastY;
+        lastX = currentX;
+        lastY = currentY;
+        reDraw();
+      }
+    }
+
+    function wheelHandler(event){
+      event.preventDefault();
+      let rect = canvas.getBoundingClientRect();
+      let currentX = Math.floor(event.clientX - rect.left);
+      let currentY = Math.floor(event.clientY - rect.top);
+      //Zoom in
+      if(event.deltaY<0) {
+        zoomIn(currentX, currentY);
+      }
+      //Zoom out
+      if(event.deltaY>0) {
+        zoomOut(currentX, currentY);
+      }
+      reDraw();
+    }
+
+    function zoomIn(x, y) {
+      dx = x - (x - dx) * scaleFactor;
+      dy = y - (y - dy) * scaleFactor;
+      dHeight *= scaleFactor;
+      dWidth *= scaleFactor;
+    }
+
+    function zoomOut(x, y) {
+      dx = x - (x - dx)/scaleFactor;
+      dy = y - (y - dy)/scaleFactor;
+      dHeight /= scaleFactor;
+      dWidth /= scaleFactor;
     }
   </script>
 </body>
