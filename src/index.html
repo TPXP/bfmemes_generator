@@ -23,6 +23,12 @@
             min-height: calc(100vh - 170px);
             margin:25px;
         }
+        #canvasWrapper{
+            padding:0;
+        }
+        canvas{
+            transform-origin: top left;
+        }
         footer{
             filter:invert(1);
             background: white;
@@ -253,6 +259,21 @@
       document.body.removeChild(a);
     };
 
+    /*** Canvas resizing ***/
+    const canvasWrapper = document.getElementById('canvasWrapper');
+    let canvasBox;
+    let canvasScale = 1;
+    window.onresize = function(){
+      canvasBox = canvasWrapper.getBoundingClientRect();
+      canvasScale = canvasBox.width/canvas.width;
+      if(canvasScale > 1)
+        canvasScale = 1;
+      canvas.style.transform = 'scale(' + canvasScale + ')';
+
+      canvasWrapper.style.height = (canvasBox.width * canvas.height / canvas.width) + 'px';
+    };
+    window.onresize();
+
     /*** Zoom Handling ***/
     // Last known position of the mouse/main finger
     let lastX, lastY;
@@ -261,25 +282,24 @@
     let mouseDown = false;
     const scaleFactor = 1.1;
 
-    canvas.addEventListener('mousedown', mouseDownHandler);
-    canvas.addEventListener('mouseup', mouseUpHandler);
-    canvas.addEventListener('mouseleave', mouseUpHandler);
-    canvas.addEventListener('mousemove', mouseMoveHandler);
-    canvas.addEventListener('wheel', wheelHandler, false);
+    canvasWrapper.addEventListener('mousedown', mouseDownHandler);
+    canvasWrapper.addEventListener('mouseup', mouseUpHandler);
+    canvasWrapper.addEventListener('mouseleave', mouseUpHandler);
+    canvasWrapper.addEventListener('mousemove', mouseMoveHandler);
+    canvasWrapper.addEventListener('wheel', wheelHandler, false);
 
     canvas.addEventListener('touchend', mouseUpHandler);
     canvas.addEventListener('touchcancel', mouseUpHandler);
 
-    canvas.addEventListener('touchstart',function (event) {
-      //Same processing than mouse for main finger
+    canvasWrapper.addEventListener('touchstart',function (event) {
+      // Same processing than mouse for main finger
       mouseDownHandler(event.touches[0]);
       // Just save second finger position if used
       if(event.touches.length>1) {
-        let rect = canvas.getBoundingClientRect();
-        secondFingerX = Math.floor(event.touches[1].clientX - rect.left);
-        secondFingerY = Math.floor(event.touches[1].clientY - rect.top);
+        secondFingerX = event.touches[1].clientX;
+        secondFingerY = event.touches[1].clientY;
       }
-      //Use preventDefault everytime handling canvas event for mobile
+      // Use preventDefault everytime handling canvas event for mobile
       event.preventDefault();
     });
 
@@ -289,20 +309,21 @@
         mouseMoveHandler(event.touches[0]);
       else {
         //Else calculate position on canvas for both
-        let rect = canvas.getBoundingClientRect();
-        let f1X = Math.floor(event.touches[0].clientX - rect.left);
-        let f1Y = Math.floor(event.touches[0].clientY - rect.top);
-        let f2X = Math.floor(event.touches[1].clientX - rect.left);
-        let f2Y = Math.floor(event.touches[1].clientY - rect.top);
+        let f1X = event.touches[0].clientX;
+        let f1Y = event.touches[0].clientY;
+        let f2X = event.touches[1].clientX;
+        let f2Y = event.touches[1].clientY;
 
         //Also the distance between fingers, the last known distance and the center
         let lastDist = Math.sqrt(Math.pow(lastX - secondFingerX, 2) + Math.pow(lastY - secondFingerY, 2));
         let newDist = Math.sqrt(Math.pow(f1X - f2X, 2) + Math.pow(f1Y - f2Y, 2));
-        let centerX = (f1X + f2X) / 2;
-        let centerY = (f1Y + f2Y) / 2;
 
-        //Simple cond to avoid zooming too fast when using 2 finger
+        // Safeguard to avoid zooming too fast when using 2 finger
         if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
+          // Compute the zoom center
+          const centerX = (f1X + f2X) / 2 - canvasBox.left;
+          const centerY = (f1Y + f2Y) / 2 - canvasBox.top;
+
           //fingers mooving away
           if (lastDist < newDist) {
             zoomIn(centerX, centerY);
@@ -338,8 +359,8 @@
         let currentX = event.clientX;
         let currentY = event.clientY;
         // Move the image
-        dx += currentX - lastX;
-        dy += currentY - lastY;
+        dx += (currentX - lastX)/canvasScale;
+        dy += (currentY - lastY)/canvasScale;
 
         // Save the position
         lastX = currentX;
@@ -350,9 +371,8 @@
 
     function wheelHandler(event){
       event.preventDefault();
-      let rect = canvas.getBoundingClientRect();
-      let currentX = Math.floor(event.clientX - rect.left);
-      let currentY = Math.floor(event.clientY - rect.top);
+      let currentX = Math.floor(event.clientX - canvasBox.left);
+      let currentY = Math.floor(event.clientY - canvasBox.top);
       //Zoom in
       if(event.deltaY<0) {
         zoomIn(currentX, currentY);
@@ -365,6 +385,8 @@
     }
 
     function zoomIn(x, y) {
+      x /= canvasScale;
+      y /= canvasScale;
       dx = x - (x - dx) * scaleFactor;
       dy = y - (y - dy) * scaleFactor;
       dHeight *= scaleFactor;
@@ -372,6 +394,8 @@
     }
 
     function zoomOut(x, y) {
+      x /= canvasScale;
+      y /= canvasScale;
       dx = x - (x - dx)/scaleFactor;
       dy = y - (y - dy)/scaleFactor;
       dHeight /= scaleFactor;
