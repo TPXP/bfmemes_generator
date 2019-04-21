@@ -98,12 +98,15 @@
     let imageLogo = null;
     let imageAlerte = null;
     let bgd = null;
+    let sx, sy, dx, dy;
+    let sWidth, sHeight, dWidth, dHeight;
+
     function reDraw() {
       ctx.fillStyle='#000';
       ctx.fillRect(0,0, 1280, 720);
 
       if(bgd)
-        ctx.drawImage(bgd, 0, 0, 1280, 720);
+        ctx.drawImage(bgd, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 
       /* Bandeau du bas: 100px */
       ctx.fillStyle = '#F0EFEE';
@@ -182,23 +185,15 @@
               const imgtag = new Image();
               imgtag.onload = function(){
                 // Finally, create a bitmap with it. Easy, right?
+                sWidth = dWidth = imgtag.width;
+                sHeight = dHeight = imgtag.height;
+                sx = sy = 0;
+                //By default the image will be centered
+                dx = (canvas.width-sWidth)/2;
+                dy = (canvas.height-sHeight)/2;
 
-                let sx = 0, sy = 0, sWidth = imgtag.width, sHeight = imgtag.height;
-                // A bit of math to make sure the image covers everything
-                if(imgtag.height / imgtag.width > 720/1280){
-                  // We need to crop vertically
-                  sHeight = Math.floor(imgtag.width / 1280 * 720);
-                  sy = Math.floor((imgtag.height - sHeight) / 2);
-                } else {
-                  // We need to crop horizontally
-                  sWidth = Math.floor(imgtag.height / 720 * 1280);
-                  sx = Math.floor((imgtag.width- sWidth) / 2);
-                }
-
-                createImageBitmap(this, sx, sy, sWidth, sHeight).then((i) => {
-                  bgd = i;
-                  reDraw();
-                });
+                bgd = imgtag;
+                reDraw();
               };
               imgtag.src = e.target.result;
             };
@@ -213,19 +208,15 @@
     reDraw();
     const imgTagAlerte = new Image();
     imgTagAlerte.onload = function(){
-      createImageBitmap(this).then((i) => {
-        imageAlerte = i;
-        reDraw();
-      });
+      imageAlerte = imgTagAlerte;
+      reDraw();
     };
     imgTagAlerte.src = 'alerteInfo.jpeg';
 
     const imgTagLogo = new Image();
     imgTagLogo.onload = function(){
-      createImageBitmap(this).then((i) => {
-        imageLogo = i;
-        reDraw();
-      });
+      imageLogo = imgTagLogo;
+      reDraw();
     };
     imgTagLogo.src = 'bfmemes.png';
 
@@ -239,6 +230,127 @@
       a.click();
       document.body.removeChild(a);
     }
+
+    /*** Zoom Handling ***/
+    //Last known position of the mouse/main finger
+    let lastX, lastY;
+    //Last known position of the second finger if relevant
+    let secondFingerX, secondFingerY;
+    let mouseDown = false;
+    let scaleFactor = 1.1;
+
+    canvas.addEventListener('mousedown', mouseDownHandler);
+    canvas.addEventListener('mouseup', mouseUpHandler);
+    canvas.addEventListener('mousemove', mouseMoveHandler);
+    canvas.addEventListener('wheel', wheelHandler, false);
+
+    canvas.addEventListener('touchstart',function (event) {
+      //Same processing than mouse for main finger
+      mouseDownHandler(event.touches[0]);
+      //Juste save second finger position if used
+      if(event.touches.length>1) {
+        let rect = canvas.getBoundingClientRect();
+        secondFingerX = Math.floor(event.touches[1].clientX - rect.left);
+        secondFingerY = Math.floor(event.touches[1].clientY - rect.top);
+      }
+      //Use preventDefault everytime handling canvas event for mobile
+      event.preventDefault();
+    });
+
+    canvas.addEventListener('touchmove',function (event) {
+      //Use finger as mouse when their is only one
+      if(event.touches.length===1)
+        mouseMoveHandler(event.touches[0]);
+      else {
+        //Else calculate position on canvas for both
+        let rect = canvas.getBoundingClientRect();
+        let f1X = Math.floor(event.touches[0].clientX - rect.left);
+        let f1Y = Math.floor(event.touches[0].clientY - rect.top);
+        let f2X = Math.floor(event.touches[1].clientX - rect.left);
+        let f2Y = Math.floor(event.touches[1].clientY - rect.top);
+
+        //Also the distance between fingers, the last known distance and the center
+        let lastDist = Math.sqrt(Math.pow(Math.abs(lastX - secondFingerX), 2) + Math.pow(Math.abs(lastY - secondFingerY), 2));
+        let newDist = Math.sqrt(Math.pow(Math.abs(f1X - f2X), 2) + Math.pow(Math.abs(f1Y - f2Y), 2));
+        let centerX = (f1X + f2X) / 2;
+        let centerY = (f1Y + f2Y) / 2;
+
+        //Simple cond to avoid zooming too fast when using 2 finger
+        if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
+          //fingers mooving away
+          if (lastDist < newDist) {
+            zoomIn(centerX, centerY);
+          } //fingers gets closer
+          else {
+            zoomOut(centerX, centerY);
+          }
+          //Then save current position for next zoom
+          lastX = f1X;
+          lastY = f1Y;
+          secondFingerX = f2X;
+          secondFingerY = f2Y;
+          reDraw();
+        }
+      }
+      event.preventDefault();
+    });
+
+    //Save current position when click is triggered
+    function mouseDownHandler(event) {
+      let rect = canvas.getBoundingClientRect();
+      lastX = Math.floor(event.clientX - rect.left);
+      lastY = Math.floor(event.clientY - rect.top);
+      mouseDown = true;
+    }
+
+    function mouseUpHandler(event) {
+      mouseDown = false;
+    }
+
+    //Update draw positions when mooving mouse and then redraw
+    function mouseMoveHandler(event) {
+      if(mouseDown) {
+        let rect = canvas.getBoundingClientRect();
+        let currentX = Math.floor(event.clientX - rect.left);
+        let currentY = Math.floor(event.clientY - rect.top);
+        dx += currentX - lastX;
+        dy += currentY - lastY;
+        lastX = currentX;
+        lastY = currentY;
+        reDraw();
+      }
+    }
+
+    function wheelHandler(event){
+      event.preventDefault();
+      let rect = canvas.getBoundingClientRect();
+      let currentX = Math.floor(event.clientX - rect.left);
+      let currentY = Math.floor(event.clientY - rect.top);
+      //Zoom in
+      if(event.deltaY<0) {
+        zoomIn(currentX, currentY);
+      }
+      //Zoom out
+      if(event.deltaY>0) {
+        zoomOut(currentX, currentY);
+      }
+      reDraw();
+    }
+
+    function zoomIn(x, y) {
+      dx = x - (x - dx) * scaleFactor;
+      dy = y - (y - dy) * scaleFactor;
+      dHeight *= scaleFactor;
+      dWidth *= scaleFactor;
+    }
+
+    function zoomOut(x, y) {
+      dx = x - (x - dx)/scaleFactor;
+      dy = y - (y - dy)/scaleFactor;
+      dHeight /= scaleFactor;
+      dWidth /= scaleFactor;
+    }
+
   </script>
 </body>
 </html>
