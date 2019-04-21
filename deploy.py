@@ -6,7 +6,6 @@ hostname = os.environ['DEPLOY_HOST']
 username = os.environ['DEPLOY_USER']
 password = os.environ['DEPLOY_PASSWORD']
 path = os.environ['DEPLOY_PATH']
-print(hostname, username, password, path)
 
 date_format = '%Y-%m-%d %H:%M:%S'
 # Make sure the path ends with a slash
