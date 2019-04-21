@@ -21,7 +21,9 @@
         }
         #mainContainer{
             min-height: calc(100vh - 170px);
-            margin:25px;
+            margin:25px auto;
+            padding: 0 25px;
+            max-width: 1970px; /* 1280 * 3/2 : make sure the canvas' scale is at most 1 (+padding(25px)*2)*/
         }
         #canvasWrapper{
             padding:0;
