@@ -110,8 +110,11 @@
       ctx.fillRect(0, 720-125, 1280, 100);
 
       /* Bandeau du haut: 100px */
-      ctx.fillStyle = '#1e2677';
-      ctx.fillRect(230, 720-251, 1280, 113);
+      let gradient = ctx.createLinearGradient(0, 469, 0, 582);
+      gradient.addColorStop(0,"#1B296F");
+      gradient.addColorStop(1,"#2C4190");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(230, 469, 1280, 113);
 
       // DIRECT
       ctx.fillRect(0, 25, 290, 50);
