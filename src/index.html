@@ -323,9 +323,8 @@
 
     // Save current position when click is triggered
     function mouseDownHandler(event) {
-      let rect = canvas.getBoundingClientRect();
-      lastX = Math.floor(event.clientX - rect.left);
-      lastY = Math.floor(event.clientY - rect.top);
+      lastX = event.clientX;
+      lastY = event.clientY;
       mouseDown = true;
     }
 
@@ -336,11 +335,13 @@
     // Update draw positions when moving mouse and then redraw
     function mouseMoveHandler(event) {
       if(mouseDown) {
-        let rect = canvas.getBoundingClientRect();
-        let currentX = Math.floor(event.clientX - rect.left);
-        let currentY = Math.floor(event.clientY - rect.top);
+        let currentX = event.clientX;
+        let currentY = event.clientY;
+        // Move the image
         dx += currentX - lastX;
         dy += currentY - lastY;
+
+        // Save the position
         lastX = currentX;
         lastY = currentY;
         reDraw();
