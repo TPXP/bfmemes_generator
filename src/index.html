@@ -267,6 +267,9 @@
     canvas.addEventListener('mousemove', mouseMoveHandler);
     canvas.addEventListener('wheel', wheelHandler, false);
 
+    canvas.addEventListener('touchend', mouseUpHandler);
+    canvas.addEventListener('touchcancel', mouseUpHandler);
+
     canvas.addEventListener('touchstart',function (event) {
       //Same processing than mouse for main finger
       mouseDownHandler(event.touches[0]);
