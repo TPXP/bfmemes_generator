@@ -2,7 +2,8 @@
 
 # 1. Fetch the file list
 echo "** Fetching the directory list"
-echo "ls -1" | sshpass -e sftp $DEPLOY_USER@$DEPLOY_HOST | tee /tmp/folder_list
+echo "ls -1" > /tmp/ls_command
+sshpass -e sftp -b /tmp/ls_command $DEPLOY_USER@$DEPLOY_HOST | tee /tmp/folder_list
 
 # 2. Find out what we want to do
 echo "** Writing deployment commands"
@@ -56,4 +57,4 @@ echo "ln -s $TARGET_DIR live" >> /tmp/command_list
 cat /tmp/command_list
 
 echo "** Deploying!"
-cat /tmp/command_list | sshpass -e sftp $DEPLOY_USER@$DEPLOY_HOST
+sshpass -e sftp -b /tmp/command_list $DEPLOY_USER@$DEPLOY_HOST
