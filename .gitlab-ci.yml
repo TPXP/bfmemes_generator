@@ -1,11 +1,11 @@
 pages:
   stage: deploy
   script:
-    - mkdir website
-    - cp -r src/* website
+    - mkdir public
+    - cp -r src/* public
   artifacts:
     paths:
-      - website
+      - public
     expire_in: 1 week
   only:
     - master
