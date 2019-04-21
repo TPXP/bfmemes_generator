@@ -9,40 +9,15 @@
     <meta property="og:description"        content="Générez facilement et rapidement votre propre BFMème!" />
     <meta property="og:image"              content="https://neurchi.gitlab.io/bfmemes/logo.jpg" />
     <link rel="icon" href="logo.jpg" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
         body{
-            font-family: sans-serif;
-            margin: 0;
-            display: flex;
-            min-height: 100vh;
-            flex-direction: column;
-            justify-content: space-between;
+            overflow-x: hidden;
         }
-        div {
-            display: flex;
-            flex-direction: row;
-            flex-wrap: wrap;
-            margin:20px;
-            align-items: center;
-            justify-content: center;
-        }
-        form{
-            display: flex;
-            flex-direction: column;
-            flex:99;
-            min-width: 250px;
-            margin-bottom: 20px;
-        }
-        form * {
-            margin:10px;
-        }
-        canvas{
-            border:1px solid black;
-        }
-        @media(min-width:1550px) {
-            form{
-                margin-right: 20px;
-            }
+        #mainContainer{
+            min-height: calc(100vh - 170px);
+            margin:25px;
         }
         footer{
             filter:invert(1);
@@ -69,20 +44,48 @@
     </style>
 </head>
 <body>
-<div>
-    <form>
+<div class="row" id="mainContainer">
+    <form class="form-horizontal col-sm-12 col-md-4">
         <h1>BFMemes Generator&trade;</h1>
-        <label for="headline">Gros titre</label>
-        <input type="text" id="headline" />
-        <label for="fit-head"><input type="checkbox" id="fit-head" /> Faire rentrer mon titre dans le cadre</label>
-        <label for="subtitle">Alerte INFO</label>
-        <input type="text" id="subtitle" />
-        <label for="fit-sub"><input type="checkbox" id="fit-sub" /> Faire rentrer mon alerte info dans le cadre</label>
-        <label for="image">Image</label>
-        <input type="file" id="image" />
-        <button>Télécharger</button>
+        <hr />
+        <div class="form-group">
+            <label for="headline">Gros titre</label>
+            <input type="text" class="form-control" id="headline" placeholder="Gros titre">
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="fit-head">
+                <label class="form-check-label" for="fit-head">
+                    Faire rentrer mon titre dans le cadre
+                </label>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label for="subtitle">Alerte INFO</label>
+            <input type="text" class="form-control" id="subtitle" placeholder="Alerte INFO">
+        </div>
+        <div class="form-group">
+            <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="fit-sub">
+                <label class="form-check-label" for="fit-sub">
+                    Faire rentrer mon alerte info dans le cadre
+                </label>
+            </div>
+        </div>
+        <hr />
+        <div class="form-group">
+            <label for="image">Image</label>
+            <input type="file" class="form-control-file" id="image" />
+        </div>
+        <button type="button" class="btn btn-lg btn-block mt-5 btn-success">
+            <i class="material-icons">cloud_download</i>
+            Télécharger
+        </button>
     </form>
-    <canvas width="1280" height="720"></canvas>
+    <div id="canvasWrapper" class="col-sm-12 col-md-8">
+        <canvas width="1280" height="720"></canvas>
+    </div>
 </div>
 <footer>
     <a href="https://www.lafrenchtech.com" target="_blank">
