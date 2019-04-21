@@ -2,8 +2,7 @@
 
 # 1. Fetch the file list
 echo "** Fetching the directory list"
-echo "ls -1" > /tmp/ls_command
-sshpass -e sftp -b /tmp/ls_command -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST | tee /tmp/folder_list
+echo "ls -1" | sshpass -e sftp -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST | tee /tmp/folder_list
 
 # 2. Find out what we want to do
 echo "** Writing deployment commands"
@@ -57,4 +56,4 @@ echo "ln -s $TARGET_DIR live" >> /tmp/command_list
 cat /tmp/command_list
 
 echo "** Deploying!"
-sshpass -e sftp -b /tmp/command_list -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST
+cat /tmp/command_list | sshpass -e sftp -o StrictHostKeyChecking=no $DEPLOY_USER@$DEPLOY_HOST
