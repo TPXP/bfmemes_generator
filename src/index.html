@@ -3,12 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <title>BFMemes Generator</title>
-    <meta property="og:url"                content="https://neurchi.gitlab.io/bfmemes" />
+    <link rel="icon" href="logo.jpg" />
+
+    <!-- Facebook OpenGraph -->
+    <meta property="og:url"                content="https://bfmemes.com/" />
     <meta property="og:type"               content="website" />
     <meta property="og:title"              content="BFMemes Generator" />
     <meta property="og:description"        content="Générez facilement et rapidement votre propre BFMème!" />
-    <meta property="og:image"              content="https://neurchi.gitlab.io/bfmemes/logo.jpg" />
-    <link rel="icon" href="logo.jpg" />
+    <meta property="og:image"              content="https://bfmemes.com/logo.jpg" />
+
+    <!-- CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style type="text/css">
@@ -101,6 +105,7 @@
     let sx, sy, dx, dy;
     let sWidth, sHeight, dWidth, dHeight;
 
+    // Redraw the canvas image
     function reDraw() {
       ctx.fillStyle='#000';
       ctx.fillRect(0,0, 1280, 720);
@@ -108,31 +113,31 @@
       if(bgd)
         ctx.drawImage(bgd, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);
 
-      /* Bandeau du bas: 100px */
+      /* Bottom Ribbon: 100px */
       ctx.fillStyle = '#F0EFEE';
       ctx.fillRect(0, 595, 1280, 100);
 
-      /* Bandeau du haut: 100px */
+      /* Top Ribbon: 100px */
       let gradient = ctx.createLinearGradient(0, 469, 0, 582);
       gradient.addColorStop(0,"#1B296F");
       gradient.addColorStop(1,"#2C4190");
       ctx.fillStyle = gradient;
       ctx.fillRect(230, 469, 1280, 113);
 
-      // DIRECT
+      /*** DIRECT and time in upper left corner***/
       ctx.fillRect(0, 25, 290, 50);
 
-      // Le petit carré
+      // The orange square between direct and time
       ctx.fillStyle = '#e88c17';
       ctx.fillRect(125, 45, 12, 12);
 
-      // Le petit texte "DIRECT"
+      // The "DIRECT" text
       ctx.fillStyle = '#fff';
       ctx.font = 'bold 30px sans-serif';
 
       ctx.fillText('DIRECT', 150, 62, 130);
 
-      // L'heure
+      // Time
       ctx.textAlign = 'right';
 
       let time = new Date();
@@ -146,6 +151,7 @@
       ctx.textAlign = 'left';
 
 
+      // Headline
       const headline = document.getElementById('headline').value;
       if(headline) {
         ctx.font = 'condensed bold 60px sans-serif';
@@ -155,6 +161,7 @@
           ctx.fillText(headline, 250, 548);
       }
 
+      // Subtitle (bottom ribbon)
       const subtitle = document.getElementById('subtitle').value;
       if(subtitle) {
         ctx.fillStyle = '#000';
@@ -165,16 +172,21 @@
           ctx.fillText(subtitle, 240, 660);
       }
 
-      // Overlay
+      // "Alerte Info"
       if(imageAlerte)
         ctx.drawImage(imageAlerte, 75, 595);
 
+      // BFMemes Logo
       if(imageLogo)
         ctx.drawImage(imageLogo, 73, 450);
     }
+
+    // Handling of events on inputs
     const inputs = document.getElementsByTagName('input');
     for(let a=0; a<inputs.length;a++){
       const input = inputs[a];
+
+      // For files, load the image before drawing it again
       if(input.type === 'file'){
         input.onchange = function(){
           if(input.files && input.files.length) {
@@ -200,12 +212,20 @@
             reader.readAsDataURL(input.files[0]);
           }
         };
+
+        // In case there is already something (page refresh), load it
         input.onchange();
         continue;
       }
+
+      // Text inputs don't need anything special, they're queried when drawing
       input.oninput = reDraw;
     }
+
+    // In case there is already something in the text fields, redraw the image
     reDraw();
+
+    // Load images for "Alerte Info"...
     const imgTagAlerte = new Image();
     imgTagAlerte.onload = function(){
       imageAlerte = imgTagAlerte;
@@ -213,6 +233,7 @@
     };
     imgTagAlerte.src = 'alerteInfo.jpeg';
 
+    // ... and the BFMemes logo
     const imgTagLogo = new Image();
     imgTagLogo.onload = function(){
       imageLogo = imgTagLogo;
@@ -220,6 +241,7 @@
     };
     imgTagLogo.src = 'bfmemes.png';
 
+    // Image download
     document.getElementsByTagName('button')[0].onclick = function(e) {
       e.preventDefault();
       let a = document.createElement('a');
@@ -232,9 +254,9 @@
     };
 
     /*** Zoom Handling ***/
-    //Last known position of the mouse/main finger
+    // Last known position of the mouse/main finger
     let lastX, lastY;
-    //Last known position of the second finger if relevant
+    // Last known position of the second finger if relevant
     let secondFingerX, secondFingerY;
     let mouseDown = false;
     const scaleFactor = 1.1;
