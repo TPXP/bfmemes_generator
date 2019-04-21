@@ -321,7 +321,7 @@
       event.preventDefault();
     });
 
-    //Save current position when click is triggered
+    // Save current position when click is triggered
     function mouseDownHandler(event) {
       let rect = canvas.getBoundingClientRect();
       lastX = Math.floor(event.clientX - rect.left);
@@ -329,11 +329,11 @@
       mouseDown = true;
     }
 
-    function mouseUpHandler(event) {
+    function mouseUpHandler() {
       mouseDown = false;
     }
 
-    //Update draw positions when mooving mouse and then redraw
+    // Update draw positions when moving mouse and then redraw
     function mouseMoveHandler(event) {
       if(mouseDown) {
         let rect = canvas.getBoundingClientRect();
