@@ -12,6 +12,8 @@ LAST_MONTH=$(date --date='last month' +%s)
 [[ -f /tmp/command_list ]] && rm /tmp/command_list
 touch /tmp/command_list
 
+cat /tmp/folder_list
+
 N_PRESERVED=0
 
 while read folder;do
@@ -50,6 +52,8 @@ done
 echo "cd .."                  >> /tmp/command_list
 echo "rm live"                >> /tmp/command_list
 echo "ln -s $TARGET_DIR live" >> /tmp/command_list
+
+cat /tmp/command_list
 
 echo "** Deploying!"
 cat /tmp/command_list | sshpass -e sftp $DEPLOY_USER@$DEPLOY_HOST
