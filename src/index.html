@@ -114,7 +114,7 @@
         </button>
     </form>
     <div id="canvasWrapper" class="col-sm-12 col-md-8 mt-4 mt-md-0">
-        <canvas width="1280" height="720"></canvas>
+        <canvas id="canvas" width="1280" height="720"></canvas>
     </div>
 </div>
 <footer>
@@ -282,18 +282,19 @@
 
     /*** Canvas resizing ***/
     const canvasWrapper = document.getElementById('canvasWrapper');
-    let canvasBox;
+    let canvasWrapperBox;
     let canvasScale = 1;
     window.onresize = function(){
-      canvasBox = canvasWrapper.getBoundingClientRect();
-      canvasScale = canvasBox.width/canvas.width;
+        canvasWrapperBox = canvasWrapper.getBoundingClientRect();
+      canvasScale = canvasWrapperBox.width/canvas.width;
       if(canvasScale > 1)
         canvasScale = 1;
       canvas.style.transform = 'scale(' + canvasScale + ')';
 
-      canvasWrapper.style.height = (canvasBox.width * canvas.height / canvas.width) + 'px';
+      canvasWrapper.style.height = (canvasWrapperBox.width * canvas.height / canvas.width) + 'px';
     };
     window.onresize();
+    let canvasBox = canvas.getBoundingClientRect();
 
     /*** Zoom Handling ***/
     // Last known position of the mouse/main finger
@@ -342,6 +343,7 @@
         // Safeguard to avoid zooming too fast when using 2 finger
         if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
           // Compute the zoom center
+          canvasBox = canvas.getBoundingClientRect();
           const centerX = (f1X + f2X) / 2 - canvasBox.left;
           const centerY = (f1Y + f2Y) / 2 - canvasBox.top;
 
@@ -392,6 +394,7 @@
 
     function wheelHandler(event){
       event.preventDefault();
+      canvasBox = canvas.getBoundingClientRect();
       let currentX = Math.floor(event.clientX - canvasBox.left);
       let currentY = Math.floor(event.clientY - canvasBox.top);
       //Zoom in
