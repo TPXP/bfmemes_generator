@@ -236,7 +236,7 @@
           if(input.files && input.files.length) {
             // First, read the file as a data URL
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function() {
               // Set it as the source of an image tag
               const imgtag = new Image();
               imgtag.onload = function(){
@@ -264,7 +264,8 @@
                 bgd = imgtag;
                 reDraw();
               };
-              imgtag.src = e.target.result;
+              // noinspection JSValidateTypes
+              imgtag.src = this.result;
             };
             reader.readAsDataURL(input.files[0]);
           }
