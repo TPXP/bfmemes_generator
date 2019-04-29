@@ -43,6 +43,9 @@
         canvas{
             transform-origin: top left;
         }
+        .material-icons{
+            vertical-align: middle;
+        }
         footer{
             filter:invert(1);
             background: white;
@@ -64,11 +67,6 @@
         footer a{
             text-decoration: none;
             font-size:0;
-        }
-        .btn:focus {
-            outline: none !important;
-            -webkit-box-shadow: none !important;
-            box-shadow: none !important;
         }
     </style>
 </head>
@@ -112,13 +110,13 @@
         <div class="form-group">
             <label for="image">Image</label>
             <input type="file" class="form-control-file" id="image" />
+            <div class="btn-group btn-block mt-3" role="group">
+                <button id="turnLeft" type="button" class="btn btn-light"><i class="material-icons">rotate_left</i></button>
+                <button id="turnRight" type="button" class="btn btn-light"><i class="material-icons">rotate_right</i></button>
+            </div>
         </div>
     </form>
     <div id="wrapperCeption" class="col-sm-12 col-md-8 mt-4 mt-md-0">
-        <div class="btn-group btn-block" role="group">
-            <button id="turnLeft" type="button" class="btn"><i class="material-icons">rotate_left</i></button>
-            <button id="turnRight" type="button" class="btn"><i class="material-icons">rotate_right</i></button>
-        </div>
         <div id="canvasWrapper">
             <canvas id="canvas" width="1280" height="720"></canvas>
         </div>
