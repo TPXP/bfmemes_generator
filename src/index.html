@@ -269,7 +269,7 @@
         };
 
         // In case there is already something (page refresh), load it
-        input.onchange();
+        input.onchange(null);
         continue;
       }
 
@@ -308,6 +308,7 @@
       document.body.removeChild(a);
     };
 
+    // Image rotation
     document.getElementById('turnRight').onclick = function(e) {
       e.preventDefault();
       angle+=10;
@@ -333,7 +334,7 @@
 
       canvasWrapper.style.height = (canvasWrapperBox.width * canvas.height / canvas.width) + 'px';
     };
-    window.onresize();
+    window.onresize(null);
 
     /*** Zoom Handling ***/
     // Last known position of the mouse/main finger
