@@ -238,13 +238,26 @@
               // Set it as the source of an image tag
               const imgtag = new Image();
               imgtag.onload = function(){
-                // Finally, create a bitmap with it. Easy, right?
-                sWidth = dWidth = imgtag.width;
-                sHeight = dHeight = imgtag.height;
+                // Load the image, show it full screen
+                sWidth = imgtag.width;
+                sHeight = imgtag.height;
                 sx = sy = 0;
+                dWidth = sWidth;
+                dHeight = sHeight;
+
+                // Make the image "cover" the screen
+                if(dWidth / dHeight < canvas.width / canvas.height){
+                  // Image is larger
+                  dWidth = canvas.width;
+                  dHeight = dWidth * sHeight / sWidth;
+                } else {
+                  dHeight = canvas.height;
+                  dWidth = dHeight * sWidth / sHeight;
+                }
+
                 //By default the image will be centered
-                dx = (canvas.width-sWidth)/2;
-                dy = (canvas.height-sHeight)/2;
+                dx = (canvas.width-dWidth)/2;
+                dy = (canvas.height-dHeight)/2;
 
                 bgd = imgtag;
                 reDraw();
