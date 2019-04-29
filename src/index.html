@@ -314,7 +314,7 @@
     let canvasWrapperBox;
     let canvasScale = 1;
     window.onresize = function(){
-        canvasWrapperBox = canvasWrapper.getBoundingClientRect();
+      canvasWrapperBox = canvasWrapper.getBoundingClientRect();
       canvasScale = canvasWrapperBox.width/canvas.width;
       if(canvasScale > 1)
         canvasScale = 1;
