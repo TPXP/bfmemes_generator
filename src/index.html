@@ -147,11 +147,11 @@
       ctx.fillRect(0,0, 1280, 720);
 
       if(bgd) {
-          ctx.save();
-          ctx.translate(dx+dWidth/2,dy+dHeight/2);
-          ctx.rotate(angle*Math.PI/180);
-          ctx.drawImage(bgd, sx, sy, sWidth, sHeight, -dWidth/2, -dHeight/2, dWidth, dHeight);
-          ctx.restore();
+        ctx.save();
+        ctx.translate(dx+dWidth/2,dy+dHeight/2);
+        ctx.rotate(angle*Math.PI/180);
+        ctx.drawImage(bgd, sx, sy, sWidth, sHeight, -dWidth/2, -dHeight/2, dWidth, dHeight);
+        ctx.restore();
       }
 
       /* Bottom Ribbon: 100px */
