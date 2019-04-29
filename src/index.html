@@ -113,6 +113,8 @@
             <div class="btn-group btn-block mt-3" role="group">
                 <button id="turnLeft" type="button" class="btn btn-light"><i class="material-icons">rotate_left</i></button>
                 <button id="turnRight" type="button" class="btn btn-light"><i class="material-icons">rotate_right</i></button>
+                <button id="zoomIn" type="button" class="btn btn-light"><i class="material-icons">zoom_in</i></button>
+                <button id="zoomOut" type="button" class="btn btn-light"><i class="material-icons">zoom_out</i></button>
             </div>
         </div>
     </form>
@@ -443,9 +445,11 @@
         zoomOut(currentX, currentY);
     }
 
-    function zoomIn(x, y) {
-      x /= canvasScale;
-      y /= canvasScale;
+    function zoomIn(x, y, noScaling) {
+      if(!noScaling) {
+        x /= canvasScale;
+        y /= canvasScale;
+      }
       dx = x - (x - dx) * scaleFactor;
       dy = y - (y - dy) * scaleFactor;
       dHeight *= scaleFactor;
@@ -454,9 +458,11 @@
       reDraw();
     }
 
-    function zoomOut(x, y) {
-      x /= canvasScale;
-      y /= canvasScale;
+    function zoomOut(x, y, noScaling) {
+      if(!noScaling) {
+        x /= canvasScale;
+        y /= canvasScale;
+      }
       dx = x - (x - dx)/scaleFactor;
       dy = y - (y - dy)/scaleFactor;
       dHeight /= scaleFactor;
@@ -464,6 +470,17 @@
 
       reDraw();
     }
+
+    // Button events
+    document.getElementById('zoomIn').onclick = function(e){
+      e.preventDefault();
+      return bgd && zoomIn(dx + dWidth / 2, dy + dHeight / 2, true);
+    };
+
+    document.getElementById('zoomOut').onclick = function(e){
+      e.preventDefault();
+      return bgd && zoomOut(dx + dWidth / 2, dy + dHeight / 2, true);
+    };
   </script>
 </body>
 </html>
