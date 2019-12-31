@@ -6,11 +6,14 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
 module.exports = {
   mode,
+  output:{
+    publicPath: mode === "production" ? "https://www.bfmemes.com/" : "",
+  },
   module: {
     rules: [
       {
         test: /\.css$/i,
-        // Extract the CSS files as another resource (except for dev where we use hot reload)
+        // Extract the CSS files as another resource - don't put them in JS (except for dev where we use hot reload)
         use: [ mode === 'production' ? {
           loader: MiniCssExtractPlugin.loader
         } : 'style-loader', 'css-loader'],
@@ -27,12 +30,16 @@ module.exports = {
         use: [{
           // The extract loader will be called implicitely by the HTML plugin for images' file paths
           loader: 'html-loader',
+          options: {
+            interpolate: true
+          }
         }],
       }
     ],
   },
   stats: mode === 'production' ? 'normal' : 'errors-warnings',
   plugins: [
+    // Clear the dist directory when building a new bundle
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
       template: "src/index.html",
@@ -47,6 +54,7 @@ module.exports = {
         useShortDoctype: true
       } : false,
     }),
+    // Put the CSS files aside the JS bundle
     new MiniCssExtractPlugin(),
   ],
 };
