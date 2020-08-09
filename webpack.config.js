@@ -7,7 +7,7 @@ const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production
 module.exports = {
   mode,
   output:{
-    publicPath: mode === "production" ? "https://www.bfmemes.com/" : "",
+    publicPath: mode === "production" ? "https://generator.bfmemes.com/" : "",
   },
   module: {
     rules: [
@@ -28,7 +28,7 @@ module.exports = {
       {
         test: /\.html$/i,
         use: [{
-          // The extract loader will be called implicitely by the HTML plugin for images' file paths
+          // The extract loader will be called implicitly by the HTML plugin for images' file paths
           loader: 'html-loader',
           options: {
             interpolate: true
