@@ -58,9 +58,9 @@ print('* Sending the current version "{}"'.format(cur_ver))
 
 remote_path = path + cur_ver
 sftp.mkdir(remote_path)
-for file in os.listdir('src'):
+for file in os.listdir('dist'):
     print(file)
-    sftp.put(os.curdir + '/src/' + file, remote_path + '/' + file)
+    sftp.put(os.curdir + '/dist/' + file, remote_path + '/' + file)
 
 print('* Changing the "latest" symlink')
 try:

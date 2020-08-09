@@ -1,8 +1,9 @@
 pages:
   stage: deploy
+  image: node:14
   script:
-    - mkdir public
-    - cp -r src/* public
+    - yarn build
+    - mv dist public
   artifacts:
     paths:
       - public
@@ -15,11 +16,15 @@ pages:
 
 production:
   stage: deploy
-  image: python:3.7
+  image: node:14
   before_script:
-    - pip install paramiko
+    - apt update
+    - apt install python3 python3-pip
+    - pip3 install paramiko
   script:
-    - python deploy.py
+    - yarn install
+    - yarn build
+    - python3 deploy.py
   only:
    - prod
   environment:
