@@ -2,6 +2,7 @@ pages:
   stage: deploy
   image: node:14
   script:
+    - yarn install
     - yarn build
     - mv dist public
   artifacts:
