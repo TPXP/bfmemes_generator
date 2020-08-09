@@ -8,6 +8,7 @@ module.exports = {
   mode,
   output:{
     publicPath: mode === "production" ? "https://generator.bfmemes.com/" : "",
+    filename: '[hash].js',
   },
   module: {
     rules: [
@@ -34,17 +35,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "src/index.ejs",
       hash: true,
-      // With v4 of the webpack html plugin, this can be removed
-      minify: mode === 'production' ? {
-        collapseWhitespace: true,
-        removeComments: true,
-        removeRedundantAttributes: true,
-        removeScriptTypeAttributes: true,
-        removeStyleLinkTypeAttributes: true,
-        useShortDoctype: true
-      } : false,
     }),
     // Put the CSS files aside the JS bundle
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[hash].css',
+    }),
   ],
 };
