@@ -9,6 +9,8 @@ process.argv.forEach(v => {
   if(v.startsWith('--url='))
     publicPath = v.substr(6);
 });
+if(!publicPath.endsWith('/'))
+  publicPath += '/';
 
 module.exports = {
   mode,
