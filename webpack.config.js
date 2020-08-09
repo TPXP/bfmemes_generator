@@ -4,10 +4,16 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
+let publicPath = mode === "production" ? "https://generator.bfmemes.com/" : "";
+process.argv.forEach(v => {
+  if(v.startsWith('--url='))
+    publicPath = v.substr(6);
+});
+
 module.exports = {
   mode,
   output:{
-    publicPath: mode === "production" ? "https://generator.bfmemes.com/" : "",
+    publicPath,
     filename: '[hash].js',
   },
   module: {

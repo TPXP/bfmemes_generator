@@ -3,7 +3,7 @@ pages:
   image: node:14
   script:
     - yarn install
-    - yarn build
+    - yarn build --url=https://neurchi.gitlab.io/bfmemes
     - mv dist public
   artifacts:
     paths:
