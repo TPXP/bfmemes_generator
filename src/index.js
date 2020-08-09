@@ -156,7 +156,7 @@ imgTagAlerte.onload = function(){
   imageAlerte = imgTagAlerte;
   reDraw();
 };
-imgTagAlerte.src = 'alerteInfo.jpeg';
+imgTagAlerte.src = require('./alerteInfo.jpeg?size=150').src;
 
 // ... and the BFMemes logo
 const imgTagLogo = new Image();
@@ -164,7 +164,7 @@ imgTagLogo.onload = function(){
   imageLogo = imgTagLogo;
   reDraw();
 };
-imgTagLogo.src = 'bfmemes.png';
+imgTagLogo.src = require('./bfmemes.png?size=150').src;
 
 // Image download
 document.getElementById('download').onclick = function(e) {

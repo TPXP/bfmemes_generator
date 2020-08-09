@@ -20,11 +20,14 @@ module.exports = {
         } : 'style-loader', 'css-loader'],
       },
       {
-        test: /\.(png|jpg|jpeg)$/i,
+        test: /\.(png|jpe?g|webp)$/i,
         // Load these files as raw (put them in the bundle)
         use: [{
-          loader: 'file-loader',
-        }],
+          loader: 'responsive-loader',
+          options: {
+            adapter: require('responsive-loader/sharp')
+          }
+        }]
       }
     ],
   },

@@ -3,20 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>BFMemes Generator</title>
-    <link rel="icon" href="<%= require('./logo.jpg') %>" />
+    <link rel="icon" href="<%= require('./logo.jpg?size=256').src %>" />
 
     <!-- Mobile stuff -->
     <meta name="viewport" content="width=device-width, user-scalable=no">
 
     <!-- Home screen icon (for iOS and Android) -->
-    <link rel="apple-touch-icon" href="<%= require('./logo.jpg') %>">
+    <link rel="apple-touch-icon" href="<%= require('./logo.jpg?size=256').src %>">
 
     <!-- Facebook OpenGraph -->
     <meta property="og:url"                content="<%= __webpack_public_path__ %>" />
     <meta property="og:type"               content="website" />
     <meta property="og:title"              content="BFMemes Generator" />
     <meta property="og:description"        content="Générez facilement et rapidement votre propre BFMème!" />
-    <meta property="og:image"              content="<%= require('./logo.jpg') %>" />
+    <meta property="og:image"              content="<%= require('./logo.jpg').src %>" />
 
     <!-- CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -82,7 +82,7 @@
 </div>
 <footer>
     <a href="https://www.lafrenchtech.com" target="_blank">
-        <img src="<%= require('./frenchtech.png') %>" alt="La FrenchTech" />
+        <img src="<%= require('./frenchtech.png?size=100') %>" alt="La FrenchTech" />
     </a> Nos neurchis ont du talent
 </footer>
 </body>
