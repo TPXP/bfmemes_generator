@@ -24,16 +24,6 @@ module.exports = {
         use: [{
           loader: 'file-loader',
         }],
-      },
-      {
-        test: /\.html$/i,
-        use: [{
-          // The extract loader will be called implicitly by the HTML plugin for images' file paths
-          loader: 'html-loader',
-          options: {
-            interpolate: true
-          }
-        }],
       }
     ],
   },
@@ -42,7 +32,7 @@ module.exports = {
     // Clear the dist directory when building a new bundle
     new CleanWebpackPlugin(),
     new HtmlWebpackPlugin({
-      template: "src/index.html",
+      template: "src/index.ejs",
       hash: true,
       // With v4 of the webpack html plugin, this can be removed
       minify: mode === 'production' ? {
