@@ -49,9 +49,14 @@ if not prev_version_preserved and len(to_delete) > 0:
     to_delete.pop()
 
 print('* Deleting old versions')
-for dir in to_delete:
-    print(dir)
-    sftp.rmdir(path + dir)
+for directory in to_delete:
+    print(directory)
+    directory = path + directory
+    # We don't deploy sub directories
+    for file in sftp.listdir(directory):
+        sftp.remove(directory + '/' + file)
+    # Now that the directory is cleaned, remove it
+    sftp.rmdir(directory)
 
 cur_ver = time.strftime(date_format)
 print('* Sending the current version "{}"'.format(cur_ver))
