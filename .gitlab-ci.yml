@@ -24,4 +24,4 @@ production:
    - prod
   environment:
     name: Production
-    url: https://bfmemes.com
+    url: https://generator.bfmemes.com
