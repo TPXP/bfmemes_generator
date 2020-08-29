@@ -1,95 +1,167 @@
 import './style.css';
 
 const canvas = document.getElementsByTagName("canvas")[0];
-const ctx = canvas.getContext('2d');
-let imageLogo = null;
-let imageAlerte = null;
-let bgd = null;
-let sx, sy, dx, dy;
-let sWidth, sHeight, dWidth, dHeight;
-let angle = 0;
+//const fabricCanvas = new fabric.Canvas(canvas);
 
-// Redraw the canvas image
-function reDraw() {
-  ctx.fillStyle='#000';
-  ctx.fillRect(0,0, 1280, 720);
-
-  if(bgd) {
-    ctx.save();
-    ctx.translate(dx+dWidth/2,dy+dHeight/2);
-    ctx.rotate(angle*Math.PI/180);
-    ctx.drawImage(bgd, sx, sy, sWidth, sHeight, -dWidth/2, -dHeight/2, dWidth, dHeight);
-    ctx.restore();
+class MyMath {
+  static signOfVectorProduct(a, b, c) {
+    return (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
   }
 
-  /* Bottom Ribbon: 100px */
-  ctx.fillStyle = '#F0EFEE';
-  ctx.fillRect(0, 595, 1280, 100);
-
-  /* Top Ribbon: 100px */
-  let gradient = ctx.createLinearGradient(0, 469, 0, 582);
-  gradient.addColorStop(0,"#1B296F");
-  gradient.addColorStop(1,"#2C4190");
-  ctx.fillStyle = gradient;
-  ctx.fillRect(230, 469, 1280, 113);
-
-  /*** DIRECT and time in upper left corner***/
-  ctx.fillRect(0, 25, 290, 50);
-
-  // The orange square between direct and time
-  ctx.fillStyle = '#e88c17';
-  ctx.fillRect(125, 45, 12, 12);
-
-  // The "DIRECT" text
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 30px sans-serif';
-
-  ctx.fillText('DIRECT', 150, 62, 130);
-
-  // Time
-  ctx.textAlign = 'right';
-
-  let time = new Date();
-  let hour = '' + time.getMinutes();
-  if(hour.length < 2)
-    hour = 0 + hour;
-  hour = time.getHours() + ':' + hour;
-
-  ctx.fillText(hour, 112, 62, 100);
-
-  ctx.textAlign = 'left';
-
-
-  // Headline
-  let headLineText = document.getElementById('headline').value;
-  const headline = document.getElementById('upperCase').checked? headLineText.toUpperCase():headLineText;
-  if(headline) {
-    ctx.font = 'condensed bold 60px sans-serif';
-    if(document.getElementById('fit-head').checked)
-      ctx.fillText(headline, 250, 548, 1010);
-    else
-      ctx.fillText(headline, 250, 548);
+  static isPointInTriangle(p, a, b, c) {
+    console.log(p,a,b,c);
+    // A bit of geometry
+    // See https://stackoverflow.com/a/2049593/3841242
+    // Compute the vector product (along Z) to know the angle. All must have the same sign
+    const results = [
+      this.signOfVectorProduct(a, b, p),
+      this.signOfVectorProduct(b, c, p),
+      this.signOfVectorProduct(c, a, p),
+    ];
+    const hasPos = results.reduce((a, v) => a || (v > 0), false),
+      hasNeg = results.reduce((a, v) => a || (v < 0), false);
+    return !(hasNeg && hasPos);
   }
 
-  // Subtitle (bottom ribbon)
-  const subtitle = document.getElementById('subtitle').value;
-  if(subtitle) {
-    ctx.fillStyle = '#000';
-    ctx.font = 'condensed 30px sans-serif';
-    if(document.getElementById('fit-sub').checked)
-      ctx.fillText(subtitle, 240, 660, 1030);
-    else
-      ctx.fillText(subtitle, 240, 660);
+  static vectorRotation(x, y, alpha) {
+    // Time for some complex numbers!
+    return [x * Math.cos(alpha) - y * Math.sin(alpha), x * Math.sin(alpha) + y * Math.cos(alpha)];
   }
 
-  // "Alerte Info"
-  if(imageAlerte)
-    ctx.drawImage(imageAlerte, 75, 595);
-
-  // BFMemes Logo
-  if(imageLogo)
-    ctx.drawImage(imageLogo, 73, 450);
+  static findRectangleCorners(width, height, centerX, centerY, angle) {
+    return [[1,1], [-1, 1], [-1, -1], [1,-1]].map(([mx, my]) =>
+       this.vectorRotation( width / 2 * mx,  height / 2 * my, angle),
+    ).map(([x,y]) => [centerX + x, centerY + y]);
+  }
 }
+
+class ElementsManager {
+  backgroundColor = '#000';
+  width = 1280;
+  height = 720;
+  constructor(canvas) {
+    this.ctx = canvas.getContext('2d');
+    this.elements = [{
+      type: 'color',
+      color: '#f00',
+      centerX: 100,
+      centerY: 100,
+      angle: Math.PI / 4,
+      width:100,
+      height:100,
+    },{
+      type: 'color',
+      color: '#ff0',
+      centerX: 500,
+      centerY: 300,
+      angle: Math.PI / 4,
+      width:200,
+      height:100,
+    }];
+    this.selected = 1;
+    this.draw();
+  }
+
+  getElements() {
+    return this.elements;
+  }
+
+  setElements(elements) {
+    this.elements = elements;
+  }
+
+  getSelectedElement() {
+    return this.elements?.[this.selected];
+  }
+
+  updateSelectedElement(update) {
+    if(!this.elements?.[this.selected])
+      return;
+    this.elements[this.selected] = {...this.elements[this.selected], ...update};
+    this.draw();
+  }
+
+  draw() {
+    const {ctx} = this, elements = [{
+      // Background
+      type: 'color',
+      color: this.backgroundColor,
+      centerX: this.width / 2,
+      centerY: this.height / 2,
+      width: this.width,
+      height: this.height,
+      angle: 0,
+    }, ...this.elements.map((v,i) => ({...v, selected: i === this.selected}))];
+    // Start with the background - cover the rest
+    ctx.fillStyle = '#f00';
+    ctx.fillRect(0, 0, this.width, this.height);
+
+    elements.forEach(({type, color, centerX, centerY, width, height, angle, asset, text, selected}) => {
+      ctx.save();
+      // Get to the center of the element and perform the rotation - we'll draw from here
+      ctx.translate(centerX, centerY);
+      ctx.rotate(angle);
+      if (type === 'image' && asset) {
+        ctx.drawImage(asset.resource,
+          /* This may change if we have cropping */ 0, 0, asset.width, asset.height, -width / 2, -height / 2, width, height);
+      } else if (type === 'color' && color) {
+        ctx.fillStyle = color;
+        ctx.fillRect(-width / 2, -height / 2, width, height);
+      } else {
+        // TODO: Show a broken square
+      }
+      ctx.restore();
+    });
+    // Add the selected item handles - done afterwards so that they appear over any other element
+    elements.filter(({selected}) => selected).forEach(({centerX, centerY, width, height, angle}) => {
+      // For the love of maths, we'll compute the points of the rectangle ourselves
+      const points = MyMath.findRectangleCorners(width, height, centerX, centerY, angle);
+      ctx.beginPath();
+      ctx.moveTo(points[3][0], points[3][1]);
+      for(let i = 0; i<=3; i++)
+        ctx.lineTo(points[i][0], points[i][1]);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 5;
+      ctx.setLineDash([]);
+      ctx.stroke();
+      ctx.setLineDash([20, 20]);
+      ctx.strokeStyle = '#000';
+      ctx.stroke();
+      ctx.fillStyle = '#f60';
+      // Add circles at every corner
+      points.map(([x,y]) => {
+        ctx.beginPath();
+        // As you can see, drawing circles is trivial in WebCanvas /s
+        ctx.ellipse(x, y, 10, 10, 0, 0, Math.PI * 2)
+        ctx.fill();
+      });
+    });
+  }
+
+  getSelectedIndex() {
+    return this.selected;
+  }
+
+  setSelectedIndex(i) {
+    this.selected = i;
+    this.draw();
+  }
+
+  getSelectedIndexesForPosition(x,y) {
+    // Find all elements matching the given coordinates
+    const res = [];
+    this.elements.forEach(({centerX, centerY, width, height, angle}, i) => {
+      // Find the corners
+      const corners = MyMath.findRectangleCorners(width, height, centerX, centerY, angle);
+      if(MyMath.isPointInTriangle([x,y], corners[0], corners[1], corners[2])
+        || MyMath.isPointInTriangle([x,y], corners[0], corners[3], corners[2]))
+        res.push(i);
+    });
+    return res;
+  }
+}
+
+const elementsManager = new ElementsManager(canvas);
 
 // Handling of events on inputs
 const inputs = document.getElementsByTagName('input');
@@ -144,27 +216,8 @@ for(let a=0; a<inputs.length;a++){
   }
 
   // Text inputs don't need anything special, they're queried when drawing
-  input.oninput = reDraw;
+  // input.oninput = reDraw;
 }
-
-// In case there is already something in the text fields, redraw the image
-reDraw();
-
-// Load images for "Alerte Info"...
-const imgTagAlerte = new Image();
-imgTagAlerte.onload = function(){
-  imageAlerte = imgTagAlerte;
-  reDraw();
-};
-imgTagAlerte.src = require('./alerteInfo.jpeg?size=150').src;
-
-// ... and the BFMemes logo
-const imgTagLogo = new Image();
-imgTagLogo.onload = function(){
-  imageLogo = imgTagLogo;
-  reDraw();
-};
-imgTagLogo.src = require('./bfmemes.png?size=150').src;
 
 // Image download
 document.getElementById('download').onclick = function(e) {
@@ -181,14 +234,20 @@ document.getElementById('download').onclick = function(e) {
 // Image rotation
 document.getElementById('turnRight').onclick = function(e) {
   e.preventDefault();
-  angle+=10;
-  reDraw();
+  const elt = elementsManager.getSelectedElement();
+  if(elt)
+    elementsManager.updateSelectedElement({
+      angle: elt.angle + Math.PI / 18,
+    })
 };
 
 document.getElementById('turnLeft').onclick = function(e) {
   e.preventDefault();
-  angle-=10;
-  reDraw();
+  const elt = elementsManager.getSelectedElement();
+  if(elt)
+    elementsManager.updateSelectedElement({
+      angle: elt.angle - Math.PI / 18,
+    })
 };
 
 /*** Canvas resizing ***/
@@ -203,6 +262,7 @@ window.onresize = function(){
   canvas.style.transform = 'scale(' + canvasScale + ')';
 
   canvasWrapper.style.height = (canvasWrapperBox.width * canvas.height / canvas.width) + 'px';
+  canvasWrapperBox = canvasWrapper.getBoundingClientRect();
 };
 window.onresize(null);
 
@@ -211,7 +271,7 @@ window.onresize(null);
 let lastX, lastY;
 // Last known position of the second finger if relevant
 let secondFingerX, secondFingerY;
-let mouseDown = false;
+let mouseDown = false, currentMode = null, shortIntervalAfterMouseDown = false, mouseUpAction = () => {};
 const scaleFactor = 1.1;
 
 canvasWrapper.addEventListener('mousedown', mouseDownHandler);
@@ -223,6 +283,7 @@ canvasWrapper.addEventListener('wheel', wheelHandler, false);
 canvasWrapper.addEventListener('touchend', mouseUpHandler);
 canvasWrapper.addEventListener('touchcancel', mouseUpHandler);
 
+/*
 canvasWrapper.addEventListener('touchstart',function (event) {
   // Same processing than mouse for main finger
   mouseDownHandler(event.touches[0]);
@@ -272,32 +333,71 @@ canvas.addEventListener('touchmove',function (event) {
   }
   event.preventDefault();
 });
+ */
 
 // Save current position when click is triggered
 function mouseDownHandler(event) {
-  lastX = event.clientX;
-  lastY = event.clientY;
   mouseDown = true;
+  lastX = event.clientX - canvasWrapperBox.left;
+  lastY = event.clientY - canvasWrapperBox.top;
+  console.log(canvasWrapperBox);
+  // If we clicked on the selected item, switch to move mode
+  const selected = elementsManager.getSelectedIndexesForPosition(lastX / canvasScale, lastY / canvasScale);
+  // TODO Work on handles
+  if(selected.includes(elementsManager.getSelectedIndex())) {
+    currentMode = 'MOVE';
+    return;
+  }
+  // Else, select the new item only after after some time (or on mouse leave)
+  mouseUpAction = () => {
+    console.log(selected);
+    clearInterval(shortIntervalAfterMouseDown);
+    if(mouseDown)
+      currentMode = 'MOVE';
+    elementsManager.setSelectedIndex(selected[0] ?? false);
+    shortIntervalAfterMouseDown = false;
+    mouseUpAction = () => {};
+  }
+  shortIntervalAfterMouseDown = setTimeout(mouseUpAction, 300);
 }
 
 function mouseUpHandler() {
   mouseDown = false;
+  currentMode = null;
+  mouseUpAction();
 }
 
 // Update draw positions when moving mouse and then redraw
 function mouseMoveHandler(event) {
-  if(mouseDown) {
-    let currentX = event.clientX;
-    let currentY = event.clientY;
-    // Move the image
-    dx += (currentX - lastX)/canvasScale;
-    dy += (currentY - lastY)/canvasScale;
-
-    // Save the position
-    lastX = currentX;
-    lastY = currentY;
-    reDraw();
+  if(!mouseDown)
+    return;
+  let currentX = event.clientX - canvasWrapperBox.left;
+  let currentY = event.clientY - canvasWrapperBox.top;
+  if(shortIntervalAfterMouseDown) {
+    // Hold on, you didn't wait for the element below your mouse to be selected. Are you not too far?
+    if (Math.abs(currentX - lastX) < 20 && Math.abs(currentY - lastY))
+      return;
+    else { // You're too far, let's avoid confusing you
+      clearInterval(shortIntervalAfterMouseDown);
+      shortIntervalAfterMouseDown = false;
+      mouseUpAction = () => {};
+    }
   }
+  if(currentMode === 'MOVE') {
+    // Move the image
+    const {centerX, centerY} = elementsManager.getSelectedElement() ?? {};
+    if (!Number.isFinite(centerX)) // Null or undefined if no items are selected
+      return;
+    elementsManager.updateSelectedElement({
+      centerX: centerX + (currentX - lastX) / canvasScale,
+      centerY: centerY + (currentY - lastY) / canvasScale,
+    });
+  }
+
+  // Save the position
+  lastX = currentX;
+  lastY = currentY;
+  reDraw();
 }
 
 function wheelHandler(event){
