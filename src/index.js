@@ -146,7 +146,7 @@ class ElementsManager {
   }
 
   getSelectedIndexesForPosition(x,y) {
-    // Find all elements matching the given coordinates
+    // Find all elements matching the given coordinates - super useful in case of an overlay!
     const res = [];
     this.elements.forEach(({centerX, centerY, width, height, angle}, i) => {
       // Find the corners
@@ -268,7 +268,7 @@ window.onresize = function(){
 window.onresize(null);
 
 /*** Zoom Handling ***/
-  // Last known position of the mouse/main finger
+// Last known position of the mouse/main finger
 let lastX, lastY;
 // Last known position of the second finger if relevant
 let secondFingerX, secondFingerY;
@@ -341,14 +341,14 @@ function mouseDownHandler(event) {
   mouseDown = true;
   lastX = event.clientX - canvasWrapperBox.left;
   lastY = event.clientY - canvasWrapperBox.top;
-  // If we clicked on the selected item, switch to move mode
   const selected = elementsManager.getSelectedIndexesForPosition(lastX / canvasScale, lastY / canvasScale);
-  // TODO Work on handles
+  // If we clicked on the selected item, switch to move mode immediately
   if(selected.includes(elementsManager.getSelectedIndex())) {
     currentMode = 'MOVE';
     return;
   }
-  // Else, select the new item only after after some time (or on mouse leave)
+  // TODO Work on handles
+  // Else, select the first item only after after some time (or on mouse leave)
   mouseUpAction = () => {
     clearInterval(shortIntervalAfterMouseDown);
     if(mouseDown)
@@ -384,12 +384,11 @@ function mouseMoveHandler(event) {
   }
   if(currentMode === 'MOVE') {
     // Move the image
-    const {centerX, centerY} = elementsManager.getSelectedElement() ?? {};
-    if (!Number.isFinite(centerX)) // Null or undefined if no items are selected
-      return;
+    const element = elementsManager.getSelectedElement();
+    if (!element) // Null or undefined if no items are selected
     elementsManager.updateSelectedElement({
-      centerX: centerX + (currentX - lastX) / canvasScale,
-      centerY: centerY + (currentY - lastY) / canvasScale,
+      centerX: element.centerX + (currentX - lastX) / canvasScale,
+      centerY: element.centerY + (currentY - lastY) / canvasScale,
     });
   }
 
@@ -400,50 +399,35 @@ function mouseMoveHandler(event) {
 
 function wheelHandler(event){
   event.preventDefault();
-  let currentX = Math.floor(event.clientX - canvasWrapperBox.left);
-  let currentY = Math.floor(event.clientY - canvasWrapperBox.top);
-  //Zoom in
-  if(event.deltaY<0)
-    zoomIn(currentX, currentY);
+  let currentX = (event.clientX - canvasWrapperBox.left) / canvasScale;
+  let currentY = (event.clientY - canvasWrapperBox.top) / canvasScale;
+  // Make sure we're hover the selected item
+  if(!elementsManager.getSelectedIndexesForPosition(currentX, currentY).includes(elementsManager.getSelectedIndex()))
+    return;
 
-  //Zoom out
-  if(event.deltaY>0)
-    zoomOut(currentX, currentY);
+  // Update the element zoom factor
+  changeZoom(event.deltaY < 0);
 }
 
-function zoomIn(x, y, noScaling) {
-  if(!noScaling) {
-    x /= canvasScale;
-    y /= canvasScale;
-  }
-  dx = x - (x - dx) * scaleFactor;
-  dy = y - (y - dy) * scaleFactor;
-  dHeight *= scaleFactor;
-  dWidth *= scaleFactor;
-
-  reDraw();
-}
-
-function zoomOut(x, y, noScaling) {
-  if(!noScaling) {
-    x /= canvasScale;
-    y /= canvasScale;
-  }
-  dx = x - (x - dx)/scaleFactor;
-  dy = y - (y - dy)/scaleFactor;
-  dHeight /= scaleFactor;
-  dWidth /= scaleFactor;
-
-  reDraw();
+function changeZoom(zoomIn /* else, zoom out */){
+  // Get the current dimensions
+  const element = elementsManager.getSelectedElement();
+  if(!element)
+    return;
+  const factor = zoomIn ? scaleFactor : 1/scaleFactor;
+  elementsManager.updateSelectedElement({
+    width: element.width * factor,
+    height: element.height * factor,
+  });
 }
 
 // Button events
 document.getElementById('zoomIn').onclick = function(e){
   e.preventDefault();
-  return bgd && zoomIn(dx + dWidth / 2, dy + dHeight / 2, true);
+  changeZoom(true);
 };
 
 document.getElementById('zoomOut').onclick = function(e){
   e.preventDefault();
-  return bgd && zoomOut(dx + dWidth / 2, dy + dHeight / 2, true);
+  changeZoom(false);
 };
