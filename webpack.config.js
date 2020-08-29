@@ -21,6 +21,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.m?js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ["@babel/plugin-proposal-class-properties"],
+          }
+        }
+      },
+      {
         test: /\.css$/i,
         // Extract the CSS files as another resource - don't put them in JS (except for dev where we use hot reload)
         use: [ mode === 'production' ? {
