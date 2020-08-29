@@ -9,7 +9,6 @@ class MyMath {
   }
 
   static isPointInTriangle(p, a, b, c) {
-    console.log(p,a,b,c);
     // A bit of geometry
     // See https://stackoverflow.com/a/2049593/3841242
     // Compute the vector product (along Z) to know the angle. All must have the same sign
@@ -157,6 +156,8 @@ class ElementsManager {
         || MyMath.isPointInTriangle([x,y], corners[0], corners[3], corners[2]))
         res.push(i);
     });
+    // Items drawn the later are the last of the array
+    res.reverse();
     return res;
   }
 }
@@ -262,6 +263,7 @@ window.onresize = function(){
   canvas.style.transform = 'scale(' + canvasScale + ')';
 
   canvasWrapper.style.height = (canvasWrapperBox.width * canvas.height / canvas.width) + 'px';
+  // We changed the height, and we need up-to-date coordinates to know which item to select
   canvasWrapperBox = canvasWrapper.getBoundingClientRect();
 };
 window.onresize(null);
@@ -340,7 +342,6 @@ function mouseDownHandler(event) {
   mouseDown = true;
   lastX = event.clientX - canvasWrapperBox.left;
   lastY = event.clientY - canvasWrapperBox.top;
-  console.log(canvasWrapperBox);
   // If we clicked on the selected item, switch to move mode
   const selected = elementsManager.getSelectedIndexesForPosition(lastX / canvasScale, lastY / canvasScale);
   // TODO Work on handles
@@ -350,7 +351,6 @@ function mouseDownHandler(event) {
   }
   // Else, select the new item only after after some time (or on mouse leave)
   mouseUpAction = () => {
-    console.log(selected);
     clearInterval(shortIntervalAfterMouseDown);
     if(mouseDown)
       currentMode = 'MOVE';
