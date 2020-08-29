@@ -368,6 +368,7 @@ function mouseUpHandler() {
 
 // Update draw positions when moving mouse and then redraw
 function mouseMoveHandler(event) {
+  bypassWheelCheck = false;
   if(!mouseDown)
     return;
   let currentX = event.clientX - canvasWrapperBox.left;
@@ -397,13 +398,18 @@ function mouseMoveHandler(event) {
   lastY = currentY;
 }
 
+let bypassWheelCheck = false;
+
 function wheelHandler(event){
   event.preventDefault();
   let currentX = (event.clientX - canvasWrapperBox.left) / canvasScale;
   let currentY = (event.clientY - canvasWrapperBox.top) / canvasScale;
   // Make sure we're hover the selected item
-  if(!elementsManager.getSelectedIndexesForPosition(currentX, currentY).includes(elementsManager.getSelectedIndex()))
+  if(!bypassWheelCheck && !elementsManager.getSelectedIndexesForPosition(currentX, currentY).includes(elementsManager.getSelectedIndex()))
     return;
+
+  // I often use the wrong direction and end up with a tiny element, so here's a forgiving approach : we'll stop this on mouse move
+  bypassWheelCheck = true;
 
   // Update the element zoom factor
   changeZoom(event.deltaY < 0);
