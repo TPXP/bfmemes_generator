@@ -2,6 +2,8 @@ import './style.css';
 import {mdiArrowUpDownBold, mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiRotateLeft} from '@mdi/js';
 const canvas = document.getElementsByTagName("canvas")[0];
 
+const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true;
+
 const MAGIC_ANGLES = [
   { // Bottom right
     icon: mdiArrowTopLeftBottomRightBold,
@@ -319,7 +321,6 @@ let lastX, lastY;
 // Last known position of the second finger if relevant
 let secondFingerX, secondFingerY;
 let mouseDown = false, currentMode = null, shortIntervalAfterMouseDown = false, mouseUpAction = () => {};
-const scaleFactor = 1.1;
 
 canvasWrapper.addEventListener('mousedown', mouseDownHandler);
 canvasWrapper.addEventListener('mouseup', mouseUpHandler);
@@ -465,6 +466,7 @@ function mouseMoveHandler(event) {
         / MyMath.distance(a, b));
       elementsManager.updateSelectedElement({
         width,
+        centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE, // If you prefer the resize to happen on both sides, change this
       });
       break;
     case 'RESIZE_Y':
@@ -473,6 +475,7 @@ function mouseMoveHandler(event) {
         / MyMath.distance(a, b));
       elementsManager.updateSelectedElement({
         height,
+        centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE,
       });
       break;
     case 'RESIZE_XY':
@@ -480,9 +483,13 @@ function mouseMoveHandler(event) {
       const rectangleDiagonal = MyMath.distance(a, b)
       const diagonal = Math.max(10, MyMath.scalarProduct(a, b, [currentX / canvasScale, currentY / canvasScale])
         / rectangleDiagonal);
+      height = diagonal / rectangleDiagonal * element.height;
+      width = diagonal / rectangleDiagonal * element.width;
       elementsManager.updateSelectedElement({
-        height: diagonal / rectangleDiagonal * element.height,
-        width: diagonal / rectangleDiagonal * element.width,
+        height,
+        width,
+        centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE,
+        centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE,
       });
       break;
   }
@@ -514,7 +521,7 @@ function changeZoom(zoomIn /* else, zoom out */){
   const element = elementsManager.getSelectedElement();
   if(!element)
     return;
-  const factor = zoomIn ? scaleFactor : 1/scaleFactor;
+  const factor = zoomIn ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
   elementsManager.updateSelectedElement({
     width: element.width * factor,
     height: element.height * factor,
