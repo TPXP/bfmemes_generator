@@ -1,10 +1,40 @@
 import './style.css';
-
+import {mdiArrowUpDownBold, mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiRotateLeft} from '@mdi/js';
 const canvas = document.getElementsByTagName("canvas")[0];
 
+const MAGIC_ANGLES = [
+  { // Bottom right
+    icon: mdiArrowTopLeftBottomRightBold,
+    mode: 'RESIZE_XY',
+    scale: 0.8,
+  },
+  { // Bottom left
+    icon: mdiArrowUpDownBold,
+    mode: 'RESIZE_Y',
+  },
+  { // Top left
+    icon: mdiRotateLeft,
+    mode: 'ROTATE',
+  },
+  { // Top Right
+    icon: mdiArrowLeftRightBold,
+    mode: 'RESIZE_X',
+  },
+];
+
 class MyMath {
+  // Returns the Z coordinate of AB ^ BC
   static signOfVectorProduct(a, b, c) {
     return (b[0] - a[0]) * (c[1] - b[1]) - (b[1] - a[1]) * (c[0] - b[0]);
+  }
+
+  // Returns OA.OB
+  static scalarProduct(o, a, b) {
+    return (a[0] - o[0]) * (b[0] - o[0]) + (a[1] - o[1]) * (b[1] - o[1]);
+  }
+
+  static distance (a, b) {
+    return Math.sqrt(Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2));
   }
 
   static isPointInTriangle(p, a, b, c) {
@@ -37,6 +67,7 @@ class ElementsManager {
   backgroundColor = '#000';
   width = 1280;
   height = 720;
+  manipulatingHandle = null;
   constructor(canvas) {
     this.ctx = canvas.getContext('2d');
     this.elements = [{
@@ -52,7 +83,7 @@ class ElementsManager {
       color: '#ff0',
       centerX: 500,
       centerY: 300,
-      angle: Math.PI / 4,
+      angle: 0,
       width:200,
       height:100,
     }];
@@ -66,6 +97,11 @@ class ElementsManager {
 
   setElements(elements) {
     this.elements = elements;
+  }
+
+  setManipulatingHandle(value) {
+    this.manipulatingHandle = value;
+    this.draw();
   }
 
   getSelectedElement() {
@@ -125,13 +161,23 @@ class ElementsManager {
       ctx.setLineDash([20, 20]);
       ctx.strokeStyle = '#000';
       ctx.stroke();
-      ctx.fillStyle = '#f60';
       // Add circles at every corner
-      points.map(([x,y]) => {
+      points.map(([x,y], i) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
         ctx.beginPath();
         // As you can see, drawing circles is trivial in WebCanvas /s
-        ctx.ellipse(x, y, 10, 10, 0, 0, Math.PI * 2)
+        ctx.fillStyle = i === this.manipulatingHandle ? '#1bb61b' : '#ff6600';
+        ctx.ellipse(0, 0, 12, 12, 0, 0, Math.PI * 2)
         ctx.fill();
+        const scale = MAGIC_ANGLES[i].scale ?? 1;
+        ctx.translate(-12 * scale, -12 * scale);
+        ctx.scale(scale, scale)
+        const path = new Path2D(MAGIC_ANGLES[i].icon);
+        ctx.fillStyle = '#fff';
+        ctx.fill(path);
+        ctx.restore();
       });
     });
   }
@@ -286,53 +332,50 @@ canvasWrapper.addEventListener('touchcancel', mouseUpHandler);
 
 /*
 canvasWrapper.addEventListener('touchstart',function (event) {
+  event.preventDefault();
   // Same processing than mouse for main finger
   mouseDownHandler(event.touches[0]);
-  // Just save second finger position if used
+  // Just save second finger position if we have one
   if(event.touches.length>1) {
-    secondFingerX = event.touches[1].clientX;
-    secondFingerY = event.touches[1].clientY;
+    secondFingerX = (event.touches[1].clientX - canvasWrapperBox.left) / canvasScale;
+    secondFingerY = (event.touches[1].clientY - canvasWrapperBox.top) / canvasScale;
   }
-  // Use preventDefault everytime handling canvas event for mobile
-  event.preventDefault();
 });
 
 canvas.addEventListener('touchmove',function (event) {
-  //Use finger as mouse when their is only one
-  if(event.touches.length===1)
-    mouseMoveHandler(event.touches[0]);
-  else {
-    //Else calculate position on canvas for both
-    let f1X = event.touches[0].clientX;
-    let f1Y = event.touches[0].clientY;
-    let f2X = event.touches[1].clientX;
-    let f2Y = event.touches[1].clientY;
-
-    //Also the distance between fingers, the last known distance and the center
-    let lastDist = Math.sqrt(Math.pow(lastX - secondFingerX, 2) + Math.pow(lastY - secondFingerY, 2));
-    let newDist = Math.sqrt(Math.pow(f1X - f2X, 2) + Math.pow(f1Y - f2Y, 2));
-
-    // Safeguard to avoid zooming too fast when using 2 finger
-    if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
-      // Compute the zoom center
-      const centerX = (f1X + f2X) / 2 - canvasWrapperBox.left;
-      const centerY = (f1Y + f2Y) / 2 - canvasWrapperBox.top;
-
-      //fingers mooving away
-      if (lastDist < newDist) {
-        zoomIn(centerX, centerY);
-      } //fingers gets closer
-      else {
-        zoomOut(centerX, centerY);
-      }
-      //Then save current position for next zoom
-      lastX = f1X;
-      lastY = f1Y;
-      secondFingerX = f2X;
-      secondFingerY = f2Y;
-    }
-  }
   event.preventDefault();
+  // Behave as a mouse if there's only one finger
+  if(event.touches.length===1)
+    return mouseMoveHandler(event.touches[0]);
+  // Else calculate position on canvas for both
+  let f1X = event.touches[0].clientX;
+  let f1Y = event.touches[0].clientY;
+  let f2X = event.touches[1].clientX;
+  let f2Y = event.touches[1].clientY;
+
+  //Also the distance between fingers, the last known distance and the center
+  let lastDist = Math.sqrt(Math.pow(lastX - secondFingerX, 2) + Math.pow(lastY - secondFingerY, 2));
+  let newDist = Math.sqrt(Math.pow(f1X - f2X, 2) + Math.pow(f1Y - f2Y, 2));
+
+  // Safeguard to avoid zooming too fast when using 2 finger
+  if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
+    // Compute the zoom center
+    const centerX = (f1X + f2X) / 2 - canvasWrapperBox.left;
+    const centerY = (f1Y + f2Y) / 2 - canvasWrapperBox.top;
+
+    //fingers mooving away
+    if (lastDist < newDist) {
+      zoomIn(centerX, centerY);
+    } //fingers gets closer
+    else {
+      zoomOut(centerX, centerY);
+    }
+    //Then save current position for next zoom
+    lastX = f1X;
+    lastY = f1Y;
+    secondFingerX = f2X;
+    secondFingerY = f2Y;
+  }
 });
  */
 
@@ -341,13 +384,31 @@ function mouseDownHandler(event) {
   mouseDown = true;
   lastX = event.clientX - canvasWrapperBox.left;
   lastY = event.clientY - canvasWrapperBox.top;
+  // Did we click a handle?
+  const element = elementsManager.getSelectedElement();
+  if(element) {
+    // Get the handles coordinates
+    const handles = MyMath.findRectangleCorners(element.width, element.height, element.centerX, element.centerY, element.angle);
+    let best = null, bestScore = Math.min(); // Infinity
+    handles.forEach(([x,y], i) => {
+      const score = MyMath.distance([lastX / canvasScale, lastY / canvasScale], [x, y]);
+      if(score > 20 || bestScore < score)
+        return;
+      best = i;
+      bestScore = score;
+    });
+    if(best !== null) {
+      elementsManager.setManipulatingHandle(best);
+      currentMode = MAGIC_ANGLES[best].mode;
+      return;
+    }
+  }
   const selected = elementsManager.getSelectedIndexesForPosition(lastX / canvasScale, lastY / canvasScale);
   // If we clicked on the selected item, switch to move mode immediately
   if(selected.includes(elementsManager.getSelectedIndex())) {
     currentMode = 'MOVE';
     return;
   }
-  // TODO Work on handles
   // Else, select the first item only after after some time (or on mouse leave)
   mouseUpAction = () => {
     clearInterval(shortIntervalAfterMouseDown);
@@ -364,10 +425,12 @@ function mouseUpHandler() {
   mouseDown = false;
   currentMode = null;
   mouseUpAction();
+  elementsManager.setManipulatingHandle(null);
 }
 
 // Update draw positions when moving mouse and then redraw
 function mouseMoveHandler(event) {
+  event.preventDefault();
   bypassWheelCheck = false;
   if(!mouseDown)
     return;
@@ -383,14 +446,45 @@ function mouseMoveHandler(event) {
       mouseUpAction = () => {};
     }
   }
-  if(currentMode === 'MOVE') {
-    // Move the image
-    const element = elementsManager.getSelectedElement();
-    if (element) // Null or undefined if no items are selected
+  const element = elementsManager.getSelectedElement();
+  if (!element) // Null or undefined if no items are selected
+    return;
+  let a,b, height, width;
+  switch(currentMode) {
+    case 'MOVE':
+      // Move the image
       elementsManager.updateSelectedElement({
         centerX: element.centerX + (currentX - lastX) / canvasScale,
         centerY: element.centerY + (currentY - lastY) / canvasScale,
       });
+      break;
+    case 'RESIZE_X':
+      // We need to work on the inclined line
+      [,,a,b] = MyMath.findRectangleCorners(element.width, element.height, element.centerX, element.centerY, element.angle);
+      width = Math.max(10, MyMath.scalarProduct(a, b, [currentX / canvasScale, currentY / canvasScale])
+        / MyMath.distance(a, b));
+      elementsManager.updateSelectedElement({
+        width,
+      });
+      break;
+    case 'RESIZE_Y':
+      [,b,a] = MyMath.findRectangleCorners(element.width, element.height, element.centerX, element.centerY, element.angle);
+      height = Math.max(10, MyMath.scalarProduct(a, b, [currentX / canvasScale, currentY / canvasScale])
+        / MyMath.distance(a, b));
+      elementsManager.updateSelectedElement({
+        height,
+      });
+      break;
+    case 'RESIZE_XY':
+      [b,,a] = MyMath.findRectangleCorners(element.width, element.height, element.centerX, element.centerY, element.angle);
+      const rectangleDiagonal = MyMath.distance(a, b)
+      const diagonal = Math.max(10, MyMath.scalarProduct(a, b, [currentX / canvasScale, currentY / canvasScale])
+        / rectangleDiagonal);
+      elementsManager.updateSelectedElement({
+        height: diagonal / rectangleDiagonal * element.height,
+        width: diagonal / rectangleDiagonal * element.width,
+      });
+      break;
   }
 
   // Save the position
