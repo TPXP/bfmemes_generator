@@ -387,6 +387,7 @@ function mouseMoveHandler(event) {
     // Move the image
     const element = elementsManager.getSelectedElement();
     if (!element) // Null or undefined if no items are selected
+      return;
     elementsManager.updateSelectedElement({
       centerX: element.centerX + (currentX - lastX) / canvasScale,
       centerY: element.centerY + (currentY - lastY) / canvasScale,
