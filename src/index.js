@@ -386,12 +386,11 @@ function mouseMoveHandler(event) {
   if(currentMode === 'MOVE') {
     // Move the image
     const element = elementsManager.getSelectedElement();
-    if (!element) // Null or undefined if no items are selected
-      return;
-    elementsManager.updateSelectedElement({
-      centerX: element.centerX + (currentX - lastX) / canvasScale,
-      centerY: element.centerY + (currentY - lastY) / canvasScale,
-    });
+    if (element) // Null or undefined if no items are selected
+      elementsManager.updateSelectedElement({
+        centerX: element.centerX + (currentX - lastX) / canvasScale,
+        centerY: element.centerY + (currentY - lastY) / canvasScale,
+      });
   }
 
   // Save the position
