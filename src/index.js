@@ -1,7 +1,6 @@
 import './style.css';
 
 const canvas = document.getElementsByTagName("canvas")[0];
-//const fabricCanvas = new fabric.Canvas(canvas);
 
 class MyMath {
   static signOfVectorProduct(a, b, c) {
@@ -397,7 +396,6 @@ function mouseMoveHandler(event) {
   // Save the position
   lastX = currentX;
   lastY = currentY;
-  reDraw();
 }
 
 function wheelHandler(event){
