@@ -73,19 +73,16 @@ class MyMath {
   }
 
   static tryMatchingMagicAngle(angle) {
-    angle %= 2* Math.PI; // Angle is not between -2PI and 2PI
+    angle %= 2 * Math.PI; // Angle is not between -2PI and 2PI
     if(angle < 0) // Angle is now between 0 and 2PI
       angle += 2 * Math.PI;
     // Try to match the angle with a canonic angle
-    if(MAGIC_ANGLES) {
-      for (let i = 0; i <= MAGIC_ANGLES_PER_CIRCLE; i++) {
-        const candidate = 2 * Math.PI * i / MAGIC_ANGLES_PER_CIRCLE;
-        if(Math.abs(angle - candidate) < MAGIC_ANGLES_TOLERANCE) {
-          angle = candidate;
-          break;
-        }
-      }
+    for (let i = 0; i <= MAGIC_ANGLES_PER_CIRCLE; i++) {
+      const candidate = 2 * Math.PI * i / MAGIC_ANGLES_PER_CIRCLE;
+      if(Math.abs(angle - candidate) < MAGIC_ANGLES_TOLERANCE)
+        return candidate;
     }
+    // No angle matched!
     return angle;
   }
 }
@@ -214,8 +211,10 @@ class ElementsManager {
   }
 
   setSelectedIndex(i) {
+    const prev = this.selected;
     this.selected = i;
-    this.draw();
+    if(prev !== i)
+      this.draw();
   }
 
   getSelectedIndexesForPosition(x,y) {
@@ -344,11 +343,10 @@ window.onresize = function(){
 window.onresize(null);
 
 /*** Zoom Handling ***/
-// Last known position of the mouse/main finger
-let lastX, lastY;
-// Last known position of the second finger if relevant
-let secondFingerX, secondFingerY;
-let mouseDown = false, currentMode = null, shortIntervalAfterMouseDown = false, mouseUpAction = () => {};
+let lastX, lastY, // Last known position of the mouse/main finger
+  secondFingerX, secondFingerY, // Last known position of the second finger if relevant
+  selectedForTouch, touchAngleDelta = 0, // Between magic angles
+  mouseDown = false, currentMode = null, shortIntervalAfterMouseDown = false, mouseUpAction = () => {};
 
 canvasWrapper.addEventListener('mousedown', mouseDownHandler);
 canvasWrapper.addEventListener('mouseup', mouseUpHandler);
@@ -359,57 +357,65 @@ canvasWrapper.addEventListener('wheel', wheelHandler, false);
 canvasWrapper.addEventListener('touchend', mouseUpHandler);
 canvasWrapper.addEventListener('touchcancel', mouseUpHandler);
 
-/*
 canvasWrapper.addEventListener('touchstart',function (event) {
   event.preventDefault();
+  selectedForTouch = elementsManager.getSelectedIndex();
   // Same processing than mouse for main finger
   mouseDownHandler(event.touches[0]);
   // Just save second finger position if we have one
-  if(event.touches.length>1) {
-    secondFingerX = (event.touches[1].clientX - canvasWrapperBox.left) / canvasScale;
-    secondFingerY = (event.touches[1].clientY - canvasWrapperBox.top) / canvasScale;
+  if(event.touches.length > 1) {
+    secondFingerX = event.touches[1].clientX - canvasWrapperBox.left;
+    secondFingerY = event.touches[1].clientY - canvasWrapperBox.top;
   }
 });
 
 canvas.addEventListener('touchmove',function (event) {
   event.preventDefault();
   // Behave as a mouse if there's only one finger
-  if(event.touches.length===1)
+  if(event.touches.length === 1)
     return mouseMoveHandler(event.touches[0]);
+  // Two fingers ? We're manipulating the initially selected item then
+  elementsManager.setSelectedIndex(selectedForTouch);
   // Else calculate position on canvas for both
-  let f1X = event.touches[0].clientX;
-  let f1Y = event.touches[0].clientY;
-  let f2X = event.touches[1].clientX;
-  let f2Y = event.touches[1].clientY;
+  const f1X = event.touches[0].clientX - canvasWrapperBox.left,
+    f1Y = event.touches[0].clientY - canvasWrapperBox.top,
+    f2X = event.touches[1].clientX - canvasWrapperBox.left,
+    f2Y = event.touches[1].clientY - canvasWrapperBox.top;
 
-  //Also the distance between fingers, the last known distance and the center
-  let lastDist = Math.sqrt(Math.pow(lastX - secondFingerX, 2) + Math.pow(lastY - secondFingerY, 2));
-  let newDist = Math.sqrt(Math.pow(f1X - f2X, 2) + Math.pow(f1Y - f2Y, 2));
+  // Get the distance difference to know by how much we need to zoom
+  const lastDist = MyMath.distance([lastX, lastY], [secondFingerX, secondFingerY]),
+    newDist = MyMath.distance([f1X, f1Y], [f2X, f2Y]),
+    lastAngle = MyMath.getVectorAngleFromXAxis(secondFingerX - lastX, secondFingerY - lastY),
+    newAngle = MyMath.getVectorAngleFromXAxis(f2X - f1X, f2Y - f1Y);
 
-  // Safeguard to avoid zooming too fast when using 2 finger
-  if((Math.min(lastDist, newDist)/Math.max(lastDist, newDist))<0.95) {
-    // Compute the zoom center
-    const centerX = (f1X + f2X) / 2 - canvasWrapperBox.left;
-    const centerY = (f1Y + f2Y) / 2 - canvasWrapperBox.top;
+  // Save the current position for the next iteration
+  lastX = f1X;
+  lastY = f1Y;
+  secondFingerX = f2X;
+  secondFingerY = f2Y;
 
-    //fingers mooving away
-    if (lastDist < newDist) {
-      zoomIn(centerX, centerY);
-    } //fingers gets closer
-    else {
-      zoomOut(centerX, centerY);
-    }
-    //Then save current position for next zoom
-    lastX = f1X;
-    lastY = f1Y;
-    secondFingerX = f2X;
-    secondFingerY = f2Y;
+  // Update the element
+  const element = elementsManager.getSelectedElement();
+  if(!element)
+    return;
+  if(newDist === 0 || lastDist === 0) // Sometimes, things go wrong
+    return;
+  let angle = element.angle + newAngle - lastAngle;
+  if(MAGIC_ANGLES) {
+    const initial = angle;
+    angle = MyMath.tryMatchingMagicAngle(angle + touchAngleDelta);
+    touchAngleDelta += initial - angle;
   }
+  elementsManager.updateSelectedElement({
+    width: element.width * newDist / lastDist,
+    height: element.height * newDist / lastDist,
+    angle,
+  });
 });
- */
 
 // Save current position when click is triggered
 function mouseDownHandler(event) {
+  event.preventDefault?.(); // Events from the touch system don't have preventDefault set
   mouseDown = true;
   lastX = event.clientX - canvasWrapperBox.left;
   lastY = event.clientY - canvasWrapperBox.top;
@@ -454,12 +460,14 @@ function mouseUpHandler() {
   mouseDown = false;
   currentMode = null;
   mouseUpAction();
+  selectedForTouch = false;
+  touchAngleDelta = 0;
   elementsManager.setManipulatingHandle(null);
 }
 
 // Update draw positions when moving mouse and then redraw
 function mouseMoveHandler(event) {
-  event.preventDefault();
+  event.preventDefault?.(); // Events from the touch system don't have preventDefault set
   bypassWheelCheck = false;
   if(!mouseDown)
     return;
@@ -481,6 +489,9 @@ function mouseMoveHandler(event) {
   switch(currentMode) {
     case 'MOVE':
       // Move the image
+      // When putting 2 fingers simultaneously, we might get a report with the first finger then the second one, before they're uniformized. Let's avoid huge moves
+      if(MyMath.distance([currentX, currentY], [lastX, lastY]) > 100 && selectedForTouch)
+        break;
       elementsManager.updateSelectedElement({
         centerX: element.centerX + (currentX - lastX) / canvasScale,
         centerY: element.centerY + (currentY - lastY) / canvasScale,
