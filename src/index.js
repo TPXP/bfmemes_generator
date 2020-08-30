@@ -2,9 +2,10 @@ import './style.css';
 import {mdiArrowUpDownBold, mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiRotateLeft} from '@mdi/js';
 const canvas = document.getElementsByTagName("canvas")[0];
 
-const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true;
+const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true,
+  MAGIC_ANGLES = true, MAGIC_ANGLES_PER_CIRCLE = 8, MAGIC_ANGLES_TOLERANCE = Math.PI / (MAGIC_ANGLES_PER_CIRCLE * 3);
 
-const MAGIC_ANGLES = [
+const MAGIC_CORNERS = [
   { // Bottom right
     icon: mdiArrowTopLeftBottomRightBold,
     mode: 'RESIZE_XY',
@@ -173,10 +174,10 @@ class ElementsManager {
         ctx.fillStyle = i === this.manipulatingHandle ? '#1bb61b' : '#ff6600';
         ctx.ellipse(0, 0, 12, 12, 0, 0, Math.PI * 2)
         ctx.fill();
-        const scale = MAGIC_ANGLES[i].scale ?? 1;
+        const scale = MAGIC_CORNERS[i].scale ?? 1;
         ctx.translate(-12 * scale, -12 * scale);
         ctx.scale(scale, scale)
-        const path = new Path2D(MAGIC_ANGLES[i].icon);
+        const path = new Path2D(MAGIC_CORNERS[i].icon);
         ctx.fillStyle = '#fff';
         ctx.fill(path);
         ctx.restore();
@@ -400,7 +401,7 @@ function mouseDownHandler(event) {
     });
     if(best !== null) {
       elementsManager.setManipulatingHandle(best);
-      currentMode = MAGIC_ANGLES[best].mode;
+      currentMode = MAGIC_CORNERS[best].mode;
       return;
     }
   }
@@ -490,6 +491,32 @@ function mouseMoveHandler(event) {
         width,
         centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE,
         centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE,
+      });
+      break;
+    case 'ROTATE':
+      // Find the position from the center
+      a = currentX / canvasScale - element.centerX;
+      b = currentY / canvasScale - element.centerY;
+      let angle = a === 0 ? Math.PI / 2 : Math.atan(b / Math.abs(a));
+      if(a < 0)
+        angle = Math.PI - angle;
+      // Now, adapt this since we're dragging from the upper left corner
+      angle += Math.PI - Math.atan(element.height / (element.width || 1));
+      angle %= 2* Math.PI; // Angle is not between -2PI and 2PI
+      if(angle < 0) // Angle is now between 0 and 2PI
+        angle += 2 * Math.PI;
+      // Try to match the angle with a canonic angle
+      if(MAGIC_ANGLES) {
+        for (let i = 0; i <= MAGIC_ANGLES_PER_CIRCLE; i++) {
+          const candidate = 2 * Math.PI * i / MAGIC_ANGLES_PER_CIRCLE;
+          if(Math.abs(angle - candidate) < MAGIC_ANGLES_TOLERANCE) {
+            angle = candidate;
+            break;
+          }
+        }
+      }
+      elementsManager.updateSelectedElement({
+        angle,
       });
       break;
   }
