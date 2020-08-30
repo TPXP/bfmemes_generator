@@ -40,6 +40,13 @@ class MyMath {
     return Math.sqrt(Math.pow(b[0] - a[0], 2) + Math.pow(b[1] - a[1], 2));
   }
 
+  static getVectorAngleFromXAxis(x,y){
+    const angle = x === 0 ? Math.PI / 2 : Math.atan(y / Math.abs(x));
+    if(x < 0)
+      return Math.PI - angle;
+    return angle;
+  }
+
   static isPointInTriangle(p, a, b, c) {
     // A bit of geometry
     // See https://stackoverflow.com/a/2049593/3841242
@@ -506,9 +513,8 @@ function mouseMoveHandler(event) {
       // Find the position from the center
       a = currentX / canvasScale - element.centerX;
       b = currentY / canvasScale - element.centerY;
-      let angle = a === 0 ? Math.PI / 2 : Math.atan(b / Math.abs(a));
-      if(a < 0)
-        angle = Math.PI - angle;
+      let angle = MyMath.getVectorAngleFromXAxis(currentX / canvasScale - element.centerX,
+        currentY / canvasScale - element.centerY);
       // Now, adapt this since we're dragging from the upper left corner
       angle += Math.PI - Math.atan(element.height / (element.width || 1));
       angle %= 2* Math.PI; // Angle is not between -2PI and 2PI
