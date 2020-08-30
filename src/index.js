@@ -450,13 +450,12 @@ function mouseMoveHandler(event) {
   let currentY = event.clientY - canvasWrapperBox.top;
   if(shortIntervalAfterMouseDown) {
     // Hold on, you didn't wait for the element below your mouse to be selected. Are you not too far?
-    if (Math.abs(currentX - lastX) < 20 && Math.abs(currentY - lastY))
+    if (Math.abs(currentX - lastX) < 20 && Math.abs(currentY - lastY) < 20)
       return;
-    else { // You're too far, let's avoid confusing you
-      clearInterval(shortIntervalAfterMouseDown);
-      shortIntervalAfterMouseDown = false;
-      mouseUpAction = () => {};
-    }
+    // You're too far, let's avoid confusing you
+    clearInterval(shortIntervalAfterMouseDown);
+    shortIntervalAfterMouseDown = false;
+    mouseUpAction = () => {};
   }
   const element = elementsManager.getSelectedElement();
   if (!element) // Null or undefined if no items are selected
