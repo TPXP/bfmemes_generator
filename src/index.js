@@ -273,7 +273,10 @@ document.getElementById('download').onclick = function(e) {
   e.preventDefault();
   let a = document.createElement('a');
   a.download = 'bfmeme.png';
+  const selected = elementsManager.getSelectedIndex();
+  elementsManager.setSelectedIndex(false);
   a.href = canvas.toDataURL("image/png");
+  elementsManager.setSelectedIndex(selected);
 
   document.body.appendChild(a);
   a.click();
