@@ -71,6 +71,23 @@ class MyMath {
        this.vectorRotation( width / 2 * mx,  height / 2 * my, angle),
     ).map(([x,y]) => [centerX + x, centerY + y]);
   }
+
+  static tryMatchingMagicAngle(angle) {
+    angle %= 2* Math.PI; // Angle is not between -2PI and 2PI
+    if(angle < 0) // Angle is now between 0 and 2PI
+      angle += 2 * Math.PI;
+    // Try to match the angle with a canonic angle
+    if(MAGIC_ANGLES) {
+      for (let i = 0; i <= MAGIC_ANGLES_PER_CIRCLE; i++) {
+        const candidate = 2 * Math.PI * i / MAGIC_ANGLES_PER_CIRCLE;
+        if(Math.abs(angle - candidate) < MAGIC_ANGLES_TOLERANCE) {
+          angle = candidate;
+          break;
+        }
+      }
+    }
+    return angle;
+  }
 }
 
 class ElementsManager {
@@ -516,19 +533,8 @@ function mouseMoveHandler(event) {
         currentY / canvasScale - element.centerY);
       // Now, adapt this since we're dragging from the upper left corner
       angle += Math.PI - Math.atan(element.height / (element.width || 1));
-      angle %= 2* Math.PI; // Angle is not between -2PI and 2PI
-      if(angle < 0) // Angle is now between 0 and 2PI
-        angle += 2 * Math.PI;
-      // Try to match the angle with a canonic angle
-      if(MAGIC_ANGLES) {
-        for (let i = 0; i <= MAGIC_ANGLES_PER_CIRCLE; i++) {
-          const candidate = 2 * Math.PI * i / MAGIC_ANGLES_PER_CIRCLE;
-          if(Math.abs(angle - candidate) < MAGIC_ANGLES_TOLERANCE) {
-            angle = candidate;
-            break;
-          }
-        }
-      }
+      if(MAGIC_ANGLES)
+        angle = MyMath.tryMatchingMagicAngle(angle);
       elementsManager.updateSelectedElement({
         angle,
       });
