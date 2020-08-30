@@ -467,7 +467,8 @@ function mouseMoveHandler(event) {
         / MyMath.distance(a, b));
       elementsManager.updateSelectedElement({
         width,
-        centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE, // If you prefer the resize to happen on both sides, change this
+        centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE * Math.cos(element.angle),
+        centerY: element.centerY + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE * Math.sin(element.angle),
       });
       break;
     case 'RESIZE_Y':
@@ -476,7 +477,8 @@ function mouseMoveHandler(event) {
         / MyMath.distance(a, b));
       elementsManager.updateSelectedElement({
         height,
-        centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE,
+        centerX: element.centerX - (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE * Math.sin(element.angle),
+        centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE * Math.cos(element.angle),
       });
       break;
     case 'RESIZE_XY':
@@ -489,8 +491,12 @@ function mouseMoveHandler(event) {
       elementsManager.updateSelectedElement({
         height,
         width,
-        centerX: element.centerX + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE,
-        centerY: element.centerY + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE,
+        centerX: element.centerX
+          + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE * Math.cos(element.angle)
+          - (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE * Math.sin(element.angle),
+        centerY: element.centerY
+          + (width - element.width) / 2 * SCALE_ONLY_ONE_SIDE * Math.sin(element.angle)
+          + (height - element.height) / 2 * SCALE_ONLY_ONE_SIDE * Math.cos(element.angle),
       });
       break;
     case 'ROTATE':
