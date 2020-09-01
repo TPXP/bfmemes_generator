@@ -2,6 +2,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // To clean the dist folder on build
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
 let publicPath = mode === "production" ? "https://generator.bfmemes.com/" : "";
@@ -21,6 +22,17 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /[.]vue$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'vue-loader',
+          options: {
+            presets: ['@babel/preset-env'],
+            plugins: ["@babel/plugin-proposal-class-properties"],
+          }
+        }
+      },
+      {
         test: /\.m?js$/,
         exclude: /node_modules/,
         use: {
@@ -36,7 +48,7 @@ module.exports = {
         // Extract the CSS files as another resource - don't put them in JS (except for dev where we use hot reload)
         use: [ mode === 'production' ? {
           loader: MiniCssExtractPlugin.loader
-        } : 'style-loader', 'css-loader'],
+        } : 'vue-style-loader', 'css-loader'],
       },
       {
         test: /\.(png|jpe?g|webp)$/i,
@@ -62,5 +74,9 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[hash].css',
     }),
+    new VueLoaderPlugin(),
   ],
+  resolve: {
+    extensions: ['.vue', '.js', '.mjs', '.json']
+  }
 };
