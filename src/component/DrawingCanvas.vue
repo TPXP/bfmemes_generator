@@ -1,15 +1,15 @@
 <template>
   <div class="canvasWrapper" ref="wrapper" :style="`height:${wrapperHeight}px`"
        @resize="onResize"
-       @mousedown.stop="onMouseDown"
-       @mousemove.stop="onMouseMove"
-       @mouseleave.stop="onMouseUp"
-       @mouseup.stop="onMouseUp"
-       @wheel.stop="onWheel"
-       @touchstart.stop="onTouchStart"
-       @touchmove.stop="onTouchMove"
-       @touchend.stop="onMouseUp"
-       @touchcancel.stop="onMouseUp">
+       @mousedown.prevent="onMouseDown"
+       @mousemove.prevent="onMouseMove"
+       @mouseleave.prev="onMouseUp"
+       @mouseup.prevent="onMouseUp"
+       @wheel.prevent="onWheel"
+       @touchstart.prevent="onTouchStart"
+       @touchmove.prevent="onTouchMove"
+       @touchend.prevent="onMouseUp"
+       @touchcancel.prevent="onMouseUp">
     <canvas ref="canvas" :width="width" :height="height" :style="`transform:scale(${scale})`"/>
   </div>
 </template>
@@ -297,7 +297,6 @@ export default {
       this.lastY = currentY;
     },
     onWheel(event){
-      event.preventDefault();
       let currentX = (event.clientX - this.wrapperBox.left) / this.scale;
       let currentY = (event.clientY - this.wrapperBox.top) / this.scale;
       // Make sure we're hover the selected item
@@ -311,7 +310,6 @@ export default {
       this.$store.commit(`zoomSelectedElement`, event.deltaY < 0 ? ZOOM_FACTOR : 1/ZOOM_FACTOR);
     },
     onTouchStart(event){
-      event.preventDefault();
       this.selectedForTouch = this.$store.state.selectedElement;
       // Same processing than mouse for main finger
       this.onMouseDown(event.touches[0]);
@@ -322,7 +320,6 @@ export default {
       }
     },
     onTouchMove(event) {
-      event.preventDefault();
       // Behave as a mouse if there's only one finger
       if (event.touches.length === 1)
         return this.onMouseMove(event.touches[0]);
