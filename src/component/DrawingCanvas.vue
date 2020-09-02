@@ -78,10 +78,10 @@ export default {
         width: this.width,
         height: this.height,
         angle: 0,
-      }, ...this.$store.state.elements.map((v,i) => ({...v, selected: i === this.$store.state.selectedElement}))];
+      }, ...this.$store.state.elements];
 
       // Start with the background
-      elements.forEach(({type, color, centerX, centerY, width, height, angle, asset, text, selected}) => {
+      elements.forEach(({type, color, centerX, centerY, width, height, angle, asset, text}) => {
         ctx.save();
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
@@ -98,38 +98,40 @@ export default {
         ctx.restore();
       });
       // Add the selected item handles - done afterwards so that they appear over any other element
-      elements.filter(({selected}) => selected).forEach(({centerX, centerY, width, height, angle}) => {
-        // For the love of maths, we'll compute the points of the rectangle ourselves
-        const points = Geometry.findRectangleCorners(width, height, centerX, centerY, angle);
+      const selectedElement = this.$store.state.elements[this.$store.state.selectedElement];
+      if(!selectedElement)
+        return;
+      const {centerX, centerY, width, height, angle} = selectedElement;
+      // For the love of maths, we'll compute the points of the rectangle ourselves
+      const points = Geometry.findRectangleCorners(width, height, centerX, centerY, angle);
+      ctx.beginPath();
+      ctx.moveTo(points[3][0], points[3][1]);
+      for(let i = 0; i<=3; i++)
+        ctx.lineTo(points[i][0], points[i][1]);
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 5;
+      ctx.setLineDash([]);
+      ctx.stroke();
+      ctx.setLineDash([20, 20]);
+      ctx.strokeStyle = '#000';
+      ctx.stroke();
+      // Add circles at every corner
+      points.map(([x,y], i) => {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
         ctx.beginPath();
-        ctx.moveTo(points[3][0], points[3][1]);
-        for(let i = 0; i<=3; i++)
-          ctx.lineTo(points[i][0], points[i][1]);
-        ctx.strokeStyle = '#fff';
-        ctx.lineWidth = 5;
-        ctx.setLineDash([]);
-        ctx.stroke();
-        ctx.setLineDash([20, 20]);
-        ctx.strokeStyle = '#000';
-        ctx.stroke();
-        // Add circles at every corner
-        points.map(([x,y], i) => {
-          ctx.save();
-          ctx.translate(x, y);
-          ctx.rotate(angle);
-          ctx.beginPath();
-          // As you can see, drawing circles is trivial in WebCanvas /s
-          ctx.fillStyle = i === this.$store.state.selectedCorner ? '#1bb61b' : '#ff6600';
-          ctx.ellipse(0, 0, 12, 12, 0, 0, Math.PI * 2)
-          ctx.fill();
-          const scale = MAGIC_CORNERS[i].scale ?? 1;
-          ctx.translate(-12 * scale, -12 * scale);
-          ctx.scale(scale, scale)
-          const path = new Path2D(MAGIC_CORNERS[i].icon);
-          ctx.fillStyle = '#fff';
-          ctx.fill(path);
-          ctx.restore();
-        });
+        // As you can see, drawing circles is trivial in WebCanvas /s
+        ctx.fillStyle = i === this.$store.state.selectedCorner ? '#1bb61b' : '#ff6600';
+        ctx.ellipse(0, 0, 12, 12, 0, 0, Math.PI * 2)
+        ctx.fill();
+        const scale = MAGIC_CORNERS[i].scale ?? 1;
+        ctx.translate(-12 * scale, -12 * scale);
+        ctx.scale(scale, scale)
+        const path = new Path2D(MAGIC_CORNERS[i].icon);
+        ctx.fillStyle = '#fff';
+        ctx.fill(path);
+        ctx.restore();
       });
     },
     getSelectedIndexesForPosition(x,y) {
