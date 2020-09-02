@@ -1,6 +1,5 @@
 <template>
   <div class="canvasWrapper" ref="wrapper" :style="`height:${wrapperHeight}px`"
-       @resize="onResize"
        @mousedown.prevent="onMouseDown"
        @mousemove.prevent="onMouseMove"
        @mouseleave.prev="onMouseUp"
@@ -367,6 +366,10 @@ export default {
   mounted() {
     this.onResize();
     this.draw();
+    window.addEventListener('resize', this.onResize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.onResize);
   },
   computed: mapState(['elements', 'selectedElement', 'selectedCorner']),
   watch:{
@@ -384,4 +387,10 @@ export default {
 </script>
 
 <style scoped>
+.canvasWrapper{
+  flex: 1;
+  overflow: hidden;
+  max-width: 1280px;
+  min-width: 300px;
+}
 </style>
