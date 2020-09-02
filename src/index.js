@@ -1,15 +1,15 @@
 import Vue from 'vue';
-import DrawingCanvas from "./component/DrawingCanvas";
 import store from './lib/vuex';
 
 import './style.css';
+import App from "./component/App";
 
 // Initialize Vue
 new Vue({
   el: '#app',
   store,
   render(h) {
-    return h(DrawingCanvas);
+    return h(App);
   }
 });
 

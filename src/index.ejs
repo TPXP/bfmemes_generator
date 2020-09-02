@@ -23,68 +23,11 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 </head>
 <body>
-<div class="row align-items-center" id="mainContainer">
-    <div id="app"></div>
-    <form class="form-horizontal col-sm-12 col-md-4 p-0 pl-md-3 pr-md-4">
-        <h1>BFMemes Generator&trade;</h1>
-        <hr />
-        <div class="form-group">
-            <label for="headline">Gros titre</label>
-            <input type="text" class="form-control" id="headline" placeholder="Gros titre">
-        </div>
-        <div class="form-group">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="upperCase" checked>
-                <label class="form-check-label" for="upperCase">
-                    Titre en majuscule
-                </label>
-            </div>
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="fit-head">
-                <label class="form-check-label" for="fit-head">
-                    Faire rentrer mon titre dans le cadre
-                </label>
-            </div>
-        </div>
-        <hr />
-        <div class="form-group">
-            <label for="subtitle">Alerte INFO</label>
-            <input type="text" class="form-control" id="subtitle" placeholder="Alerte INFO">
-        </div>
-        <div class="form-group">
-            <div class="form-check">
-                <input class="form-check-input" type="checkbox" id="fit-sub">
-                <label class="form-check-label" for="fit-sub">
-                    Faire rentrer mon alerte info dans le cadre
-                </label>
-            </div>
-        </div>
-        <hr />
-        <div class="form-group">
-            <label for="image">Image</label>
-            <input type="file" class="form-control-file" id="image" />
-            <div class="btn-group btn-block mt-3" role="group">
-                <button id="turnLeft" type="button" class="btn btn-light"><i class="material-icons">rotate_left</i></button>
-                <button id="turnRight" type="button" class="btn btn-light"><i class="material-icons">rotate_right</i></button>
-                <button id="zoomIn" type="button" class="btn btn-light"><i class="material-icons">zoom_in</i></button>
-                <button id="zoomOut" type="button" class="btn btn-light"><i class="material-icons">zoom_out</i></button>
-            </div>
-        </div>
-    </form>
-    <div id="wrapperCeption" class="col-sm-12 col-md-8 mt-4 mt-md-0">
-        <div id="canvasWrapper">
-            <canvas id="canvas" width="1280" height="720"></canvas>
-        </div>
-        <button id="download" type="button" class="btn btn-lg btn-block mt-5 btn-success">
-            <i class="material-icons">cloud_download</i>
-            Télécharger
-        </button>
-    </div>
+<div id="app">
+    <noscript>
+        <p>We're sorry, this website cannot work without Javascript. Please <a href="https://enable-javascript.com">enable it</a> and reload the page.</p>
+        <p>Désolé, nous avons besoin que vous activiez Javascript pour fonctionner. Essayez de recharger la page <a href="https://enable-javascript.com">après l'avoir activé</a>.</p>
+    </noscript>
 </div>
-<footer>
-    <a href="https://www.lafrenchtech.com" target="_blank">
-        <img src="<%= require('./frenchtech.png?size=100') %>" alt="La FrenchTech" />
-    </a> Nos neurchis ont du talent
-</footer>
 </body>
 </html>
