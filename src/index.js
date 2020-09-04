@@ -1,7 +1,10 @@
 import Vue from 'vue';
 import store from './lib/vuex';
 
-import './style.css';
+import ElementUI from 'element-ui';
+Vue.use(ElementUI);
+
+import "./scss/style.scss";
 import App from "./component/App";
 
 // Initialize Vue

@@ -51,6 +51,13 @@ module.exports = {
         } : 'vue-style-loader', 'css-loader'],
       },
       {
+        test: /\.(scss|sass)$/i,
+        // Extract the CSS files as another resource - don't put them in JS (except for dev where we use hot reload)
+        use: [ mode === 'production' ? {
+          loader: MiniCssExtractPlugin.loader
+        } : 'vue-style-loader', 'css-loader', 'sass-loader'],
+      },
+      {
         test: /\.(png|jpe?g|webp)$/i,
         // Load these files as raw (put them in the bundle)
         use: [{
@@ -77,6 +84,6 @@ module.exports = {
     new VueLoaderPlugin(),
   ],
   resolve: {
-    extensions: ['.vue', '.js', '.mjs', '.json']
+    extensions: ['.vue', '.js', '.mjs', '.json', '.sass', '.scss']
   }
 };
