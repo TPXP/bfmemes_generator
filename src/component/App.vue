@@ -1,9 +1,17 @@
 <template>
-  <div id="editor">
-    <elements-list />
-    <div class="spacer" />
-    <drawing-canvas />
-    <div class="spacer" />
+  <div id="app">
+    <nav id="mainNav">
+      <div class="logo">
+        <h1>BFMemes Generator</h1>
+        <em>Reloaded</em>
+      </div>
+    </nav>
+    <div id="editor">
+      <elements-list />
+      <div class="spacer" />
+      <drawing-canvas />
+      <div class="spacer" />
+    </div>
   </div>
 </template>
 
@@ -16,12 +24,13 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped scss>
 #editor{
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   justify-content: center;
+  flex:1;
 }
 .spacer {
   flex:1;

@@ -394,6 +394,7 @@ export default {
   min-width: 300px;
   align-self: center;
   margin:10px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.5);
 }
 canvas {
   transform-origin: top left;
