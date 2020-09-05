@@ -32,7 +32,4 @@ export default {
   justify-content: center;
   flex:1;
 }
-.spacer {
-  flex:1;
-}
 </style>
