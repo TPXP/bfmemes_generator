@@ -2,7 +2,7 @@
   <div class="elementsList">
     <h2>Éléments</h2>
     <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
-      <div class="elementTitle">
+      <div class="elementTitle" @click="selectElement(index)">
         <span class="material-icons">drag_indicator</span>
         <b>{{ getTitle(element, index) }}</b>
         <div class="spacer" />
@@ -10,7 +10,7 @@
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
       </div>
-      <element-form :elementIndex="index" />
+      <element-form v-if="index === activeElement" />
     </div>
     <h2>Ajouter un élément</h2>
     <div class="buttonGroup">
@@ -50,6 +50,9 @@ export default {
           return `Texte #${index}`;
       }
     },
+    selectElement(index){
+      this.$store.commit('setSelectedElement', index);
+    }
   }
 }
 </script>
@@ -96,10 +99,10 @@ h2::before{
     padding-left:10px;
   }
 }
-.element{
-  border-bottom:1px solid $darkerPrimary;
-  &.active .elementTitle {
-    background: $darkerPrimary;
-  }
+.element.active .elementTitle {
+  background: $darkerPrimary;
+}
+.element + .element {
+  border-top:1px solid $darkerPrimary;
 }
 </style>
