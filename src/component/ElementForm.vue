@@ -2,7 +2,7 @@
   <div class="elementForm" v-if="element">
     <div class="option inline" v-if="['color', 'text'].includes(element.type)">
       <div class="label">Couleur</div>
-
+      <color-picker :value="element.color" @input="setValue('color', $event)" />
     </div>
     <div class="option inline"> <!-- v-if="['color', 'text'].includes(element.type)"> -->
       <div class="label">Texte</div>
@@ -12,20 +12,20 @@
 </template>
 
 <script>
+import ColorPicker from "./ColorPicker";
 export default {
   name: "ElementForm",
+  components: {ColorPicker},
   computed: {
     element(){
       return this.$store.state.elements[this.$store.state.selectedElement] ?? {};
     }
   },
   methods:{
-    setValue(index, val, dontClear = false){
-      if(dontClear && !val)
-        return;
+    setValue(key, val){
       // Update the store - assume we're the selected element
       this.$store.commit('updateSelectedElement', {
-        [index]: val,
+        [key]: val,
       });
     }
   }

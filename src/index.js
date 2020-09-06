@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import store from './lib/vuex';
+import './lib/click-outside';
 
 import "./scss/style.scss";
 import App from "./component/App";

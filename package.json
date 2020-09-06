@@ -13,6 +13,7 @@
     "vue": "^2.6.12",
     "vue-color": "^2.7.1",
     "vue-loader": "^15.9.3",
+    "vue-on-click-outside": "^1.0.3",
     "vue-template-compiler": "^2.6.12",
     "vuex": "^3.5.1"
   },
