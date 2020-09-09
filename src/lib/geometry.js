@@ -57,3 +57,58 @@ export function tryMatchingMagicAngle(angle, n_divisions, tolerance) {
   // No angle matched!
   return angle;
 }
+
+export function fitTextInRectangle(canvas, maxSize, text, width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = '') {
+  // This is a dichotomy algorithm between 1 and maxSize - Yes, I studied this in class!
+  let a = 1, b = maxSize;
+  // If we ever fall back to font size 1, put everything on the same line
+  let bestSolution = [text];
+
+  if(fontWeight) // Make those values easier to concatenate
+    fontWeight += " ";
+
+  const words = text.split(' ');
+
+  while(a !== b) {
+    // The dichotomy part - here we only work on integers, which greatly helps in reducing the number of rounds
+    const c = Math.floor((a + b)/2) + 1;
+
+    let candidate = [''], currentLineWidth = 0, it_fits = true;
+    canvas.font = `${fontWeight}${c}px ${fontFamily}`;
+    // How big is a space?
+    const spaceWidth = canvas.measureText(' ').width;
+    for(let word of words){
+      const wordWidth = canvas.measureText(word).width;
+      if(wordWidth + spaceWidth > width){
+        it_fits = false;
+        break;
+      }
+      // If it does not fit on the line, jump a line
+      if(wordWidth + spaceWidth + currentLineWidth > width){
+        candidate.push(word);
+        currentLineWidth = wordWidth;
+      } else { // Else, add it at the end
+        candidate[candidate.length - 1] += `${candidate[candidate.length - 1] ? ' ' : ''}${word}`;
+        currentLineWidth += wordWidth + spaceWidth;
+      }
+      if(candidate.length * c * lineHeight > height) {
+        it_fits = false;
+        break;
+      }
+    }
+
+    // The rest of the dichotomy algorithm. Feel free to reuse it if you get stuck in an infinite loop in the middle of an interview
+    if(it_fits) {
+      a = c;
+      bestSolution = candidate;
+    } else
+      b = c - 1;
+  }
+  // Font size is a, words are in bestSolution
+  // Set the font size, and return the lines to write (so that they can be centered or whatever)
+  canvas.font = `${fontWeight}${a}px ${fontFamily}`;
+  return {
+    lines: bestSolution,
+    fontSize: a,
+  };
+}

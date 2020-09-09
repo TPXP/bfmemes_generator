@@ -17,6 +17,7 @@
 import {mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiArrowUpDownBold, mdiRotateLeft} from "@mdi/js";
 import * as Geometry from "../lib/geometry";
 import {mapState} from 'vuex';
+import {fitTextInRectangle} from "../lib/geometry";
 
 const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true,
     MAGIC_ANGLES = true, MAGIC_ANGLES_PER_CIRCLE = 8, MAGIC_ANGLES_TOLERANCE = Math.PI / (MAGIC_ANGLES_PER_CIRCLE * 3);
@@ -91,6 +92,14 @@ export default {
         } else if (type === 'color' && color) {
           ctx.fillStyle = color;
           ctx.fillRect(-width / 2, -height / 2, width, height);
+          if(text) {
+            // How does the text fit in the square?
+            ctx.fillStyle = '#f60'; // DEBUG
+            const {lines, fontSize} = fitTextInRectangle(ctx, 1000, text, width, height);
+            lines.forEach((line, i) => {
+              ctx.fillText(line, 0 - width / 2, (i+1) * fontSize * 1.2 - height / 2);
+            });
+          }
         } else {
           // TODO: Show a broken square
         }

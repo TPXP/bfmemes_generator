@@ -6,7 +6,7 @@
     </div>
     <div class="option inline"> <!-- v-if="['color', 'text'].includes(element.type)"> -->
       <div class="label">Texte</div>
-      <input placeholder="texte" />
+      <input placeholder="texte" :value="element.text" @input="setValue('text', $event.target.value)" />
     </div>
   </div>
 </template>
