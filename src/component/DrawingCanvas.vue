@@ -97,7 +97,7 @@ export default {
             ctx.fillStyle = '#f60'; // DEBUG
             const {lines, fontSize} = fitTextInRectangle(ctx, 1000, text, width, height);
             lines.forEach((line, i) => {
-              ctx.fillText(line, 0 - width / 2, (i+1) * fontSize * 1.2 - height / 2);
+              ctx.fillText(line, 0 - width / 2, fontSize * (1.2*i+1) - height / 2);
             });
           }
         } else {
