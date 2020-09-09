@@ -72,7 +72,7 @@ export default {
       const elements = [{
         // Background
         type: 'color',
-        color: this.backgroundColor,
+        backgroundColor: this.backgroundColor,
         centerX: this.width / 2,
         centerY: this.height / 2,
         width: this.width,
@@ -81,27 +81,32 @@ export default {
       }, ...this.$store.state.elements];
 
       // Start with the background
-      elements.forEach(({type, color, centerX, centerY, width, height, angle, asset, text}) => {
+      elements.forEach(({centerX, centerY, width, height, angle, asset, text, backgroundColor}) => {
         ctx.save();
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
         ctx.rotate(angle);
-        if (type === 'image' && asset) {
+        if (backgroundColor) {
+          ctx.fillStyle = backgroundColor;
+          ctx.fillRect(-width / 2, -height / 2, width, height);
+        }
+        if (asset) {
           ctx.drawImage(asset.resource,
               /* This may change if we have cropping */ 0, 0, asset.width, asset.height, -width / 2, -height / 2, width, height);
-        } else if (type === 'color' && color) {
+        }
+        if (text?.value) {
+          // How does the text fit in the square?
+          const {color = '#F60', value, maxSize = 1000, fontFamily, strokeSize, strokeColor, fontWeight, lineHeight} = text;
           ctx.fillStyle = color;
-          ctx.fillRect(-width / 2, -height / 2, width, height);
-          if(text) {
-            // How does the text fit in the square?
-            ctx.fillStyle = '#f60'; // DEBUG
-            const {lines, fontSize} = fitTextInRectangle(ctx, 1000, text, width, height);
-            lines.forEach((line, i) => {
-              ctx.fillText(line, 0 - width / 2, fontSize * (1.2*i+1) - height / 2);
-            });
-          }
-        } else {
-          // TODO: Show a broken square
+          ctx.strokeStyle = strokeColor;
+          ctx.lineWidth = strokeSize;
+          const {lines, fontSize} = fitTextInRectangle(ctx, maxSize, value, width, height, fontFamily, lineHeight, fontWeight);
+          lines.forEach((line, i) => {
+            const x = - width / 2, y = fontSize * (1.2*i+1) - height / 2;
+            if(strokeSize)
+              ctx.strokeText(line, x, y);
+            ctx.fillText(line, x, y);
+          });
         }
         ctx.restore();
       });

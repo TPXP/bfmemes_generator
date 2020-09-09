@@ -1,13 +1,13 @@
 <template>
   <div class="elementForm" v-if="element">
-    <div class="option inline" v-if="['color', 'text'].includes(element.type)">
-      <div class="label">Couleur</div>
-      <color-picker :value="element.color" @input="setValue('color', $event)" />
-    </div>
-    <div class="option inline"> <!-- v-if="['color', 'text'].includes(element.type)"> -->
-      <div class="label">Texte</div>
-      <input placeholder="texte" :value="element.text" @input="setValue('text', $event.target.value)" />
-    </div>
+    <label class="option inline" v-if="['color', 'text'].includes(element.type)">
+      <span>Couleur</span>
+      <color-picker :value="element.backgroundColor" @input="setValue('backgroundColor', $event)" />
+    </label>
+    <label class="option inline" :for="`${id}text`">
+      <span>Texte</span>
+      <input :id="`${id}text`" placeholder="Texte" :value="element.text && element.text.value" @input="setValue('text.value', $event.target.value)" />
+    </label>
   </div>
 </template>
 
@@ -16,6 +16,9 @@ import ColorPicker from "./ColorPicker";
 export default {
   name: "ElementForm",
   components: {ColorPicker},
+  data: () => ({
+    id: Date.now() + '' + Math.random(),
+  }),
   computed: {
     element(){
       return this.$store.state.elements[this.$store.state.selectedElement] ?? {};
@@ -23,10 +26,19 @@ export default {
   },
   methods:{
     setValue(key, val){
-      // Update the store - assume we're the selected element
-      this.$store.commit('updateSelectedElement', {
-        [key]: val,
+      const parts = key.split('.'), payload = {};
+      let currentlyEditing = payload, currentValue = this.$store.state.elements[this.$store.state.selectedElement];
+      if(!currentValue)
+        return;
+      parts.forEach((p,i) => {
+        if(i === parts.length - 1)
+          return currentlyEditing[p] = val;
+        // Dig deeper into the payload
+        currentValue = currentValue[p];
+        currentlyEditing[p] = {...currentValue};
+        currentlyEditing = currentlyEditing[p];
       });
+      this.$store.commit('updateSelectedElement', payload);
     }
   }
 }
@@ -46,9 +58,10 @@ export default {
   display: flex;
   align-items: center;
 }
-.option .label{
+.option > span{
   font-weight: bold;
   width:120px;
+  display: block;
 }
 input {
   background: #fff0;

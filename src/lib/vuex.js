@@ -8,7 +8,7 @@ const store = new Vuex.Store({
     count: 0,
     elements: [{
       type: 'color',
-      color: '#f00',
+      backgroundColor: '#f00',
       centerX: 100,
       centerY: 100,
       angle: Math.PI / 4,
@@ -16,7 +16,7 @@ const store = new Vuex.Store({
       height:100,
     },{
       type: 'color',
-      color: '#ff0',
+      backgroundColor: '#ff0',
       centerX: 500,
       centerY: 300,
       angle: 0,
