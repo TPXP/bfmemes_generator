@@ -240,7 +240,7 @@ export default {
         case 'MOVE':
           // Move the image
           // When putting 2 fingers simultaneously, we might get a report with the first finger then the second one, before they're uniformized. Let's avoid huge moves
-          if(Geometry.distance([currentX, currentY], [this.lastX, this.lastY]) > 100 && selectedForTouch)
+          if(Geometry.distance([currentX, currentY], [this.lastX, this.lastY]) > 100 && this.selectedForTouch)
             break;
           this.$store.commit('updateSelectedElement', {
             centerX: element.centerX + (currentX - this.lastX) / this.scale,
