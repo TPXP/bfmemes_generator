@@ -3,7 +3,7 @@
     <div class="color" :style="`background:${value}`" />
     <transition name="pop">
       <div class="wrapper" v-if="opened" @click.stop>
-        <chrome :value="value" @input="$emit('input', $event.hex8)" />
+        <chrome :value="value || '#0000'" @input="$emit('input', value ? $event.hex8 : $event.hex8.substr(0,6))" />
       </div>
     </transition>
   </div>
