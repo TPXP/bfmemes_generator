@@ -1,12 +1,39 @@
+<script src="../../webpack.config.js"></script>
 <template>
   <div class="elementForm" v-if="element">
-    <label class="option inline" v-if="['color', 'text'].includes(element.type)">
-      <span>Couleur</span>
+    <label class="option inline" v-if="element.backgroundColor">
+      <span>Couleur de fond</span>
       <color-picker :value="element.backgroundColor" @input="setValue('backgroundColor', $event)" />
     </label>
-    <label class="option inline" :for="`${id}text`">
-      <span>Texte</span>
-      <input :id="`${id}text`" placeholder="Texte" :value="element.text && element.text.value" @input="setValue('text.value', $event.target.value)" />
+    <section v-if="element.text">
+      <h3>Texte</h3>
+      <label class="option inline" :for="`${id}text`">
+        <span>Texte</span>
+        <input :id="`${id}text`" placeholder="Texte" :value="element.text.value" @input="setValue('text.value', $event.target.value)" />
+      </label>
+      <label class="option inline">
+        <span>Couleur</span>
+        <color-picker :value="element.text.color" @input="setValue('text.color', $event)" />
+      </label>
+      <label class="option inline">
+        <span>Couleur du contour</span>
+        <color-picker :value="element.text.strokeColor" @input="setValue('text.strokeColor', $event)" />
+      </label>
+      <label class="option inline">
+        <span>Taille du contour</span>
+        <input type="range" min="0" max="200" step="1" :value="element.text.strokeSize || 0" @input="setValue('text.strokeSize', $event.target.value)" />
+      </label>
+      <label class="option inline">
+        <span>Taille du texte max</span>
+        <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
+      </label>
+    </section>
+    <label class="option inline">
+      <span>Ajouter</span>
+      <div class="buttonGroup">
+        <a @click="addValue('text')" v-if="!element.text" class="button material-icons">title</a>
+        <a @click="addValue('backgroundColor', '#fff')" v-if="!element.backgroundColor" class="button material-icons">format_paint</a>
+      </div>
     </label>
   </div>
 </template>
@@ -39,12 +66,16 @@ export default {
         currentlyEditing = currentlyEditing[p];
       });
       this.$store.commit('updateSelectedElement', payload);
+    },
+    addValue(type, value = {}){
+      return this.$store.commit('updateSelectedElement', {[type]: value});
     }
-  }
+  },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+@import "src/scss/colors";
 .elementForm{
   padding:10px 10px 0;
 }
@@ -76,5 +107,22 @@ input {
 input:focus{
   background: #fff2;
   border-bottom-color: #fff;
+}
+h3{
+  margin: 0;
+  line-height:40px;
+  position: relative;
+  padding-left:10px;
+  &::before{
+    position: absolute;
+    top:0;
+    left:-10px;
+    bottom:0;
+    height:1px;
+    background: $secondary;
+    width:10px;
+    content:'';
+    margin:auto;
+  }
 }
 </style>
