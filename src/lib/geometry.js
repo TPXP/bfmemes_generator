@@ -73,10 +73,9 @@ export function fitTextInRectangle(canvas, maxSize, text, width, height, fontFam
     // The dichotomy part - here we only work on integers, which greatly helps in reducing the number of rounds
     const c = Math.floor((a + b)/2) + 1;
 
-    let candidate = [''], currentLineWidth = 0, it_fits = true;
+    let candidate = [''], currentLineWidth = 0, it_fits = true, spaceWidth = 0; // For the very first word, don't add the space width
     canvas.font = `${fontWeight}${c}px ${fontFamily}`;
     // How big is a space?
-    const spaceWidth = canvas.measureText(' ').width;
     for(let word of words){
       const wordWidth = canvas.measureText(word).width;
       if(wordWidth + spaceWidth > width){
@@ -88,13 +87,16 @@ export function fitTextInRectangle(canvas, maxSize, text, width, height, fontFam
         candidate.push(word);
         currentLineWidth = wordWidth;
       } else { // Else, add it at the end
-        candidate[candidate.length - 1] += `${candidate[candidate.length - 1] ? ' ' : ''}${word}`;
         currentLineWidth += wordWidth + spaceWidth;
+        candidate[candidate.length - 1] += `${spaceWidth ? ' ' : ''}${word}`;
       }
       if(candidate.length * c * lineHeight > height) {
         it_fits = false;
         break;
       }
+      // Make sure we take into account the space width properly for the next words
+      if(!spaceWidth)
+        spaceWidth = canvas.measureText(' ').width;
     }
 
     // The rest of the dichotomy algorithm. Feel free to reuse it if you get stuck in an infinite loop in the middle of an interview
