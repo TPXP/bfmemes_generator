@@ -128,6 +128,7 @@ export default {
       ctx.setLineDash([20, 20]);
       ctx.strokeStyle = '#000';
       ctx.stroke();
+      ctx.setLineDash([]);
       // Add circles at every corner
       points.map(([x,y], i) => {
         ctx.save();
