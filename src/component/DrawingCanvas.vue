@@ -81,7 +81,7 @@ export default {
       }, ...this.$store.state.elements];
 
       // Start with the background
-      elements.forEach(({centerX, centerY, width, height, angle, asset, text, backgroundColor}) => {
+      elements.forEach(({centerX, centerY, width, height, angle, image, text, backgroundColor}) => {
         ctx.save();
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
@@ -90,9 +90,10 @@ export default {
           ctx.fillStyle = backgroundColor;
           ctx.fillRect(-width / 2, -height / 2, width, height);
         }
-        if (asset) {
-          ctx.drawImage(asset.resource,
-              /* This may change if we have cropping */ 0, 0, asset.width, asset.height, -width / 2, -height / 2, width, height);
+        if (image?.resource) {
+          ctx.drawImage(image.resource,
+              /* This may change if we have cropping */ 0, 0,
+              image.width, image.height, -width / 2, -height / 2, width, height);
         }
         if (text?.value) {
           // How does the text fit in the square?
