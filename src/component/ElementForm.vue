@@ -45,12 +45,11 @@
         <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
       </label>
     </section>
-    <label class="option inline">
+    <label class="option inline" v-if="missingComponents.length">
       <span>Ajouter</span>
       <div class="buttonGroup">
-        <a @click="addValue('text')" v-if="!element.text" class="button material-icons">title</a>
-        <a @click="addValue('backgroundColor', '#fff')" v-if="!element.backgroundColor" class="button material-icons">format_paint</a>
-        <a @click="addValue('image')" v-if="!element.image" class="button material-icons">photo</a>
+        <a v-for="component of missingComponents" @click="addValue(component.key, component.defaultValue)" :key="component.key"
+           class="button material-icons">{{ component.icon }}</a>
       </div>
     </label>
   </div>
@@ -58,6 +57,7 @@
 
 <script>
 import ColorPicker from "./ColorPicker";
+import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
 export default {
   name: "ElementForm",
   components: {ColorPicker},
@@ -68,7 +68,10 @@ export default {
   computed: {
     element(){
       return this.$store.state.elements[this.$store.state.selectedElement] ?? {};
-    }
+    },
+    missingComponents() {
+      return ELEMENT_COMPONENTS.filter(({key}) => !this.element[key]);
+    },
   },
   methods:{
     setValue(key, val){

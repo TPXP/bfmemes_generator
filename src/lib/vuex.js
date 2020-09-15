@@ -35,6 +35,7 @@ const store = new Vuex.Store({
       state.elements[state.selectedElement] = {
         ...state.elements[state.selectedElement],
         ...update,
+        _isNew: false,
       };
     },
     zoomSelectedElement(state, factor){
@@ -53,6 +54,10 @@ const store = new Vuex.Store({
     },
     setSelectedElement (state, v) {
       state.selectedElement = v;
+    },
+    addElement (state, v){
+      state.elements = [...state.elements, {...v, _isNew: true}];
+      state.selectedElement = state.elements.length - 1;
     }
   }
 });

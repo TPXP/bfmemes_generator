@@ -14,9 +14,8 @@
     </div>
     <h2>Ajouter un élément</h2>
     <div class="buttonGroup">
-      <a class="button material-icons">insert_photo</a>
-      <a class="button material-icons">notes</a>
-      <a class="button material-icons">palette</a>
+      <a class="button material-icons" v-for="element of elementTypes" :key="element.key"
+        @click="addElement({[element.key]:element.defaultValue})">{{ element.icon }}</a>
     </div>
     <div class="downloadRow">
       <a class="button large secondary" @click="$emit('download')">
@@ -30,6 +29,7 @@
 <script>
 import {mapState} from "vuex";
 import ElementForm from "./ElementForm";
+import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
 
 export default {
   name: "ElementsList",
@@ -43,7 +43,8 @@ export default {
       set(v) {
         this.$store.commit('setSelectedElement', v);
       }
-    }
+    },
+    elementTypes: () => ELEMENT_COMPONENTS,
   },
   methods:{
     getTitle(element, index){
@@ -58,6 +59,16 @@ export default {
     },
     selectElement(index){
       this.$store.commit('setSelectedElement', index);
+    },
+    addElement(data){
+      this.$store.commit('addElement', {
+        ...data,
+        width:500, // FIXME
+        height:500,
+        centerX:300,
+        centerY:300,
+        angle:0,
+      });
     }
   }
 }
