@@ -377,7 +377,16 @@ export default {
         height: element.height * newDist / lastDist,
         angle,
       });
-    }
+    },
+    download(){
+      // Make a PNG from the canvas
+      const a = document.createElement('a'), now = new Date;
+      a.download = `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
+      a.href = this.$refs.canvas.toDataURL("image/png");
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    },
   },
   mounted() {
     this.onResize();

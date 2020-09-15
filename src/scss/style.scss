@@ -58,6 +58,17 @@ h3{
       font-size: 10px;
     }
   }
+  .button {
+    font-size: 17px;
+    line-height: 13px;
+    font-weight: bold;
+    padding-left:10px;
+    padding-right:10px;
+    .material-icons{
+      font-size: 22px;
+      margin-right:5px;
+    }
+  }
 }
 
 .buttonGroup{
@@ -73,9 +84,19 @@ $buttonRadius: 5px;
   line-height: 20px;
   border-radius:$buttonRadius;
   cursor: pointer;
+  .material-icons{
+    vertical-align: middle;
+  }
 }
 .button:hover{
   background: $darkerPrimary;
+  box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+}
+.button.secondary{
+  background: $secondary;
+  &:hover{
+    background: $darkerSecondary;
+  }
 }
 .buttonGroup * {
   flex:1;

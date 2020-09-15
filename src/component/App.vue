@@ -5,11 +5,16 @@
         <h1>BFMemes Generator</h1>
         <em>Reloaded</em>
       </div>
+      <div class="spacer" />
+      <a class="button secondary" @click="$refs.canvas.download()">
+        <span class="material-icons">cloud_download</span>
+        Télécharger
+      </a>
     </nav>
     <div id="editor">
       <elements-list />
       <div class="spacer" />
-      <drawing-canvas />
+      <drawing-canvas ref="canvas" />
       <div class="spacer" />
     </div>
   </div>
