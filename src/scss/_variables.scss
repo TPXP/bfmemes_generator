@@ -1,3 +1,4 @@
+// Colors
 $primary: #5959cd;
 $darkerPrimary: darken($primary, 15);
 $secondary: #f3821d;
@@ -7,3 +8,6 @@ $text: #ddd;
 $background: #222;
 $red: #b33c3c;
 $lightRed: #ea4d4d;
+
+// Design breakpoints
+$lineToColLayout:619px;

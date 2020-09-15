@@ -6,16 +6,12 @@
         <em>Reloaded</em>
       </div>
       <div class="spacer" />
-      <a class="button secondary" @click="$refs.canvas.download()">
-        <span class="material-icons">cloud_download</span>
-        Télécharger
-      </a>
     </nav>
     <div id="editor">
-      <elements-list />
       <div class="spacer" />
       <drawing-canvas ref="canvas" />
       <div class="spacer" />
+      <elements-list @download="$refs.canvas.download()"/>
     </div>
   </div>
 </template>
@@ -30,11 +26,19 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import "../scss/variables";
 #editor{
   display: flex;
-  flex-direction: row;
+  flex-direction: row-reverse;
   flex-wrap: wrap;
   justify-content: center;
+  align-items: center;
   flex:1;
+}
+@media (max-width: $lineToColLayout) {
+  #editor{
+    flex:0;
+    justify-content: flex-end;
+  }
 }
 </style>

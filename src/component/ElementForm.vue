@@ -128,7 +128,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "src/scss/colors";
+@import "src/scss/variables";
 .elementForm{
   padding:10px 10px 0;
 }

@@ -18,6 +18,12 @@
       <a class="button material-icons">notes</a>
       <a class="button material-icons">palette</a>
     </div>
+    <div class="downloadRow">
+      <a class="button large secondary" @click="$emit('download')">
+        <span class="material-icons">cloud_download</span>
+        Télécharger
+      </a>
+    </div>
   </div>
 </template>
 
@@ -58,12 +64,12 @@ export default {
 </script>
 
 <style scoped lang="scss">
-@import "../scss/colors";
+@import "../scss/variables";
 
 .elementsList{
   flex:30;
-  max-width: 400px;
-  min-width: 200px;
+  max-width: 620px;
+  min-width: 300px;
   align-self: stretch;
   border-right: 3px solid #000;
 }
@@ -104,5 +110,14 @@ h2::before{
 }
 .element + .element {
   border-top:1px solid $darkerPrimary;
+}
+.downloadRow{
+  text-align: center;
+  margin-top:50px
+}
+@media (max-width: $lineToColLayout){
+  .elementsList{
+    border-right-width: 0;
+  }
 }
 </style>

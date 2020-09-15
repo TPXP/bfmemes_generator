@@ -1,4 +1,4 @@
-@import "colors";
+@import "variables";
 
 html, body{
   overflow-x: hidden;
@@ -64,10 +64,6 @@ h3{
     font-weight: bold;
     padding-left:10px;
     padding-right:10px;
-    .material-icons{
-      font-size: 22px;
-      margin-right:5px;
-    }
   }
 }
 
@@ -84,8 +80,22 @@ $buttonRadius: 5px;
   line-height: 20px;
   border-radius:$buttonRadius;
   cursor: pointer;
+  white-space: nowrap;
+  display: inline-block;
   .material-icons{
     vertical-align: middle;
+    font-size: 22px;
+    margin-right:5px;
+  }
+
+  &.large{
+    font-size: 25px;
+    padding:10px 20px;
+    border-radius: 7px;
+    .material-icons{
+      font-size: 30px;
+      margin-right: 12px;
+    }
   }
 }
 .button:hover{
