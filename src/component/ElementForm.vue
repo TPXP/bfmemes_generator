@@ -4,11 +4,26 @@
     <label class="option inline" v-if="element.backgroundColor">
       <span>Couleur de fond</span>
       <color-picker :value="element.backgroundColor" @input="setValue('backgroundColor', $event)" />
-      <!-- TODO Remove option -->
+      <div class="spacer" />
+      <a class="material-icons deleteButton" @click.prevent="deleteValue('backgroundColor')">delete</a>
+    </label>
+    <label class="option inline" v-if="element.image">
+      <span>Image</span>
+      <div class="fullWidthSelector">
+        <div class="preview" v-if="element.image.resource" :style="`background-image:url(${element.image.resource.src})`"/>
+        <span class="material-icons" v-else>photo</span>
+        <span :class="[!element.image.fileName && 'placeholder']">
+          {{element.image.fileName || "Choisir une image..."}}
+        </span>
+        <input type="file" @input="handleImageFile" />
+      </div>
+      <a class="material-icons deleteButton" @click.prevent="deleteValue('image')">delete</a>
     </label>
     <section v-if="element.text">
-      <h3>Texte</h3>
-      <!-- TODO Remove option -->
+      <div class="sectionTitle">
+        <h3>Texte</h3>
+        <span class="deleteButton material-icons" @click="deleteValue('text')">delete</span>
+      </div>
       <label class="option inline" :for="`${id}text`">
         <span>Texte</span>
         <input :id="`${id}text`" placeholder="Texte" :value="element.text.value" @input="setValue('text.value', $event.target.value)" />
@@ -30,16 +45,6 @@
         <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
       </label>
     </section>
-    <label class="option inline" v-if="element.image">
-      <span>Image</span>
-      <div class="fullWidthSelector">
-        <!-- TODO Show a preview of the selected image? -->
-        <span class="material-icons">photo</span>
-        <span :class="[!element.image.fileName && 'placeholder']">{{element.image.fileName || "Choisir une image..."}}</span>
-        <input type="file" @input="handleImageFile" />
-      </div>
-      <a class="btn simple material-icons" @click.prevent="deleteValue('image')">delete</a>
-    </label>
     <label class="option inline">
       <span>Ajouter</span>
       <div class="buttonGroup">
@@ -194,6 +199,33 @@ h3{
   }
   .material-icons{
     margin-right:8px;
+  }
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .preview{
+    width:33px;
+    border:1px solid #000;
+    height:33px;
+    border-radius: 10px;
+    background-size: cover;
+    margin-right:10px;
+  }
+}
+.sectionTitle{
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  h3{
+    flex:1;
+  }
+}
+.deleteButton{
+  color:$red;
+  cursor: pointer;
+  &:hover{
+    color: $lightRed;
   }
 }
 </style>
