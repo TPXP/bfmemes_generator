@@ -29,7 +29,7 @@ export default {
 }
 </script>
 
-<style scoped scss>
+<style scoped lang="scss">
 #editor{
   display: flex;
   flex-direction: row;
