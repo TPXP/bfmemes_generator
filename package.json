@@ -35,7 +35,7 @@
     "webpack-dev-server": "^3.9.0"
   },
   "scripts": {
-    "dev": "webpack-dev-server --hot",
+    "dev": "webpack-dev-server --hot --progress --colors",
     "build": "webpack --prod"
   }
 }
