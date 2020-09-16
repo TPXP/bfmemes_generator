@@ -1,4 +1,9 @@
-<script src="../../webpack.config.js"></script>
+<script>
+import CenteredImagePreview from "./CenteredImagePreview";
+export default {
+  components: {CenteredImagePreview}
+}
+</script>
 <template>
   <div class="elementForm" v-if="element">
     <label class="option inline" v-if="element.backgroundColor">
@@ -10,7 +15,7 @@
     <label class="option inline" v-if="element.image">
       <span>Image</span>
       <div class="fullWidthSelector">
-        <div class="preview" v-if="element.image.resource" :style="`background-image:url(${element.image.resource.src})`"/>
+        <centered-image-preview :resource="element.image.resource" v-if="element.image.resource" class="preview" />
         <span class="material-icons" v-else>photo</span>
         <span :class="[!element.image.fileName && 'placeholder']">
           {{element.image.fileName || "Choisir une image..."}}
@@ -58,9 +63,10 @@
 <script>
 import ColorPicker from "./ColorPicker";
 import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
+import CenteredImagePreview from "./CenteredImagePreview";
 export default {
   name: "ElementForm",
-  components: {ColorPicker},
+  components: {ColorPicker, CenteredImagePreview},
   data: () => ({
     id: Date.now() + '' + Math.random(),
     imageError: null,
@@ -210,10 +216,7 @@ h3{
   }
   .preview{
     width:33px;
-    border:1px solid #000;
     height:33px;
-    border-radius: 10px;
-    background-size: cover;
     margin-right:10px;
     flex-shrink:0;
   }
