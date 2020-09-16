@@ -4,8 +4,7 @@
     <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
       <div class="elementTitle" @click="selectElement(index)">
         <span class="material-icons">drag_indicator</span>
-        <b>{{ getTitle(element, index) }}</b>
-        <div class="spacer" />
+        <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
         <span class="material-icons">
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
@@ -48,14 +47,18 @@ export default {
   },
   methods:{
     getTitle(element, index){
-      switch(element.type) {
-        case "color":
-          return `Rectangle #${index}`;
-        case "text":
-          if(element.text)
-            return `Texte "${element.text.substr(0,10)}${element.text.length > 10 ? '...':''}"`;
-          return `Texte #${index}`;
+      if(element.name !== void 0)
+        return element.name;
+      if(element.text) {
+        if(element.text.value)
+          return `${element.image?.resource ? 'Image et ' : ''}Texte "${element.text.value.substr(0, 10)}${element.text.length > 10 ? '...' : ''}"`;
+        return `Texte #${index}`;
       }
+      if(element.image)
+        return `Image #${index}`;
+      if(element.backgroundColor)
+        return `Rectangle #${index}`;
+      return `Élément #${index}`;
     },
     selectElement(index){
       this.$store.commit('setSelectedElement', index);
@@ -69,6 +72,15 @@ export default {
         centerY:300,
         angle:0,
       });
+    },
+    setElementTitle(name, index){
+      this.$store.commit('setSelectedElement', index);
+      this.$store.commit('updateSelectedElement', {name});
+    },
+    onElementTitleBlur(index){
+      const element = this.elements[index];
+      if(!element.name)
+        this.setElementTitle(void 0, index);
     }
   }
 }
@@ -111,9 +123,16 @@ h2::before{
   flex-direction: row;
   align-items: center;
   cursor: move;
-  b{
+  input{
+    border:0 none;
+    margin-left:10px;
+    flex:1;
+    padding:0;
+    background: transparent;
     font-size: 20px;
-    padding-left:10px;
+    font-weight: bold;
+    color: white;
+    font-family: Lato, sans-serif;
   }
 }
 .element.active .elementTitle {
