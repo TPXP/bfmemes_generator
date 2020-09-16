@@ -8,6 +8,7 @@
   "private": true,
   "dependencies": {
     "@mdi/js": "^5.5.55",
+    "fontfaceobserver": "^2.1.0",
     "node-sass": "^4.14.1",
     "sass-loader": "^10.0.2",
     "vue": "^2.6.12",
