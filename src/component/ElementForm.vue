@@ -206,6 +206,7 @@ h3{
   span {
     white-space: nowrap;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
   .preview{
     width:33px;
@@ -214,6 +215,7 @@ h3{
     border-radius: 10px;
     background-size: cover;
     margin-right:10px;
+    flex-shrink:0;
   }
 }
 .sectionTitle{
