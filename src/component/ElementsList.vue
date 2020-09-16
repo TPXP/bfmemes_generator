@@ -5,7 +5,7 @@
       <div class="elementTitle" @click="selectElement(index)">
         <span class="material-icons">drag_indicator</span>
         <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
-        <span class="material-icons">
+        <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
       </div>
