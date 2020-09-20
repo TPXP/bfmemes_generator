@@ -4,6 +4,13 @@ import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
 
 Vue.use(Vuex);
 
+const now = new Date;
+let time = now.getMinutes().toString();
+if(time.length < 2)
+  time = '0' + time;
+time = now.getHours() + '.' + time;
+if(time.length < 4)
+  time = '0' + time;
 const store = new Vuex.Store({
   state: {
     count: 0,
@@ -59,7 +66,7 @@ const store = new Vuex.Store({
       text: {
         colors: ['#0423fa'],
         font: 'Pilat Light',
-        value: (new Date).getHours() + '.' + (new Date).getMinutes(),
+        value: time,
       },
     }, {
       name: "Direct",
