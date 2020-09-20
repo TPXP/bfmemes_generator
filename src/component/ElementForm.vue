@@ -29,9 +29,8 @@ export default {
         <h3>Texte</h3>
         <span class="deleteButton material-icons" @click="deleteValue('text')">delete</span>
       </div>
-      <label class="option inline" :for="`${id}text`">
-        <span>Texte</span>
-        <input :id="`${id}text`" placeholder="Texte" :value="element.text.value" @input="setValue('text.value', $event.target.value)" />
+      <label class="option" :for="`${id}text`">
+        <textarea :id="`${id}text`" placeholder="Texte" :value="element.text.value" @input="setValue('text.value', $event.target.value)" rows="3" />
       </label>
       <label class="option inline">
         <span>Couleur</span>
@@ -144,11 +143,11 @@ export default {
 .option{
   padding-bottom: 10px;
   font-size: 17px;
+  display: flex;
+  flex-direction: row;
 }
 .option.inline{
-  flex-direction: row;
   height:50px;
-  display: flex;
   align-items: center;
 }
 .option > span{
@@ -156,7 +155,7 @@ export default {
   width:120px;
   display: block;
 }
-input {
+input, textarea {
   background: #fff0;
   border: 0 none;
   border-bottom:1px solid #bbb;
@@ -165,10 +164,11 @@ input {
   color: white;
   flex:1;
   transition: all 300ms;
-}
-input:focus{
-  background: #fff2;
-  border-bottom-color: #fff;
+  font-family: Lato, sans-serif;
+  &:focus{
+    background: #fff2;
+    border-bottom-color: #fff;
+  }
 }
 h3{
   margin: 0;
