@@ -194,6 +194,7 @@ h2::before{
     font-weight: bold;
     color: white;
     font-family: Lato, sans-serif;
+    min-width: 0;
   }
 }
 .element.active .elementTitle {
