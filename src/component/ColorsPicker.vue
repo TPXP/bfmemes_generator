@@ -1,6 +1,7 @@
 <template>
   <div class="colorPickers">
-    <div class="color" v-for="(value, index) of value" @click="opened = opened === index ? null : index" :key="index" v-on-clickaway="close">
+    <div class="color" v-for="(value, index) of value" @click="opened = opened === index ? null : index" :key="index"
+         v-on-clickaway="opened === index ? close : () => {}" :data-index="index">
       <div class="preview" :style="`background:${value}`" />
       <transition name="pop">
         <div class="wrapper" v-if="opened === index" @click.stop>
@@ -8,12 +9,13 @@
         </div>
       </transition>
     </div>
+    <span class="material-icons add" @click="addColor">add</span>
   </div>
 </template>
 
 <script>
 import {Chrome} from 'vue-color';
-import { mixin as clickaway } from 'vue-clickaway';
+import { mixin as clickaway } from 'vue-clickaway2';
 export default {
   name: "ColorsPicker",
   components: {
@@ -37,6 +39,9 @@ export default {
         return v ? event.hex8 : event.hex8.substr(0, 6);
       }))
     },
+    addColor(){
+      this.$emit('input', [...(this.value || []), '#fff']);
+    },
   },
 }
 </script>
@@ -56,6 +61,7 @@ export default {
     border:1px solid #fff9;
     background: #fff5;
     border-radius: 5px;
+    margin-right:10px;
     .preview {
       width: 30px;
       height: 30px;
@@ -88,6 +94,21 @@ export default {
   }
   .pop-leave-active{
     animation: pop reverse .2s;
+  }
+
+  .add {
+    color: white;
+    background: #fff5;
+    border:1px solid #fff;
+    border-radius: 30px;
+    height:29px;
+    width:29px;
+    line-height: 26px;
+    text-align: center;
+    cursor: pointer;
+    &:hover{
+      background: #fff8;
+    }
   }
 
   @keyframes pop {

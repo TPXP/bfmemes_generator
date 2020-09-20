@@ -34,11 +34,11 @@ export default {
       </label>
       <label class="option inline">
         <span>Couleur</span>
-        <colors-picker :value="element.text.color" @input="setValue('text.colors', $event)" />
+        <colors-picker :value="element.text.colors" @input="setValue('text.colors', $event)" />
       </label>
       <label class="option inline">
         <span>Couleur du contour</span>
-        <colors-picker :value="element.text.strokeColor" @input="setValue('text.strokeColors', $event)" />
+        <colors-picker :value="element.text.strokeColors" @input="setValue('text.strokeColors', $event)" />
       </label>
       <label class="option inline">
         <span>Taille du contour</span>

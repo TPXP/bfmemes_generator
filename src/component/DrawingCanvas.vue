@@ -86,8 +86,18 @@ export default {
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
         ctx.rotate(angle);
+        function getFillStyle(colors){
+          if(!colors?.length)
+            return '#000';
+          if(colors.length === 1)
+            return colors[0];
+          // Else, create a linear gradient - TODO Make it orientable?
+          const gradient = ctx.createLinearGradient(-width/2, 0, width/2, 0);
+          colors.forEach((color, i) => gradient.addColorStop(i/(colors.length - 1), color));
+          return gradient;
+        }
         if (backgroundColors) {
-          ctx.fillStyle = backgroundColors[0]; // FIXME
+          ctx.fillStyle = getFillStyle(backgroundColors);
           ctx.fillRect(-width / 2, -height / 2, width, height);
         }
         if (image?.resource) {
@@ -97,9 +107,9 @@ export default {
         }
         if (text?.value) {
           // How does the text fit in the square?
-          const {colors = ['#F60'], value, maxSize = 1000, fontFamily, strokeSize, strokeColor, fontWeight, lineHeight} = text;
-          ctx.fillStyle = colors[0];
-          ctx.strokeStyle = strokeColors[0];
+          const {colors = ['#F60'], value, maxSize = 1000, fontFamily, strokeSize, strokeColors, fontWeight, lineHeight} = text;
+          ctx.fillStyle = getFillStyle(colors);
+          ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
           const {lines, fontSize} = fitTextInRectangle(ctx, maxSize, value, width, height, fontFamily, lineHeight, fontWeight);
           lines.forEach((line, i) => {
