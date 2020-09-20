@@ -11,7 +11,7 @@
       <div class="spacer" />
       <drawing-canvas ref="canvas" />
       <div class="spacer" />
-      <elements-list @download="$refs.canvas.download()"/>
+      <elements-list @download="$refs.canvas.download()" @forceRedraw="$refs.canvas.draw()"/>
     </div>
   </div>
 </template>
@@ -21,7 +21,7 @@ import DrawingCanvas from "./DrawingCanvas";
 import ElementsList from "./ElementsList";
 export default {
   name: "App.vue",
-  components: {ElementsList, DrawingCanvas}
+  components: {ElementsList, DrawingCanvas},
 }
 </script>
 

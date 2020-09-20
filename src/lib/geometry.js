@@ -67,6 +67,10 @@ export function fitTextInRectangle(canvas, maxSize, text, width, height, fontFam
   if(fontWeight) // Make those values easier to concatenate
     fontWeight += " ";
 
+  // Normalize the font family
+  if(/[ "]/.test(fontFamily))
+    fontFamily = '"' + fontFamily.replace(/"/g, '\\"') + '"';
+
   const words = text.split(' ');
 
   while(a !== b) {

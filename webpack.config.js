@@ -66,6 +66,12 @@ module.exports = {
             adapter: require('responsive-loader/sharp')
           }
         }]
+      },
+      {
+        test: /\.(otf|woff|eot|ttf|woff2)$/i,
+        use:[{
+          loader: 'file-loader',
+        }]
       }
     ],
   },

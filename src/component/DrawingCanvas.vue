@@ -107,11 +107,11 @@ export default {
         }
         if (text?.value) {
           // How does the text fit in the square?
-          const {colors = ['#F60'], value, maxSize = 1000, fontFamily, strokeSize, strokeColors, fontWeight, lineHeight} = text;
+          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight} = text;
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {lines, fontSize} = fitTextInRectangle(ctx, maxSize, value, width, height, fontFamily, lineHeight, fontWeight);
+          const {lines, fontSize} = fitTextInRectangle(ctx, maxSize, value, width, height, font, lineHeight, fontWeight);
           lines.forEach((line, i) => {
             const x = - width / 2, y = fontSize * (1.2*i+1) - height / 2;
             if(strokeSize)

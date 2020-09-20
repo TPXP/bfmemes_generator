@@ -48,6 +48,12 @@ export default {
         <span>Taille du texte max</span>
         <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
       </label>
+      <label class="option inline">
+        <span>Police</span>
+        <select :value="element.text.font || 'sans-serif'" @input="setFont($event.target.value)">
+          <option v-for="font of availableFonts" :value="font.fontName || font.name">{{font.name}}</option>
+        </select>
+      </label>
     </section>
     <label class="option inline" v-if="missingComponents.length">
       <span>Ajouter</span>
@@ -63,6 +69,7 @@ export default {
 import ColorsPicker from "./ColorsPicker";
 import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
 import CenteredImagePreview from "./CenteredImagePreview";
+import {getFonts, loadFont} from "../lib/fonts";
 export default {
   name: "ElementForm",
   components: {ColorsPicker, CenteredImagePreview},
@@ -76,6 +83,9 @@ export default {
     },
     missingComponents() {
       return ELEMENT_COMPONENTS.filter(({key}) => !this.element[key]);
+    },
+    availableFonts(){
+      return getFonts();
     },
   },
   methods:{
@@ -103,6 +113,14 @@ export default {
       this.$store.commit('updateSelectedElement',{
         [type]: null,
       });
+    },
+    setFont(fontName){
+      this.setValue('text.font', fontName);
+      // Find back the font object
+      const fontObject = getFonts().filter(v => (v.fontName || v.name) === fontName);
+      if(fontObject.length !== 1)
+        throw new Error('Could not find back the font object. Duplicate or missing font name?');
+      loadFont(fontObject[0]).then(() => this.$emit('forceRedraw', {reason: 'fontLoaded'}));
     },
     handleImageFile(event){
       const {files} = event.target;

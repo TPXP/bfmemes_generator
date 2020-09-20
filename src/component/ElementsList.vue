@@ -10,7 +10,7 @@
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
         </div>
-        <element-form v-if="index === activeElement" />
+        <element-form v-if="index === activeElement" @forceRedraw="$emit('forceRedraw', $event)" />
       </div>
     </draggable>
     <h2>Ajouter un élément</h2>
