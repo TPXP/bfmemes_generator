@@ -61,6 +61,8 @@ export default {
         <a v-for="component of missingComponents" @click="addValue(component.key, component.defaultValue)" :key="component.key"
            class="button material-icons">{{ component.icon }}</a>
       </div>
+      <div class="spacer" />
+      <a class="material-icons button danger" @click="confirmWholeDelete">delete</a>
     </label>
   </div>
 </template>
@@ -148,6 +150,10 @@ export default {
         image.src = result;
       };
       fileReader.readAsDataURL(files[0]);
+    },
+    confirmWholeDelete(){
+      if(confirm("Voulez-vous vraiment supprimer cet élément complet ?"))
+        this.$store.commit('deleteSelectedElement');
     },
   },
 }

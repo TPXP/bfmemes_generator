@@ -189,6 +189,10 @@ const store = new Vuex.Store({
         _isNew: false,
       };
     },
+    deleteSelectedElement(state) {
+      state.elements = state.elements.filter((_, i) => i !== state.selectedElement);
+      state.selectedElement = null;
+    },
     zoomSelectedElement(state, factor){
       const element = state.elements?.[state.selectedElement]
       if(!element)
