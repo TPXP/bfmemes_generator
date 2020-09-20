@@ -1,11 +1,12 @@
 <template>
   <div class="colorPickers">
-    <div class="color" v-for="(value, index) of value" @click="opened = opened === index ? null : index" :key="index"
+    <div class="color" v-for="(color, index) of value" @click="opened = opened === index ? null : index" :key="index"
          v-on-clickaway="opened === index ? close : () => {}" :data-index="index">
-      <div class="preview" :style="`background:${value}`" />
+      <div class="preview" :style="`background:${color}`" />
+      <span class="delete material-icons" v-if="value.length > 1" @click="deleteColor(index)">cancel</span>
       <transition name="pop">
         <div class="wrapper" v-if="opened === index" @click.stop>
-          <chrome :value="value || '#0000'" @input="setColor(index, $event)" />
+          <chrome :value="color || '#0000'" @input="setColor(index, $event)" />
         </div>
       </transition>
     </div>
@@ -32,6 +33,11 @@ export default {
     close(){
       this.opened = null;
     },
+    deleteColor(index){
+      if(confirm('Voulez-vous vraiment supprimer cette couleur?')) {
+        this.$emit('input', this.value.filter((v, i) => i !== index));
+      }
+    },
     setColor(index, event) {
       this.$emit('input', this.value.map((v, i) => {
         if(i !== index)
@@ -41,6 +47,7 @@ export default {
     },
     addColor(){
       this.$emit('input', [...(this.value || []), '#fff']);
+      this.opened = null;
     },
   },
 }
@@ -67,6 +74,18 @@ export default {
       height: 30px;
       border: 1px solid #333;
       border-radius: 3px;
+    }
+    .delete {
+      position: absolute;
+      top:-7px;
+      right:-7px;
+      color:white;
+      opacity: 0.6;
+      cursor: pointer;
+      text-shadow: 0 1px 0 black;
+      &:hover{
+        opacity: 1;
+      }
     }
   }
   .wrapper{
