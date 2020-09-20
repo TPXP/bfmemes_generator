@@ -169,6 +169,10 @@ export default {
   font-size: 17px;
   display: flex;
   flex-direction: row;
+
+  .material-icons{
+    flex-shrink:0;
+  }
 }
 .option.inline{
   height:50px;
@@ -233,10 +237,11 @@ h3{
   .material-icons{
     margin-right:8px;
   }
-  span {
+  span:not(.material-icons){
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    flex:1;
   }
   .preview{
     width:33px;
@@ -256,6 +261,7 @@ h3{
 .deleteButton{
   color:$red;
   cursor: pointer;
+  margin-left:5px;
   &:hover{
     color: $lightRed;
   }
