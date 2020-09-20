@@ -21,7 +21,7 @@
     <div class="downloadRow">
       <a class="button large secondary" @click="$emit('download')">
         <span class="material-icons">cloud_download</span>
-        Téléchargermodel
+        Télécharger
       </a>
     </div>
   </div>
