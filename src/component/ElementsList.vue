@@ -1,16 +1,18 @@
 <template>
   <div class="elementsList">
     <h2>Éléments</h2>
-    <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
-      <div class="elementTitle" @click="selectElement(index)">
-        <span class="material-icons">drag_indicator</span>
-        <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
-        <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
+    <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange">
+      <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
+        <div class="elementTitle" @click="selectElement(index)">
+          <span class="material-icons">drag_indicator</span>
+          <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
+          <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
+        </div>
+        <element-form v-if="index === activeElement" />
       </div>
-      <element-form v-if="index === activeElement" />
-    </div>
+    </draggable>
     <h2>Ajouter un élément</h2>
     <div class="buttonGroup">
       <a class="button material-icons" v-for="element of elementTypes" :key="element.key"
@@ -19,7 +21,7 @@
     <div class="downloadRow">
       <a class="button large secondary" @click="$emit('download')">
         <span class="material-icons">cloud_download</span>
-        Télécharger
+        Téléchargermodel
       </a>
     </div>
   </div>
@@ -29,10 +31,11 @@
 import {mapState} from "vuex";
 import ElementForm from "./ElementForm";
 import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
+import draggable from 'vuedraggable';
 
 export default {
   name: "ElementsList",
-  components: {ElementForm},
+  components: {ElementForm, draggable},
   computed: {
     ...mapState(['elements']),
     activeElement: {
@@ -45,6 +48,9 @@ export default {
     },
     elementTypes: () => ELEMENT_COMPONENTS,
   },
+  data: () => ({
+    selectedOnDrag: null,
+  }),
   methods:{
     getTitle(element, index){
       if(element.name !== void 0)
@@ -81,6 +87,27 @@ export default {
       const element = this.elements[index];
       if(!element.name)
         this.setElementTitle(void 0, index);
+    },
+    onDragStart(){
+      this.selectedOnDrag = this.activeElement;
+      this.$store.commit('setSelectedElement', null);
+    },
+    onDragEnd(z){ // This will always be called, even if there are no changes. So we want to reset the selected element here
+      // NOTE: The selected element might move, so this is not reliable!
+      this.$store.commit('setSelectedElement', this.selectedOnDrag);
+      this.selectedOnDrag = null;
+    },
+    onDragChange(e){
+      if(!e?.moved)
+        return;
+      const {oldIndex, newIndex} = e.moved;
+      if(oldIndex === this.selectedOnDrag)
+        this.selectedOnDrag = newIndex;
+      else if(oldIndex < this.selectedOnDrag)
+        this.selectedOnDrag -= newIndex >= this.selectedOnDrag;
+      else if(oldIndex > this.selectedOnDrag)
+        this.selectedOnDrag += newIndex <= this.selectedOnDrag;
+      this.$store.commit('organizeElement', {oldIndex, newIndex});
     }
   }
 }

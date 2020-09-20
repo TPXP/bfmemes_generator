@@ -56,6 +56,11 @@ const store = new Vuex.Store({
     addElement (state, v){
       state.elements = [...state.elements, {...v, _isNew: true}];
       state.selectedElement = state.elements.length - 1;
+    },
+    organizeElement (state, {oldIndex, newIndex}){
+      const elements = state.elements.filter((v, i) => i !== oldIndex);
+      elements.splice(newIndex, 0, state.elements[oldIndex]);
+      state.elements = elements;
     }
   }
 });
