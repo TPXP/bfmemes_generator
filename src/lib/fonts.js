@@ -47,7 +47,6 @@ const loadedFonts = {};
  * @return A Promise that resolves once the font is loaded
  */
 export async function loadFont(fontObject) {
-  console.log(fontObject)
   if(!fontObject)
     throw new Error('Undefined font object');
   if(!fontObject.file)
