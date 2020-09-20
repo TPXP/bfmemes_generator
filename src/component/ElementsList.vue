@@ -1,10 +1,10 @@
 <template>
   <div class="elementsList">
     <h2>Éléments</h2>
-    <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange">
+    <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange" handle=".handle">
       <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
         <div class="elementTitle" @click="selectElement(index)">
-          <span class="material-icons">drag_indicator</span>
+          <span class="material-icons handle">drag_indicator</span>
           <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
           <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
           {{index === activeElement ? "expand_less" : "expand_more"}}
