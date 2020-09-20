@@ -32,6 +32,7 @@ import {mapState} from "vuex";
 import ElementForm from "./ElementForm";
 import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
 import draggable from 'vuedraggable';
+import {getFonts, loadFont} from "../lib/fonts";
 
 export default {
   name: "ElementsList",
@@ -51,6 +52,34 @@ export default {
   data: () => ({
     selectedOnDrag: null,
   }),
+  mounted() {
+    // If the template has custom fonts and images, load them
+    this.elements.forEach(({image, text}, index) => {
+      if(image?.src) {
+        const img = new Image;
+        img.onload = () => {
+          this.$store.commit('updateElementByIndex', {
+            index,
+            update: {
+              image: {
+                fileName: "Image fournie",
+                resource: img,
+                width: img.width,
+                height: img.height,
+              }
+            }
+          })
+        };
+        img.src = image.src;
+      }
+      if(text?.font){
+        // Find the corresponding font and load it
+        const fontObject = getFonts().filter(({name, fontName}) => (fontName || name) === text.font)[0];
+        if(fontObject)
+          loadFont(fontObject).then(() => this.$emit('forceRender',  {reason: 'initialFontLoaded'}));
+      }
+    })
+  },
   methods:{
     getTitle(element, index){
       if(element.name !== void 0)
