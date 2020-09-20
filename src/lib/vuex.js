@@ -7,14 +7,14 @@ const store = new Vuex.Store({
   state: {
     count: 0,
     elements: [{
-      backgroundColor: '#f00',
+      backgroundColors: ['#f00'],
       centerX: 100,
       centerY: 100,
       angle: Math.PI / 4,
       width:100,
       height:100,
     },{
-      backgroundColor: '#ff0',
+      backgroundColors: ['#ff0'],
       centerX: 500,
       centerY: 300,
       angle: 0,

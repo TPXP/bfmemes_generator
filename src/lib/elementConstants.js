@@ -2,7 +2,7 @@ export const ELEMENT_COMPONENTS = [
   {
     key: "text",
     defaultValue: {
-      color: "#000",
+      colors: ["#000"],
     },
     icon: "title",
   },
@@ -12,8 +12,8 @@ export const ELEMENT_COMPONENTS = [
     icon: "photo",
   },
   {
-    key: "backgroundColor",
-    defaultValue: "#fff",
+    key: "backgroundColors",
+    defaultValue: ["#fff"],
     icon: "format_paint",
   },
 ]

@@ -72,7 +72,7 @@ export default {
       const elements = [{
         // Background
         type: 'color',
-        backgroundColor: this.backgroundColor,
+        backgroundColors: [this.backgroundColor],
         centerX: this.width / 2,
         centerY: this.height / 2,
         width: this.width,
@@ -81,13 +81,13 @@ export default {
       }, ...this.$store.state.elements];
 
       // Start with the background
-      elements.forEach(({centerX, centerY, width, height, angle, image, text, backgroundColor}) => {
+      elements.forEach(({centerX, centerY, width, height, angle, image, text, backgroundColors}) => {
         ctx.save();
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
         ctx.rotate(angle);
-        if (backgroundColor) {
-          ctx.fillStyle = backgroundColor;
+        if (backgroundColors) {
+          ctx.fillStyle = backgroundColors[0]; // FIXME
           ctx.fillRect(-width / 2, -height / 2, width, height);
         }
         if (image?.resource) {
@@ -97,9 +97,9 @@ export default {
         }
         if (text?.value) {
           // How does the text fit in the square?
-          const {color = '#F60', value, maxSize = 1000, fontFamily, strokeSize, strokeColor, fontWeight, lineHeight} = text;
-          ctx.fillStyle = color;
-          ctx.strokeStyle = strokeColor;
+          const {colors = ['#F60'], value, maxSize = 1000, fontFamily, strokeSize, strokeColor, fontWeight, lineHeight} = text;
+          ctx.fillStyle = colors[0];
+          ctx.strokeStyle = strokeColors[0];
           ctx.lineWidth = strokeSize;
           const {lines, fontSize} = fitTextInRectangle(ctx, maxSize, value, width, height, fontFamily, lineHeight, fontWeight);
           lines.forEach((line, i) => {

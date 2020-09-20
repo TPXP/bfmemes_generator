@@ -6,11 +6,11 @@ export default {
 </script>
 <template>
   <div class="elementForm" v-if="element">
-    <label class="option inline" v-if="element.backgroundColor">
+    <label class="option inline" v-if="element.backgroundColors">
       <span>Couleur de fond</span>
-      <color-picker :value="element.backgroundColor" @input="setValue('backgroundColor', $event)" />
+      <colors-picker :value="element.backgroundColors" @input="setValue('backgroundColors', $event)" />
       <div class="spacer" />
-      <a class="material-icons deleteButton" @click.prevent="deleteValue('backgroundColor')">delete</a>
+      <a class="material-icons deleteButton" @click.prevent="deleteValue('backgroundColors')">delete</a>
     </label>
     <label class="option inline" v-if="element.image">
       <span>Image</span>
@@ -34,11 +34,11 @@ export default {
       </label>
       <label class="option inline">
         <span>Couleur</span>
-        <color-picker :value="element.text.color" @input="setValue('text.color', $event)" />
+        <colors-picker :value="element.text.color" @input="setValue('text.colors', $event)" />
       </label>
       <label class="option inline">
         <span>Couleur du contour</span>
-        <color-picker :value="element.text.strokeColor" @input="setValue('text.strokeColor', $event)" />
+        <colors-picker :value="element.text.strokeColor" @input="setValue('text.strokeColors', $event)" />
       </label>
       <label class="option inline">
         <span>Taille du contour</span>
@@ -60,12 +60,12 @@ export default {
 </template>
 
 <script>
-import ColorPicker from "./ColorPicker";
+import ColorsPicker from "./ColorsPicker";
 import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
 import CenteredImagePreview from "./CenteredImagePreview";
 export default {
   name: "ElementForm",
-  components: {ColorPicker, CenteredImagePreview},
+  components: {ColorsPicker, CenteredImagePreview},
   data: () => ({
     id: Date.now() + '' + Math.random(),
     imageError: null,
