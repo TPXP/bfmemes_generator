@@ -149,7 +149,12 @@ h2::before{
   display: flex;
   flex-direction: row;
   align-items: center;
-  cursor: move;
+  .material-icons{
+    cursor: pointer;
+  }
+  .handle{
+    cursor: move;
+  }
   input{
     border:0 none;
     margin-left:10px;
