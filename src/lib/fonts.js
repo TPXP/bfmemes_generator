@@ -4,6 +4,8 @@ import PilatBlackOTF from '../assets/fonts/PilatBlack.otf';
 import PilatCondensedBlack from '../assets/fonts/PilatCondensedBlack.otf';
 import PilatLightOTF from '../assets/fonts/PilatLight.otf';
 import CamberTTF from '../assets/fonts/Camber.ttf';
+import AspiarXNarTTF from '../assets/fonts/AspiraXNar.ttf';
+import UniversLTSBoldOTF from '../assets/fonts/UniversLTSBold.otf';
 
 const FONTS = [
   {
@@ -25,6 +27,16 @@ const FONTS = [
     name: 'Camber',
     file: CamberTTF,
     format: 'opentype',
+  },
+  {
+    name: 'Aspira XNar',
+    file: AspiarXNarTTF,
+    format: "opentype",
+  },
+  {
+    name: 'Univers LTS Bold',
+    file: UniversLTSBoldOTF,
+    format: "opentype",
   },
   // Those fonts don't have files since they're either loaded by the app (Lato) or provided by the system
   {
