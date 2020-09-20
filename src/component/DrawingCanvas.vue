@@ -63,6 +63,7 @@ export default {
     // Last 2nd finger coordinates
     secondFingerX: null,
     secondFingerY: null,
+    itemToSelectIfMouseDidNotMouve: false,
   }),
   methods: {
     draw() {
@@ -210,17 +211,18 @@ export default {
         }
       }
       const selected = this.getSelectedIndexesForPosition(this.lastX / this.scale, this.lastY / this.scale);
+      this.itemToSelectIfMouseDidNotMouve = selected[0] ?? null;
       // If we clicked on the selected item, switch to move mode immediately
       if(selected.includes(this.$store.state.selectedElement)) {
         this.currentMode = 'MOVE';
-        return;
       }
-      // Else, select the first item only after after some time (or on mouse leave)
+      // Else, select the first item only after after some time (or on mouse up)
       this.mouseUpAction = () => {
         clearInterval(this.shortIntervalAfterMouseDown);
         if(this.mouseDown)
           this.currentMode = 'MOVE';
-        this.$store.commit('setSelectedElement', selected[0] ?? null);
+        if(this.itemToSelectIfMouseDidNotMouve !== false)
+          this.$store.commit('setSelectedElement', this.itemToSelectIfMouseDidNotMouve);
         this.shortIntervalAfterMouseDown = false;
         this.mouseUpAction = () => {};
       }
@@ -249,6 +251,7 @@ export default {
         this.shortIntervalAfterMouseDown = false;
         this.mouseUpAction = () => {};
       }
+      this.itemToSelectIfMouseDidNotMouve = false;
       const element = this.$store.state.elements[this.$store.state.selectedElement];
       if (!element) // Null or undefined if no items are selected
         return;
