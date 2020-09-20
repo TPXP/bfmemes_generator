@@ -86,7 +86,7 @@ export default {
         return element.name;
       if(element.text) {
         if(element.text.value)
-          return `${element.image?.resource ? 'Image et ' : ''}Texte "${element.text.value.substr(0, 10)}${element.text.length > 10 ? '...' : ''}"`;
+          return `${element.image?.resource ? 'Image et ' : ''}Texte "${element.text.value.substr(0, 10)}${element.text.value.length > 10 ? '...' : ''}"`;
         return `Texte #${index}`;
       }
       if(element.image)
