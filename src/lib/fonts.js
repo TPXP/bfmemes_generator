@@ -3,6 +3,7 @@ import FontFaceObserver from 'fontfaceobserver';
 import PilatBlackOTF from '../assets/fonts/PilatBlack.otf';
 import PilatCondensedBlack from '../assets/fonts/PilatCondensedBlack.otf';
 import PilatLightOTF from '../assets/fonts/PilatLight.otf';
+import CamberTTF from '../assets/fonts/Camber.ttf';
 
 const FONTS = [
   {
@@ -18,6 +19,11 @@ const FONTS = [
   {
     name: 'Pilat Light',
     file: PilatLightOTF,
+    format: 'opentype',
+  },
+  {
+    name: 'Camber',
+    file: CamberTTF,
     format: 'opentype',
   },
   // Those fonts don't have files since they're either loaded by the app (Lato) or provided by the system

@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
 
 Vue.use(Vuex);
 
@@ -7,21 +8,165 @@ const store = new Vuex.Store({
   state: {
     count: 0,
     elements: [{
-      backgroundColors: ['#f00'],
-      centerX: 100,
-      centerY: 100,
-      angle: Math.PI / 4,
-      width:100,
-      height:100,
-    },{
-      backgroundColors: ['#ff0'],
-      centerX: 500,
-      centerY: 300,
+      name: "* Image de fond",
+      height: 720,
+      width: 1280,
+      centerX: 640,
+      centerY: 360,
       angle: 0,
-      width:200,
-      height:100,
+      image: {}
+    }, {
+        name: "Bandeau blanc",
+        backgroundColors: ['#fff'],
+        centerX: 640,
+        centerY: 670,
+        angle:0,
+        width:1280,
+        height:100,
+    }, {
+      name: "Bandeau bleu",
+      backgroundColors: ['#0423fa', '#000052'],
+      centerX: 560,
+      centerY: 585,
+      angle: 0,
+      width:990,
+      height:70,
+    }, {
+      name: "Logo BFMemesTV",
+      centerX: 80,
+      centerY: 75,
+      width: 130,
+      height: 82,
+      angle: 0,
+      image:{
+        src: BFMemesTVPNG.src,
+      }
+    }, {
+      name: "Bandeau en haut à gauche",
+      centerX: 235,
+      centerY: 55,
+      width:170,
+      height:25,
+      angle:0,
+      backgroundColors: ['#fff'],
+    }, {
+      name: "Heure",
+      centerX: 212,
+      centerY: 54,
+      width: 100,
+      height: 25,
+      angle: 0,
+      text: {
+        colors: ['#0423fa'],
+        font: 'Pilat Light',
+        value: (new Date).getHours() + '.' + (new Date).getMinutes(),
+      },
+    }, {
+      name: "Direct",
+      centerX: 282,
+      centerY: 54,
+      width: 100,
+      height: 25,
+      angle: 0,
+      text: {
+        colors: ['#0423fa'],
+        font: 'Pilat Black',
+        value: "DIRECT",
+      },
+    }, {
+      name: "Le live BFM...",
+      centerX: 1143,
+      centerY: 650,
+      width:140,
+      height:45,
+      angle:0,
+      text:{
+        colors:['#f00'],
+        font: 'Pilat Condensed Black',
+        value: "LE LIVE BFM",
+      }
+    }, {
+      name: "...emes",
+      centerX: 1252,
+      centerY: 651,
+      width:80,
+      height:31,
+      angle:0,
+      text:{
+        colors:['#f00'],
+        font: 'Pilat Condensed Black',
+        value: "EMES",
+      }
+    }, {
+      name: "Alerte Info",
+      centerX: 200,
+      centerY: 645,
+      width:250,
+      height:45,
+      angle:0,
+      text:{
+        colors:['#f00'],
+        font: 'Pilat Black',
+        value: "ALERTE INFO",
+      }
+    }, {
+      name: "Carré Alerte Info",
+      centerX: 335,
+      centerY: 652,
+      width:10,
+      height:10,
+      angle:0,
+      backgroundColors:['#f00'],
+    }, {
+      name: "* Titre principal",
+      centerX: 560,
+      centerY: 582,
+      width: 960,
+      height: 60,
+      angle: 0,
+      text: {
+        colors: ['#fff'],
+        font: 'Pilat Condensed Black',
+        value: "",
+      },
+    }, {
+      name: "* Détails (1/2)",
+      centerX: 700,
+      centerY: 645,
+      width:680,
+      height:40,
+      angle: 0,
+      text: {
+        colors: ['#000'],
+        font: 'Camber',
+        value: "",
+      },
+    }, {
+      name: "* Détails (2/2)",
+      centerX: 425,
+      centerY: 685,
+      width:700,
+      height:40,
+      angle: 0,
+      text: {
+        colors: ['#000'],
+        font: 'Camber',
+        value: "",
+      },
+    }, {
+      name: "* Source",
+      centerX: 920,
+      centerY: 686,
+      width: 250,
+      height: 40,
+      angle: 0,
+      text: {
+        colors: ['#000'],
+        font: 'Pilat Light',
+        value: "",
+      },
     }],
-    selectedElement: 1,
+    selectedElement: 0,
     selectedCorner: null,
   },
   mutations: {
@@ -32,6 +177,14 @@ const store = new Vuex.Store({
       state.elements = [...state.elements];
       state.elements[state.selectedElement] = {
         ...state.elements[state.selectedElement],
+        ...update,
+        _isNew: false,
+      };
+    },
+    updateElementByIndex(state, {update, index}){
+      state.elements = [...state.elements];
+      state.elements[index] = {
+        ...state.elements[index],
         ...update,
         _isNew: false,
       };
