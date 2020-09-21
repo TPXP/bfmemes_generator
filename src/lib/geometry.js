@@ -24,9 +24,9 @@ export function isPointInTriangle(p, a, b, c) {
   // See https://stackoverflow.com/a/2049593/3841242
   // Compute the vector product (along Z) to know the angle. All must have the same sign
   const results = [
-    this.signOfVectorProduct(a, b, p),
-    this.signOfVectorProduct(b, c, p),
-    this.signOfVectorProduct(c, a, p),
+    signOfVectorProduct(a, b, p),
+    signOfVectorProduct(b, c, p),
+    signOfVectorProduct(c, a, p),
   ];
   const hasPos = results.reduce((a, v) => a || (v > 0), false),
     hasNeg = results.reduce((a, v) => a || (v < 0), false);
@@ -40,7 +40,7 @@ export function vectorRotation(x, y, alpha) {
 
 export function findRectangleCorners(width, height, centerX, centerY, angle) {
   return [[1,1], [-1, 1], [-1, -1], [1,-1]].map(([mx, my]) =>
-    this.vectorRotation( width / 2 * mx,  height / 2 * my, angle),
+    vectorRotation( width / 2 * mx,  height / 2 * my, angle),
   ).map(([x,y]) => [centerX + x, centerY + y]);
 }
 
