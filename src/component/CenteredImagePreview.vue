@@ -23,5 +23,6 @@ export default {
   border:1px solid #000;
   border-radius: 10px;
   background-size: cover;
+  background-position: center;
 }
 </style>
