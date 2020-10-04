@@ -198,6 +198,10 @@ input, textarea {
     border-bottom-color: #fff;
   }
 }
+textarea{
+  height:60px;
+  line-height: 23px;
+}
 h3{
   margin: 0;
   line-height:40px;
