@@ -58,7 +58,7 @@ export function tryMatchingMagicAngle(angle, n_divisions, tolerance) {
   return angle;
 }
 
-export function fitTextInRectangle(canvas, maxSize, text, width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = '') {
+export function fitTextInRectangle(canvas, {maxSize, text, width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = ''}) {
   // This is a dichotomy algorithm between 1 and maxSize - Yes, I studied this in class!
   let a = 1, b = maxSize;
   // If we ever fall back to font size 1, put everything on the same line
