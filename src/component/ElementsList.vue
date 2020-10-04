@@ -207,7 +207,8 @@ h2::before{
 }
 .downloadRow{
   text-align: center;
-  margin-top:50px
+  margin-top:40px;
+  padding-bottom: 30px;
 }
 @media (max-width: $lineToColLayout){
   .elementsList{
