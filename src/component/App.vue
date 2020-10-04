@@ -34,11 +34,13 @@ export default {
   justify-content: center;
   align-items: center;
   flex:1;
+  overflow: hidden;
 }
 @media (max-width: $lineToColLayout) {
   #editor{
     flex:0;
     justify-content: flex-end;
+    overflow: visible;
   }
 }
 </style>

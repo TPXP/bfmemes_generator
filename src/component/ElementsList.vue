@@ -150,6 +150,8 @@ export default {
   max-width: 620px;
   min-width: 300px;
   align-self: stretch;
+  height:100%;
+  overflow-y: auto;
   border-right: 3px solid #000;
 }
 h2{
@@ -210,6 +212,7 @@ h2::before{
 @media (max-width: $lineToColLayout){
   .elementsList{
     border-right-width: 0;
+    height: auto;
   }
 }
 </style>
