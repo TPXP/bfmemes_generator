@@ -1,12 +1,6 @@
 <template>
   <div id="app">
-    <nav id="mainNav">
-      <div class="logo">
-        <h1>BFMemes Generator</h1>
-        <em>Reloaded</em>
-      </div>
-      <div class="spacer" />
-    </nav>
+    <nav-bar />
     <div id="editor">
       <div class="spacer" />
       <drawing-canvas ref="canvas" />
@@ -19,9 +13,11 @@
 <script>
 import DrawingCanvas from "./DrawingCanvas";
 import ElementsList from "./ElementsList";
+import NavBar from "./NavBar";
+
 export default {
   name: "App.vue",
-  components: {ElementsList, DrawingCanvas},
+  components: {NavBar, ElementsList, DrawingCanvas},
 }
 </script>
 
