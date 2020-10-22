@@ -39,6 +39,7 @@ h3{
   color: $white;
   display: flex;
   box-shadow: 0 0 10px #000a;
+  z-index: 1;
   .logo{
     position: relative;
     min-width: 250px;
