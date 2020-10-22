@@ -139,12 +139,14 @@ $buttonRadius: 5px;
       margin-right: 12px;
     }
   }
-}
-.button:hover{
-  background: $darkerPrimary;
-  box-shadow: 0 2px 2px rgba(0,0,0,0.2);
-  &.danger{
-    background: $darkRed;
+  &:hover{
+    background: $darkerPrimary;
+    box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+    color: $white;
+    text-decoration: none;
+    &.danger{
+      background: $darkRed;
+    }
   }
 }
 .button.secondary{
