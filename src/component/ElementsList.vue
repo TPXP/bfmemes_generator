@@ -18,11 +18,13 @@
                       @forceRedraw="$emit('forceRedraw', $event)" />
       </div>
     </draggable>
-    <h2>Ajouter un élément</h2>
-    <div class="buttonGroup">
-      <a class="button material-icons" v-for="element of elementTypes" :key="element.key"
-        @click="addElement({[element.key]:element.defaultValue})">{{ element.icon }}</a>
-    </div>
+    <template v-if="!expressMode">
+      <h2>Ajouter un élément</h2>
+      <div class="buttonGroup">
+        <a class="button material-icons" v-for="element of elementTypes" :key="element.key"
+          @click="addElement({[element.key]:element.defaultValue})">{{ element.icon }}</a>
+      </div>
+    </template>
     <div class="downloadRow">
       <a class="button large secondary" @click="$emit('download')">
         <span class="material-icons">cloud_download</span>
