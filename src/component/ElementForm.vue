@@ -69,7 +69,7 @@ export default {
 
 <script>
 import ColorsPicker from "./ColorsPicker";
-import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
+import {ELEMENT_COMPONENTS} from "../lib/constants";
 import CenteredImagePreview from "./CenteredImagePreview";
 import {getFonts, loadFont} from "../lib/fonts";
 export default {

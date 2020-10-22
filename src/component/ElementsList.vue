@@ -30,7 +30,7 @@
 <script>
 import {mapState} from "vuex";
 import ElementForm from "./ElementForm";
-import {ELEMENT_COMPONENTS} from "../lib/elementConstants";
+import {ELEMENT_COMPONENTS} from "../lib/constants";
 import draggable from 'vuedraggable';
 import {getFonts, loadFont} from "../lib/fonts";
 

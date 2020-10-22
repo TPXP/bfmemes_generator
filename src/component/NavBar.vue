@@ -5,11 +5,28 @@
       <em>Reloaded</em>
     </div>
     <div class="spacer" />
-    <a @click="visible = true">
+    <a @click="settings = true">
+      <i class="material-icons">settings</i>
+      Options
+    </a>
+    <modal @close="settings = false" :visible="settings">
+      <template v-slot:title>Options du générateur</template>
+      <h3>Mode</h3>
+      <div class="horizontal-slider">
+        <input type="range" v-model="mode" min="0" max="2" step="1" />
+        <div class="options">
+          <div v-for="({label, description}, key) of modesList" :class="[key === mode && 'active']" :key="key">
+            <p>{{label}}</p>
+            <em>{{description}}</em>
+          </div>
+        </div>
+      </div>
+    </modal>
+    <a @click="about = true">
       <i class="material-icons">info</i>
       A propos
     </a>
-    <modal @close="visible = false" :visible="visible">
+    <modal @close="about = false" :visible="about">
       <template v-slot:title>BFMemes Generator - Reloaded</template>
       <p>Un projet open-source mené par Thomas Pathier, rendu possible grâce à&nbsp;:</p>
       <ul>
@@ -39,20 +56,59 @@
 
 <script>
 import Modal from "./Modal";
+import {MODES} from "../lib/constants";
 export default {
   name: "AboutLink",
   components: {Modal},
   data() { return {
-    visible: false,
+    about: false,
+    settings: false,
+    modesList: MODES,
   }},
   computed: {
     year() {
       return (new Date).getFullYear();
     },
+    mode: {
+      get() {
+        return this.$store.state.mode;
+      },
+      set(value) {
+        this.$store.commit('setMode', parseInt(value));
+      }
+    },
   }
 }
 </script>
 
-<style scoped>
-
+<style scoped lang="scss">
+@import "src/scss/variables";
+.horizontal-slider {
+  display: flex;
+  flex-direction: column;
+  input {
+    margin: 20px 16.666%; // 33.333% / 2 - imperfect, switch to a better slider one day
+  }
+  .options {
+    display: flex;
+    flex-direction: row;
+    div {
+      flex:1;
+      text-align: center;
+      padding:0 20px 10px;
+      p {
+        font-weight: bold;
+        font-size: 120%;
+      }
+      em {
+        color: #fff9;
+      }
+      &.active {
+        p{
+          color: $primary;
+        }
+      }
+    }
+  }
+}
 </style>

@@ -1,6 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
+import {MODES} from "./constants";
 
 Vue.use(Vuex);
 
@@ -175,6 +176,7 @@ const store = new Vuex.Store({
     }],
     selectedElement: 0,
     selectedCorner: null,
+    mode: 0,
   },
   mutations: {
     updateSelectedElement (state, update) {
@@ -225,7 +227,12 @@ const store = new Vuex.Store({
       const elements = state.elements.filter((v, i) => i !== oldIndex);
       elements.splice(newIndex, 0, state.elements[oldIndex]);
       state.elements = elements;
-    }
+    },
+    setMode (state, value){
+      if(!MODES[value])
+        return;
+      state.mode = value;
+    },
   }
 });
 export default store;
