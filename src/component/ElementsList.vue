@@ -1,17 +1,17 @@
 <template>
-  <div class="elementsList">
+  <div :class="['elementsList', expressMode && 'express']">
     <h2>Éléments</h2>
     <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange" handle=".handle">
       <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index"
         v-if="(element.requiresMode || 0) <= mode">
-        <div class="elementTitle" @click="selectElement(index)" v-if="mode !== expressMode">
+        <div class="elementTitle" @click="selectElement(index)" v-if="!expressMode">
           <span class="material-icons handle">drag_indicator</span>
           <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
           <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
         </div>
-        <element-form v-if="index === activeElement || mode === expressMode"
+        <element-form v-if="index === activeElement || expressMode"
                       :element="elements[index]"
                       @update="updateElement(index, $event)"
                       @delete="deleteElement(index)"
@@ -44,7 +44,9 @@ export default {
   components: {ElementForm, draggable},
   computed: {
     ...mapState(['elements', 'mode']),
-    expressMode:() => MODE_EXPRESS,
+    expressMode(){
+      return this.mode === MODE_EXPRESS;
+    },
     activeElement: {
       get() {
         return this.$store.state.selectedElement;
@@ -164,6 +166,9 @@ export default {
   height:100%;
   overflow-y: auto;
   border-right: 3px solid #000;
+  &.express .element {
+    border-top: 0 none;
+  }
 }
 h2{
   margin:0;
