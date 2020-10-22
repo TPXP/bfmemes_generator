@@ -27,6 +27,15 @@ p{
   margin-bottom: 10px;
 }
 
+a {
+  color: $primary;
+  text-decoration: none;
+  &:hover {
+    color: $lightPrimary;
+    text-decoration: underline;
+  }
+}
+
 .spacer{
   flex:1;
 }
@@ -71,7 +80,7 @@ p{
     padding-left:10px;
     padding-right:10px;
   }
-  a {
+  > a {
     font-size: 12px;
     font-weight: bold;
     line-height: 50px;
@@ -80,6 +89,8 @@ p{
     display: inline-block;
     padding:0 15px;
     cursor: pointer;
+    color: $white;
+    text-decoration: none;
     i.material-icons{
       margin-right: 5px;
       margin-bottom: 2px;
@@ -87,6 +98,8 @@ p{
     }
     &:hover {
       background: #fff2;
+      color: $white;
+      text-decoration: none;
     }
   }
 }

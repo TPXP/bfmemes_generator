@@ -49,7 +49,7 @@
       </ul>
       <p>Les polices et éléments graphiques utilisés appartiennent à leurs auteurs respectifs lorsque applicable.</p>
       <p>Copyright {{year}} Thomas Pathier et contributeurs</p>
-      <p>FRANCE</p>
+      <p><a href="https://youtu.be/mVP42Z_7S5M?t=398" target="_blank">FRANCE</a></p>
     </modal>
   </nav>
 </template>
