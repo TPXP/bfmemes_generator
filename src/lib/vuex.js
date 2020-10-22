@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
-import {MODES} from "./constants";
+import {MODE_ADVANCED, MODE_EXPERT, MODES} from "./constants";
 
 Vue.use(Vuex);
 
@@ -16,7 +16,7 @@ const store = new Vuex.Store({
   state: {
     count: 0,
     elements: [{
-      name: "* Image de fond",
+      name: "Image de fond",
       height: 720,
       width: 1280,
       centerX: 640,
@@ -24,13 +24,14 @@ const store = new Vuex.Store({
       angle: 0,
       image: {}
     }, {
-        name: "Bandeau blanc",
-        backgroundColors: ['#fff'],
-        centerX: 640,
-        centerY: 670,
-        angle:0,
-        width:1280,
-        height:100,
+      name: "Bandeau blanc",
+      backgroundColors: ['#fff'],
+      centerX: 640,
+      centerY: 670,
+      angle:0,
+      width:1280,
+      height:100,
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Bandeau bleu",
       backgroundColors: ['#0423fa', '#000052'],
@@ -39,6 +40,7 @@ const store = new Vuex.Store({
       angle: 0,
       width:990,
       height:70,
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Logo BFMemesTV",
       centerX: 80,
@@ -48,7 +50,8 @@ const store = new Vuex.Store({
       angle: 0,
       image:{
         src: BFMemesTVPNG.src,
-      }
+      },
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Bandeau en haut à gauche",
       centerX: 235,
@@ -57,6 +60,7 @@ const store = new Vuex.Store({
       height:25,
       angle:0,
       backgroundColors: ['#fff'],
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Heure",
       centerX: 212,
@@ -69,6 +73,7 @@ const store = new Vuex.Store({
         font: 'Pilat Light',
         value: time,
       },
+      requiresMode: MODE_ADVANCED,
     }, {
       name: "Direct",
       centerX: 282,
@@ -81,6 +86,7 @@ const store = new Vuex.Store({
         font: 'Pilat Black',
         value: "DIRECT",
       },
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Le live BFM...",
       centerX: 1143,
@@ -92,7 +98,8 @@ const store = new Vuex.Store({
         colors:['#f00'],
         font: 'Pilat Condensed Black',
         value: "LE LIVE BFM",
-      }
+      },
+      requiresMode: MODE_EXPERT,
     }, {
       name: "...emes",
       centerX: 1252,
@@ -104,7 +111,8 @@ const store = new Vuex.Store({
         colors:['#f00'],
         font: 'Pilat Condensed Black',
         value: "EMES",
-      }
+      },
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Alerte Info",
       centerX: 200,
@@ -116,7 +124,8 @@ const store = new Vuex.Store({
         colors:['#f00'],
         font: 'Pilat Black',
         value: "ALERTE INFO",
-      }
+      },
+      requiresMode: MODE_EXPERT,
     }, {
       name: "Carré Alerte Info",
       centerX: 335,
@@ -125,8 +134,9 @@ const store = new Vuex.Store({
       height:10,
       angle:0,
       backgroundColors:['#f00'],
+      requiresMode: MODE_EXPERT,
     }, {
-      name: "* Titre principal",
+      name: "Titre principal",
       centerX: 560,
       centerY: 582,
       width: 960,
@@ -138,7 +148,7 @@ const store = new Vuex.Store({
         value: "",
       },
     }, {
-      name: "* Détails (1/2)",
+      name: "Détails (1/2)",
       centerX: 700,
       centerY: 645,
       width:680,
@@ -150,7 +160,7 @@ const store = new Vuex.Store({
         value: "",
       },
     }, {
-      name: "* Détails (2/2)",
+      name: "Détails (2/2)",
       centerX: 425,
       centerY: 685,
       width:700,
@@ -162,7 +172,7 @@ const store = new Vuex.Store({
         value: "",
       },
     }, {
-      name: "* Source",
+      name: "Source",
       centerX: 920,
       centerY: 686,
       width: 250,
@@ -198,9 +208,10 @@ const store = new Vuex.Store({
         _isNew: false,
       };
     },
-    deleteSelectedElement(state) {
-      state.elements = state.elements.filter((_, i) => i !== state.selectedElement);
-      state.selectedElement = null;
+    deleteElementByIndex(state, index) {
+      if(index === state.selectedElement)
+        state.selectedElement = null;
+      state.elements = state.elements.filter((_, i) => i !== index);
     },
     zoomSelectedElement(state, factor){
       const element = state.elements?.[state.selectedElement]

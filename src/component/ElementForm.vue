@@ -7,13 +7,15 @@ export default {
 <template>
   <div class="elementForm" v-if="element">
     <label class="option inline" v-if="element.backgroundColors">
-      <span>Couleur de fond</span>
+      <span>{{expressMode ? element.name : "Couleur de fond"}}</span>
       <colors-picker :value="element.backgroundColors" @input="setValue('backgroundColors', $event)" />
-      <div class="spacer" />
-      <a class="material-icons deleteButton" @click.prevent="deleteValue('backgroundColors')">delete</a>
+      <template v-if="!expressMode">
+        <div class="spacer" />
+        <a class="material-icons deleteButton" @click.prevent="deleteValue('backgroundColors')">delete</a>
+      </template>
     </label>
     <label class="option inline" v-if="element.image">
-      <span>Image</span>
+      <span>{{expressMode ? element.name : "Image"}}</span>
       <div class="fullWidthSelector">
         <centered-image-preview :resource="element.image.resource" v-if="element.image.resource" class="preview" />
         <span class="material-icons" v-else>photo</span>
@@ -22,45 +24,49 @@ export default {
         </span>
         <input type="file" @input="handleImageFile" />
       </div>
-      <a class="material-icons deleteButton" @click.prevent="deleteValue('image')">delete</a>
+      <a class="material-icons deleteButton" @click.prevent="deleteValue('image')" v-if="!expressMode">delete</a>
     </label>
     <section v-if="element.text">
-      <div class="sectionTitle">
+      <div class="sectionTitle" v-if="!expressMode">
         <h3>Texte</h3>
         <span class="deleteButton material-icons" @click="deleteValue('text')">delete</span>
       </div>
       <label class="option" :for="`${id}text`">
-        <textarea :id="`${id}text`" placeholder="Texte" :value="element.text.value" @input="setValue('text.value', $event.target.value)" rows="3" />
+        <textarea :id="`${id}text`" :placeholder="expressMode ? element.name : 'Texte'" :value="element.text.value" @input="setValue('text.value', $event.target.value)" rows="3" />
       </label>
-      <label class="option inline">
-        <span>Couleur</span>
-        <colors-picker :value="element.text.colors" @input="setValue('text.colors', $event)" />
-      </label>
-      <label class="option inline">
-        <span>Couleur du contour</span>
-        <colors-picker :value="element.text.strokeColors" @input="setValue('text.strokeColors', $event)" />
-      </label>
-      <label class="option inline">
-        <span>Taille du contour</span>
-        <input type="range" min="0" max="200" step="1" :value="element.text.strokeSize || 0" @input="setValue('text.strokeSize', $event.target.value)" />
-      </label>
-      <label class="option inline">
-        <span>Taille du texte max</span>
-        <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
-      </label>
-      <label class="option inline">
-        <span>Police</span>
-        <select :value="element.text.font || 'sans-serif'" @input="setFont($event.target.value)">
-          <option v-for="font of availableFonts" :value="font.fontName || font.name">{{font.name}}</option>
-        </select>
-      </label>
+      <template v-if="!expressMode">
+        <label class="option inline">
+          <span>Couleur</span>
+          <colors-picker :value="element.text.colors" @input="setValue('text.colors', $event)" />
+        </label>
+        <label class="option inline">
+          <span>Couleur du contour</span>
+          <colors-picker :value="element.text.strokeColors" @input="setValue('text.strokeColors', $event)" />
+        </label>
+        <label class="option inline">
+          <span>Taille du contour</span>
+          <input type="range" min="0" max="200" step="1" :value="element.text.strokeSize || 0" @input="setValue('text.strokeSize', $event.target.value)" />
+        </label>
+        <label class="option inline">
+          <span>Taille du texte max</span>
+          <input type="range" min="1" max="1000" step="1" :value="element.text.maxSize || 1000" @input="setValue('text.maxSize', parseInt($event.target.value, 10))" />
+        </label>
+        <label class="option inline">
+          <span>Police</span>
+          <select :value="element.text.font || 'sans-serif'" @input="setFont($event.target.value)">
+            <option v-for="font of availableFonts" :value="font.fontName || font.name">{{font.name}}</option>
+          </select>
+        </label>
+      </template>
     </section>
-    <label class="option inline" v-if="missingComponents.length">
-      <span>Ajouter</span>
-      <div class="buttonGroup">
-        <a v-for="component of missingComponents" @click="addValue(component.key, component.defaultValue)" :key="component.key"
-           class="button material-icons">{{ component.icon }}</a>
-      </div>
+    <label class="option inline" v-if="!expressMode">
+      <template v-if="missingComponents.length">
+        <span>Ajouter</span>
+        <div class="buttonGroup">
+          <a v-for="component of missingComponents" @click="addValue(component.key, component.defaultValue)" :key="component.key"
+             class="button material-icons">{{ component.icon }}</a>
+        </div>
+      </template>
       <div class="spacer" />
       <a class="material-icons button danger" @click="confirmWholeDelete">delete</a>
     </label>
@@ -69,31 +75,36 @@ export default {
 
 <script>
 import ColorsPicker from "./ColorsPicker";
-import {ELEMENT_COMPONENTS} from "../lib/constants";
+import {ELEMENT_COMPONENTS, MODE_EXPRESS} from "../lib/constants";
 import CenteredImagePreview from "./CenteredImagePreview";
 import {getFonts, loadFont} from "../lib/fonts";
+import {mapState} from "vuex";
 export default {
   name: "ElementForm",
   components: {ColorsPicker, CenteredImagePreview},
+  props: {
+    element: Object,
+  },
   data: () => ({
     id: Date.now() + '' + Math.random(),
     imageError: null,
   }),
   computed: {
-    element(){
-      return this.$store.state.elements[this.$store.state.selectedElement] ?? {};
-    },
+    ...mapState(['mode']),
     missingComponents() {
       return ELEMENT_COMPONENTS.filter(({key}) => !this.element[key]);
     },
     availableFonts(){
       return getFonts();
     },
+    expressMode() {
+      return this.mode === MODE_EXPRESS;
+    }
   },
   methods:{
     setValue(key, val){
       const parts = key.split('.'), payload = {};
-      let currentlyEditing = payload, currentValue = this.$store.state.elements[this.$store.state.selectedElement];
+      let currentlyEditing = payload, currentValue = this.element;
       if(!currentValue)
         return;
       parts.forEach((p,i) => {
@@ -104,15 +115,15 @@ export default {
         currentlyEditing[p] = {...currentValue};
         currentlyEditing = currentlyEditing[p];
       });
-      this.$store.commit('updateSelectedElement', payload);
+      this.$emit('update', payload);
     },
     addValue(type, value = {}){
-      return this.$store.commit('updateSelectedElement', {[type]: value});
+      return this.$emit('update', {[type]: value});
     },
     deleteValue(type){
       if(!confirm('Vous voulez vraiment supprimer ça ?'))
         return;
-      this.$store.commit('updateSelectedElement',{
+      this.$emit('update',{
         [type]: null,
       });
     },
@@ -136,7 +147,7 @@ export default {
         const image = new Image;
         image.onload = () => {
           // TODO: Resize the rectangle to fit the image width and height?
-          this.$store.commit('updateSelectedElement', {
+          this.$emit('update', {
             image: {
               fileName: files[0].name,
               resource: image,
@@ -153,7 +164,7 @@ export default {
     },
     confirmWholeDelete(){
       if(confirm("Voulez-vous vraiment supprimer cet élément complet ?"))
-        this.$store.commit('deleteSelectedElement');
+        this.$emit('delete');
     },
   },
 }

@@ -31,4 +31,7 @@ export const MODES = [
     label: 'Expert',
     description: 'La totale, parfait pour les perfectionnistes',
   }
-]
+];
+export const MODE_EXPRESS = 0;
+export const MODE_ADVANCED = 1;
+export const MODE_EXPERT = 2;

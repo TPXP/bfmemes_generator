@@ -2,15 +2,20 @@
   <div class="elementsList">
     <h2>Éléments</h2>
     <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange" handle=".handle">
-      <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index">
-        <div class="elementTitle" @click="selectElement(index)">
+      <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index"
+        v-if="(element.requiresMode || 0) <= mode">
+        <div class="elementTitle" @click="selectElement(index)" v-if="mode !== expressMode">
           <span class="material-icons handle">drag_indicator</span>
           <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
           <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
           {{index === activeElement ? "expand_less" : "expand_more"}}
         </span>
         </div>
-        <element-form v-if="index === activeElement" @forceRedraw="$emit('forceRedraw', $event)" />
+        <element-form v-if="index === activeElement || mode === expressMode"
+                      :element="elements[index]"
+                      @update="updateElement(index, $event)"
+                      @delete="deleteElement(index)"
+                      @forceRedraw="$emit('forceRedraw', $event)" />
       </div>
     </draggable>
     <h2>Ajouter un élément</h2>
@@ -30,7 +35,7 @@
 <script>
 import {mapState} from "vuex";
 import ElementForm from "./ElementForm";
-import {ELEMENT_COMPONENTS} from "../lib/constants";
+import {ELEMENT_COMPONENTS, MODE_EXPRESS} from "../lib/constants";
 import draggable from 'vuedraggable';
 import {getFonts, loadFont} from "../lib/fonts";
 
@@ -38,7 +43,8 @@ export default {
   name: "ElementsList",
   components: {ElementForm, draggable},
   computed: {
-    ...mapState(['elements']),
+    ...mapState(['elements', 'mode']),
+    expressMode:() => MODE_EXPRESS,
     activeElement: {
       get() {
         return this.$store.state.selectedElement;
@@ -95,6 +101,12 @@ export default {
         return `Rectangle #${index}`;
       return `Élément #${index}`;
     },
+    updateElement(index, update) {
+      this.$store.commit('updateElementByIndex', {index, update});
+    },
+    deleteElement(index){
+      this.$store.commit('deleteElementByIndex', index);
+    },
     selectElement(index){
       this.$store.commit('setSelectedElement', index);
     },
@@ -109,8 +121,7 @@ export default {
       });
     },
     setElementTitle(name, index){
-      this.$store.commit('setSelectedElement', index);
-      this.$store.commit('updateSelectedElement', {name});
+      this.$store.commit('updateElementByIndex', {index, update:{name}});
     },
     onElementTitleBlur(index){
       const element = this.elements[index];
