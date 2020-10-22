@@ -146,8 +146,19 @@ export default {
         const {result} = ev.target;
         const image = new Image;
         image.onload = () => {
-          // TODO: Resize the rectangle to fit the image width and height?
+          // Resize the rectangle to not stretch the image for now - cover strategy
+          let {height, width} = this.element;
+          const imageRatio = image.width / image.height,
+            elementRatio = width / height;
+
+          if(imageRatio > elementRatio) // We must increase the width
+            width = height * imageRatio;
+          else // We must increase the height
+            height = width / imageRatio;
+          // No need to update centerX and centerY
+
           this.$emit('update', {
+            height, width,
             image: {
               fileName: files[0].name,
               resource: image,
