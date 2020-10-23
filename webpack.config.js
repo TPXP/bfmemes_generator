@@ -4,6 +4,8 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
+const {resolve} = require('path');
+
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
 let publicPath = mode === "production" ? "https://generator.bfmemes.com/" : "";
 process.argv.forEach(v => {
@@ -90,6 +92,9 @@ module.exports = {
     new VueLoaderPlugin(),
   ],
   resolve: {
-    extensions: ['.vue', '.js', '.mjs', '.json', '.sass', '.scss']
+    extensions: ['.vue', '.js', '.mjs', '.json', '.sass', '.scss'],
+    alias: {
+      '@': resolve('src'),
+    }
   }
 };
