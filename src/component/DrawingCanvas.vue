@@ -18,6 +18,7 @@ import {mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiArrowUpDownBol
 import * as Geometry from "../lib/geometry";
 import {mapState} from 'vuex';
 import {fitTextInRectangle} from "../lib/geometry";
+import {downloadImage} from "@/lib/download";
 
 const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true,
     MAGIC_ANGLES = true, MAGIC_ANGLES_PER_CIRCLE = 8, MAGIC_ANGLES_TOLERANCE = Math.PI / (MAGIC_ANGLES_PER_CIRCLE * 3);
@@ -392,13 +393,23 @@ export default {
       });
     },
     download(){
-      // Make a PNG from the canvas
-      const a = document.createElement('a'), now = new Date;
-      a.download = `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`;
-      a.href = this.$refs.canvas.toDataURL("image/png");
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
+      return new Promise(resolve => {
+        const now = new Date, selected = this.$store.state.selectedElement,
+        blobCallback = (blob) => {
+          this.$store.commit('setSelectedElement', selected);
+          resolve(downloadImage(
+            `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`,
+            blob,
+          ));
+        };
+        // Don't show the corner around the selected element
+        this.$store.commit('setSelectedElement', null);
+        this.draw();
+        // If possible, ask for an HD image - I believe we're still getting a full-res image though
+        this.$refs.canvas.toBlobHD
+          ? this.$refs.canvas.toBlobHD(blobCallback, "image/png", 1)
+          : this.$refs.canvas.toBlob(blobCallback, "image/png", 1);
+      })
     },
   },
   mounted() {
