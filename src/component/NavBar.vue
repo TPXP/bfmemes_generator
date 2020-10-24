@@ -92,7 +92,11 @@ export default {
         this.$store.commit('setMode', parseInt(value));
       }
     },
-  }
+  },
+  mounted() {
+    if(window.location.hash === '#about')
+      this.about = true;
+  },
 }
 </script>
 
