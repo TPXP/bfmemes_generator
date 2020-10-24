@@ -211,7 +211,12 @@ export default {
           return;
         }
       }
-      const selected = this.getSelectedIndexesForPosition(this.lastX / this.scale, this.lastY / this.scale);
+      const selected = this.getSelectedIndexesForPosition(this.lastX / this.scale, this.lastY / this.scale)
+        .filter((index) => {
+          if(this.elements[index].requiresMode === void 0)
+            return true;
+          return this.elements[index].requiresMode <= this.mode;
+        });
       this.itemToSelectIfMouseDidNotMouve = selected[0] ?? null;
       // If we clicked on the selected item, switch to move mode immediately
       if(selected.includes(this.$store.state.selectedElement)) {
@@ -420,7 +425,7 @@ export default {
   beforeDestroy() {
     window.removeEventListener('resize', this.onResize);
   },
-  computed: mapState(['elements', 'selectedElement', 'selectedCorner']),
+  computed: mapState(['elements', 'selectedElement', 'selectedCorner', 'mode']),
   watch:{
     elements(){
       this.draw();
