@@ -158,6 +158,7 @@ export default {
         justify-content: center;
         padding:0;
         align-items: flex-start;
+        text-align: left;
       }
     }
   }
