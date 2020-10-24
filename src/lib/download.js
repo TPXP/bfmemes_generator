@@ -12,7 +12,7 @@ export async function downloadImage(name, data) {
    * image fails when pressing the notification. Let's just stick with our pessimistic but safe approach for now
    */
   if(isAndroidWebview()) {
-    // FIXME Add a progress bar for the upload?
+    // FIXME Add a progress bar for the upload? - Requires the switch to XMLHttpRequest or axios
     const upload = await uploadImage(data);
     /**
      * We're still generating a download link, except it's targeting the Imgur URL
