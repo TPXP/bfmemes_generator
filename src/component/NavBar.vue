@@ -10,7 +10,7 @@
       Options
     </a>
     <modal @close="settings = false" :visible="settings">
-      <template v-slot:title>Options du générateur</template>
+      <template v-slot:title>Options</template>
       <h3>Mode</h3>
       <div class="horizontal-slider">
         <input type="range" v-model="mode" min="0" max="2" step="1" />
@@ -27,7 +27,8 @@
       A propos
     </a>
     <modal @close="about = false" :visible="about">
-      <template v-slot:title>BFMemes Generator - Reloaded</template>
+      <template v-slot:title>A propos</template>
+      <h1>BFMemes Generator - Reloaded</h1>
       <p>Un projet open-source mené par Thomas Pathier, rendu possible grâce à&nbsp;:</p>
       <ul>
         <li>Alexis Minotto, pour ses idées et contributions techniques sur la première version du générateur</li>
@@ -107,6 +108,42 @@ export default {
         p{
           color: $primary;
         }
+      }
+    }
+  }
+}
+@media (max-width:530px) {
+  #mainNav {
+    > a {
+      font-size:0;
+      .material-icons {
+        margin-right:0;
+      }
+    }
+  }
+  .horizontal-slider {
+    flex-direction: row;
+    align-items: stretch;
+    $dimension: 250px;
+    height: $dimension;
+    input {
+      transform: rotate(90deg);
+      transform-origin: 15px 15px;
+      width:$dimension * 2/3;
+      margin: $dimension/6 0 0;
+      height:30px;
+      align-self: flex-start;
+    }
+    .options {
+      margin-left:-$dimension*2/3 + 50px;
+      flex-direction: column;
+      flex:1;
+      div {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        padding:0;
+        align-items: flex-start;
       }
     }
   }

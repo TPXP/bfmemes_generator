@@ -83,6 +83,11 @@ export default {
       overflow-y: scroll;
       flex:1;
       padding:20px;
+
+      h1 {
+        margin-top:0;
+        line-height: 30px;
+      }
     }
   }
 }
