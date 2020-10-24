@@ -39,6 +39,20 @@
         <li>Toi, pour contribuer au succès de l'outil</li>
         <li>Et tous ceux que j'ai oublié mais qui se reconnaîtront... ou pas&nbsp;?</li>
       </ul>
+      <h3>Vie privée et confidentialité</h3>
+      <p>Le projet est hébergé par la société Ionos.fr, qui collecte les données de visite du site (notamment adresse
+        IP et cookies) et les traite conformément à
+        <a href="https://www.ionos.fr/terms-gtc/terms-privacy/" target="_blank" rel="noreferrer">sa politique de confidentialité</a>.</p>
+      <p>L'équipe BFMemes a également accès aux données collectées. Ces données sont anonymes et ne sont utilisées
+        qu'à des fins de statistiques de visite.</p>
+      <p>Pour exercer votre doit d'accès et de rectification des données vous concernant, contactez l'équipe BFMemes
+        par courriel à l'adresse <a href="mailto:contact@bfmemes.com">contact@bfmemes.com</a>.</p>
+      <p>Afin de fournir nos services, nous avons également recours aux partenaires suivants qui peuvent collecter
+        des informations sur vous et les traitent conformément à leur politique de confidentialité&nbsp;:</p>
+      <ul>
+        <li><a href="https://policies.google.com/privacy?hl=en" target="_blank" rel="noreferrer">Google fonts</a></li>
+        <li><a href="https://imgur.com/privacy" target="_blank" rel="noreferrer">Imgur</a></li>
+      </ul>
       <h3>Licences</h3>
       <p>Ce projet est distribué sous licence MIT et s'appuie sur de nombreux projets open-source menés par des
         personnes sans doute plus talentueuses que l'auteur de ces lignes, notamment&nbsp;:</p>
