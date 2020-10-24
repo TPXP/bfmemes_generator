@@ -17,7 +17,6 @@
 import {mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiArrowUpDownBold, mdiRotateLeft} from "@mdi/js";
 import * as Geometry from "../lib/geometry";
 import {mapState} from 'vuex';
-import {fitTextInRectangle} from "../lib/geometry";
 import {downloadImage} from "@/lib/download";
 
 const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true,
@@ -113,7 +112,7 @@ export default {
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {lines, fontSize} = fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
+          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
           lines.forEach((line, i) => {
             const x = - width / 2, y = fontSize * (1.2*i+1) - height / 2;
             if(strokeSize)
@@ -175,23 +174,28 @@ export default {
       res.reverse();
       return res;
     },
+    addScrollOffsetToBoundingClientRect({top, left, width, height}) {
+      top += window.scrollY;
+      left += window.scrollX;
+      return {top, left, width, height};
+    },
     onResize(){
       const canvasWrapper = this.$refs.wrapper, canvas = this.$refs.canvas;
       if(!canvasWrapper || !canvas)
         return;
-      this.wrapperBox = canvasWrapper.getBoundingClientRect();
+      this.wrapperBox = this.addScrollOffsetToBoundingClientRect(canvasWrapper.getBoundingClientRect());
       this.scale = this.wrapperBox.width/this.width;
       if(this.scale > 1)
         this.scale = 1;
 
       this.wrapperHeight = this.wrapperBox.width * canvas.height / canvas.width;
       // We changed the height, and we need up-to-date coordinates to know which item to select
-      setTimeout(() => this.wrapperBox = canvasWrapper.getBoundingClientRect(), 0);
+      setTimeout(() => this.wrapperBox = this.addScrollOffsetToBoundingClientRect(canvasWrapper.getBoundingClientRect()), 0);
     },
     onMouseDown(event){
       this.mouseDown = true;
-      this.lastX = event.clientX - this.wrapperBox.left;
-      this.lastY = event.clientY - this.wrapperBox.top;
+      this.lastX = window.scrollX + event.clientX - this.wrapperBox.left;
+      this.lastY = window.scrollY + event.clientY - this.wrapperBox.top;
       // Did we click a handle?
       const element = this.$store.state.elements[this.$store.state.selectedElement];
       if(element) {
@@ -246,8 +250,8 @@ export default {
       this.bypassWheelCheck = false;
       if(!this.mouseDown)
         return;
-      let currentX = event.clientX - this.wrapperBox.left;
-      let currentY = event.clientY - this.wrapperBox.top;
+      let currentX = window.scrollX + event.clientX - this.wrapperBox.left;
+      let currentY = window.scrollY + event.clientY - this.wrapperBox.top;
       if(this.shortIntervalAfterMouseDown) {
         // Hold on, you didn't wait for the element below your mouse to be selected. Are you not too far?
         if (Math.abs(currentX - this.lastX) < 20 && Math.abs(currentY - this.lastY) < 20)
@@ -333,8 +337,8 @@ export default {
       this.lastY = currentY;
     },
     onWheel(event){
-      let currentX = (event.clientX - this.wrapperBox.left) / this.scale;
-      let currentY = (event.clientY - this.wrapperBox.top) / this.scale;
+      let currentX = (window.scrollX + event.clientX - this.wrapperBox.left) / this.scale;
+      let currentY = (window.scrollY + event.clientY - this.wrapperBox.top) / this.scale;
       // Make sure we're hover the selected item
       if(!this.bypassWheelCheck && !this.getSelectedIndexesForPosition(currentX, currentY).includes(this.$store.state.selectedElement))
         return;
@@ -351,8 +355,8 @@ export default {
       this.onMouseDown(event.touches[0]);
       // Just save second finger position if we have one
       if(event.touches.length > 1) {
-        this.secondFingerX = event.touches[1].clientX - this.wrapperBox.left;
-        this.secondFingerY = event.touches[1].clientY - this.wrapperBox.top;
+        this.secondFingerX = window.scrollX + event.touches[1].clientX - this.wrapperBox.left;
+        this.secondFingerY = window.scrollY + event.touches[1].clientY - this.wrapperBox.top;
       }
     },
     onTouchMove(event) {
@@ -362,10 +366,10 @@ export default {
       // Two fingers ? We're manipulating the initially selected item then
       this.$store.commit('setSelectedElement', this.selectedForTouch);
       // Else calculate position on canvas for both
-      const f1X = event.touches[0].clientX - this.wrapperBox.left,
-          f1Y = event.touches[0].clientY - this.wrapperBox.top,
-          f2X = event.touches[1].clientX - this.wrapperBox.left,
-          f2Y = event.touches[1].clientY - this.wrapperBox.top;
+      const f1X = window.scrollX + event.touches[0].clientX - this.wrapperBox.left,
+          f1Y = window.scrollY + event.touches[0].clientY - this.wrapperBox.top,
+          f2X = window.scrollX + event.touches[1].clientX - this.wrapperBox.left,
+          f2Y = window.scrollY + event.touches[1].clientY - this.wrapperBox.top;
 
       // Get the distance difference to know by how much we need to zoom
       const lastDist = Geometry.distance([this.lastX, this.lastY], [this.secondFingerX, this.secondFingerY]),
