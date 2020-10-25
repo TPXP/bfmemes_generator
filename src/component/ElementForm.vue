@@ -79,6 +79,7 @@ import {ELEMENT_COMPONENTS, MODE_EXPRESS} from "../lib/constants";
 import CenteredImagePreview from "./CenteredImagePreview";
 import {getFonts, loadFont} from "../lib/fonts";
 import {mapState} from "vuex";
+import {readBlobAsDataURL} from "@/lib/download";
 export default {
   name: "ElementForm",
   components: {ColorsPicker, CenteredImagePreview},
@@ -135,23 +136,20 @@ export default {
         throw new Error('Could not find back the font object. Duplicate or missing font name?');
       loadFont(fontObject[0]).then(() => this.$emit('forceRedraw', {reason: 'fontLoaded'}));
     },
-    handleImageFile(event){
-      const {files} = event.target;
-      if(files.length !== 1) // No file selected (or multiple files?)
-        return;
-      // Read the image file, and get its dimensions
-      const fileReader = new FileReader();
-      fileReader.onerror = e => this.imageError = e;
-      fileReader.onloadend = ev => {
-        const {result} = ev.target;
+    async handleImageFile(event){
+      try {
+        const {files} = event.target;
+        if (files.length !== 1) // No file selected (or multiple files?)
+          return;
+        // Read the image file, and get its dimensions
         const image = new Image;
         image.onload = () => {
           // Resize the rectangle to not stretch the image for now - cover strategy
           let {height, width} = this.element;
           const imageRatio = image.width / image.height,
-            elementRatio = width / height;
+              elementRatio = width / height;
 
-          if(imageRatio > elementRatio) // We must increase the width
+          if (imageRatio > elementRatio) // We must increase the width
             width = height * imageRatio;
           else // We must increase the height
             height = width / imageRatio;
@@ -167,11 +165,12 @@ export default {
             }
           })
         };
-        image.onerror = e => this.imageError = e;
+        image.onerror = e => { throw e }
         // Load the image
-        image.src = result;
-      };
-      fileReader.readAsDataURL(files[0]);
+        image.src = await readBlobAsDataURL(files[0]);
+      } catch (e) {
+        this.imageError = e;
+      }
     },
     confirmWholeDelete(){
       if(confirm("Voulez-vous vraiment supprimer cet élément complet ?"))

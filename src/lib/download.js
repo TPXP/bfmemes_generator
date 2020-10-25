@@ -1,6 +1,20 @@
 import {isAndroidWebview} from "@/lib/user-agent";
 import {uploadImage} from "@/lib/imgur";
 
+export function readBlobAsDataURL (blob) {
+  return new Promise((resolve, reject) => {
+    const fileReader = new FileReader();
+    fileReader.onerror = reject;
+    fileReader.onloadend = function(){
+      resolve(fileReader.result);
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    }
+    fileReader.readAsDataURL(blob);
+  });
+}
+
 export async function downloadImage(name, data) {
   const a = document.createElement('a');
   a.download = name;
@@ -42,17 +56,8 @@ export async function downloadImage(name, data) {
     return;
   }
   // Else, just use a blob URI
-  return new Promise((resolve, reject) => {
-    // Use the FileReader to get the blob as a data URI
-    const fileReader = new FileReader();
-    fileReader.onerror = reject;
-    fileReader.onloadend = function(){
-      a.href = fileReader.result;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      resolve();
-    }
-    fileReader.readAsDataURL(data);
-  });
+  a.href = await readBlobAsDataURL(data);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
 }
