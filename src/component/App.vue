@@ -5,7 +5,7 @@
       <div class="spacer" />
       <drawing-canvas ref="canvas" />
       <div class="spacer" />
-      <elements-list @download="$refs.canvas.download()" @forceRedraw="$refs.canvas.draw()"/>
+      <elements-list @download="download" @forceRedraw="$refs.canvas.draw()" />
     </div>
   </div>
 </template>
@@ -14,10 +14,20 @@
 import DrawingCanvas from "./DrawingCanvas";
 import ElementsList from "./ElementsList";
 import NavBar from "./NavBar";
+import {downloadImage} from "@/lib/download";
 
 export default {
   name: "App.vue",
   components: {NavBar, ElementsList, DrawingCanvas},
+  methods:{
+    async download() {
+      const now = new Date, blob = await this.$refs.canvas?.render();
+      return downloadImage(
+        `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`,
+        blob,
+      );
+    }
+  }
 }
 </script>
 

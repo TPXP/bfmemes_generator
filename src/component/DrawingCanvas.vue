@@ -17,7 +17,6 @@
 import {mdiArrowLeftRightBold, mdiArrowTopLeftBottomRightBold, mdiArrowUpDownBold, mdiRotateLeft} from "@mdi/js";
 import * as Geometry from "../lib/geometry";
 import {mapState} from 'vuex';
-import {downloadImage} from "@/lib/download";
 
 const ZOOM_FACTOR = 1.1, SCALE_ONLY_ONE_SIDE = true,
     MAGIC_ANGLES = true, MAGIC_ANGLES_PER_CIRCLE = 8, MAGIC_ANGLES_TOLERANCE = Math.PI / (MAGIC_ANGLES_PER_CIRCLE * 3);
@@ -401,15 +400,12 @@ export default {
         angle,
       });
     },
-    download(){
+    render(){
       return new Promise(resolve => {
-        const now = new Date, selected = this.$store.state.selectedElement,
+        const selected = this.$store.state.selectedElement,
         blobCallback = (blob) => {
           this.$store.commit('setSelectedElement', selected);
-          resolve(downloadImage(
-            `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`,
-            blob,
-          ));
+          resolve(blob);
         };
         // Don't show the corner around the selected element
         this.$store.commit('setSelectedElement', null);
