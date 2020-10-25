@@ -5,7 +5,16 @@
       <div class="spacer" />
       <drawing-canvas ref="canvas" />
       <div class="spacer" />
-      <elements-list @download="download" @forceRedraw="$refs.canvas.draw()" />
+      <elements-list @forceRedraw="$refs.canvas.draw()">
+        <slot name="listBottom">
+          <div class="downloadRow">
+            <a class="button large secondary" @click="download">
+              <span class="material-icons">cloud_download</span>
+              Télécharger
+            </a>
+          </div>
+        </slot>
+      </elements-list>
     </div>
   </div>
 </template>

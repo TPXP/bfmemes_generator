@@ -25,12 +25,7 @@
           @click="addElement({[element.key]:element.defaultValue})">{{ element.icon }}</a>
       </div>
     </template>
-    <div class="downloadRow">
-      <a class="button large secondary" @click="$emit('download')">
-        <span class="material-icons">cloud_download</span>
-        Télécharger
-      </a>
-    </div>
+    <slot v-slot="listBottom"></slot>
   </div>
 </template>
 
