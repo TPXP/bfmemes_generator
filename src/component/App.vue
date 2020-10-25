@@ -12,10 +12,16 @@
               <span class="material-icons">cloud_download</span>
               Télécharger
             </a>
+            <a class="button primary" @click="beginResize">
+              <span class="material-icons">crop</span>
+              Redimensionner
+            </a>
           </div>
         </slot>
       </elements-list>
     </div>
+    <image-resizer v-if="resizeData" @done="resizeComplete" :image="resizeData.image"
+                   :can-crop="true" :can-expand="true" />
   </div>
 </template>
 
@@ -23,11 +29,15 @@
 import DrawingCanvas from "./DrawingCanvas";
 import ElementsList from "./ElementsList";
 import NavBar from "./NavBar";
-import {downloadImage} from "@/lib/download";
+import {downloadImage, readBlobAsDataURL} from "@/lib/download";
+import ImageResizer from "@/component/ImageResizer";
 
 export default {
   name: "App.vue",
-  components: {NavBar, ElementsList, DrawingCanvas},
+  components: {ImageResizer, NavBar, ElementsList, DrawingCanvas},
+  data() { return {
+    resizeData: null,
+  } },
   methods:{
     async download() {
       const now = new Date, blob = await this.$refs.canvas?.render();
@@ -35,6 +45,17 @@ export default {
         `bfmeme_${now.getFullYear()}${now.getMonth()+1}${now.getDate()}_${now.getHours()}${now.getMinutes()}${now.getSeconds()}.png`,
         blob,
       );
+    },
+    async beginResize() {
+      // Put the canvas blob in an image source, and pass the whole data to the resize object
+      const image = new Image();
+      image.onload = () => this.resizeData = {
+        image,
+      };
+      image.src = await this.$refs.canvas?.render().then(r => readBlobAsDataURL(r));
+    },
+    async resizeComplete(data) {
+
     }
   }
 }
