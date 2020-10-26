@@ -5,12 +5,7 @@ export function readBlobAsDataURL (blob) {
   return new Promise((resolve, reject) => {
     const fileReader = new FileReader();
     fileReader.onerror = reject;
-    fileReader.onloadend = function(){
-      resolve(fileReader.result);
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    }
+    fileReader.onloadend = () => resolve(fileReader.result);
     fileReader.readAsDataURL(blob);
   });
 }
