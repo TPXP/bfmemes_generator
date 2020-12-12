@@ -1,8 +1,19 @@
 <template>
-  <nav id="mainNav">
-    <div class="logo">
+  <nav id="mainNav" @click="closeSubMenu" v-on-clickaway="closeSubMenu">
+    <div class="logo" @click.stop="expandSubmenu = !expandSubmenu">
+      <i class="material-icons moreToggle">{{expandSubmenu ? "expand_more" : "chevron_right"}}</i>
       <h1>BFMemes Generator</h1>
       <em>Reloaded</em>
+    </div>
+    <div class="submenu" v-if="expandSubmenu" @click.stop>
+      <a href="https://bfmemes.com" rel="noreferrer" target="_blank">
+        <i class="material-icons">history_edu</i>
+        BFMemes.com
+      </a>
+      <a href="https://bfmemes.com/papier-toilette" rel="noreferrer" target="_blank">
+        <i class="material-icons">mouse</i>
+        A court de PQ ?
+      </a>
     </div>
     <div class="spacer" />
     <a @click="settings = true">
@@ -71,7 +82,8 @@
 
 <script>
 import Modal from "./Modal";
-import {MODES} from "../lib/constants";
+import {MODES} from "@/lib/constants";
+import {mixin as clickaway} from "vue-clickaway2";
 export default {
   name: "AboutLink",
   components: {Modal},
@@ -79,7 +91,9 @@ export default {
     about: false,
     settings: false,
     modesList: MODES,
+    expandSubmenu: false,
   }},
+  mixins: [clickaway],
   computed: {
     year() {
       return (new Date).getFullYear();
@@ -91,6 +105,11 @@ export default {
       set(value) {
         this.$store.commit('setMode', parseInt(value));
       }
+    },
+  },
+  methods: {
+    closeSubMenu() {
+      this.expandSubmenu = false;
     },
   },
   mounted() {
@@ -164,6 +183,51 @@ export default {
         align-items: flex-start;
         text-align: left;
       }
+    }
+  }
+}
+.logo {
+  cursor: pointer;
+  &:hover {
+    background: #fff2;
+  }
+}
+.moreToggle {
+  font-size: 40px;
+  position: relative;
+  left:-5px;
+  top:2px;
+}
+#mainNav {
+  position: relative;
+}
+.submenu {
+  position: absolute;
+  top:100%;
+  left:0;
+  width:200px;
+  background: $darkerPrimary;
+  border-bottom-right-radius: 10px;
+  box-shadow: 0 0 10px #0002;
+  overflow: hidden;
+  border-width: 0 1px 1px 0;
+  border-color: darken($darkerPrimary, 30);
+  border-style: solid;
+  a {
+    border-top: 1px solid darken($darkerPrimary, 30);
+    display: block;
+    height:50px;
+    line-height: 30px;
+    padding:10px;
+    color: $white;
+    .material-icons {
+      line-height: 30px;
+      vertical-align: top;
+      margin-right: 5px;
+    }
+    &:hover {
+      text-decoration: none;
+      background: #fff2;
     }
   }
 }
