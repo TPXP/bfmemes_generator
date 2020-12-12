@@ -29,10 +29,10 @@
     <modal @close="about = false" :visible="about">
       <template v-slot:title>A propos</template>
       <h1>BFMemes Generator - Reloaded</h1>
-      <p>Un projet open-source mené par Thomas Pathier, rendu possible grâce à&nbsp;:</p>
+      <p>Un projet open-source mené par Thomas Pathier, d'après une idée originale de "Jean Bono", rendu possible grâce à&nbsp;:</p>
       <ul>
         <li>Alexis Minotto, pour ses idées et contributions techniques sur la première version du générateur</li>
-        <li>L'équipe d'administration et de modération du Neurchi de Templates pour leurs idées et retours
+        <li>L'équipe d'administration et de modération du Neurchi de memes d'Actualités pour leurs idées et retours
           constructifs</li>
         <li>Mon PC, dont j'ai massacré le très agréable clavier pour parvenir à mes fins</li>
         <li>Ma maman, car c'est la meilleure, et mon papa aussi &lt;3</li>
