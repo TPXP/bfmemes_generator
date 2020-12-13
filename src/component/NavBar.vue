@@ -39,7 +39,10 @@
     </a>
     <modal @close="about = false" :visible="about">
       <template v-slot:title>A propos</template>
-      <h1>BFMemes Generator - Reloaded</h1>
+      <h1>
+        BFMemes Generator - Reloaded
+        <em class="version">Version {{appVersion}} - {{appBranch}}</em>
+      </h1>
       <p>Un projet open-source mené par Thomas Pathier, d'après une idée originale de "Jean Bono", rendu possible grâce à&nbsp;:</p>
       <ul>
         <li>Alexis Minotto, pour ses idées et contributions techniques sur la première version du générateur</li>
@@ -95,6 +98,8 @@ export default {
   }},
   mixins: [clickaway],
   computed: {
+    appVersion() { return __GIT_VERSION; },
+    appBranch() { return __GIT_BRANCH; },
     year() {
       return (new Date).getFullYear();
     },
@@ -230,5 +235,12 @@ export default {
       background: #fff2;
     }
   }
+}
+.version {
+  font-size:14px;
+  display: block;
+  text-align: right;
+  font-weight: normal;
+  line-height: 20px;
 }
 </style>

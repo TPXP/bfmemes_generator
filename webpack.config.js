@@ -2,7 +2,10 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 // To clean the dist folder on build
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+const GitRevisionPlugin = require('git-revision-webpack-plugin');
+const {DefinePlugin} = require("webpack");
+const gitRevisionPlugin = new GitRevisionPlugin();
 
 const {resolve} = require('path');
 
@@ -61,7 +64,7 @@ module.exports = {
       },
       {
         test: /\.(png|jpe?g|webp)$/i,
-        // Load these files as raw (put them in the bundle)
+        // Resizeable images
         use: [{
           loader: 'responsive-loader',
           options: {
@@ -71,6 +74,7 @@ module.exports = {
       },
       {
         test: /\.(otf|woff|eot|ttf|woff2)$/i,
+        // Load these files as raw (put them in the bundle)
         use:[{
           loader: 'file-loader',
         }]
@@ -90,6 +94,10 @@ module.exports = {
       filename: '[hash].css',
     }),
     new VueLoaderPlugin(),
+    new DefinePlugin({
+      __GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
+      __GIT_BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+    })
   ],
   resolve: {
     extensions: ['.vue', '.js', '.mjs', '.json', '.sass', '.scss'],

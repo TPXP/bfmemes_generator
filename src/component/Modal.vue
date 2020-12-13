@@ -83,6 +83,7 @@ export default {
       overflow-y: scroll;
       flex:1;
       padding:20px;
+      text-align: justify;
 
       h1 {
         margin-top:0;
