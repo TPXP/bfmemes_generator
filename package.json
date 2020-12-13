@@ -45,6 +45,6 @@
   "scripts": {
     "dev": "webpack-dev-server --hot --progress --colors",
     "build": "webpack --prod",
-    "postinstall": "postinstall"
+    "postinstall": "patch-package"
   }
 }
