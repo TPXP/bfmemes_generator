@@ -107,16 +107,21 @@ export default {
         }
         if (text?.value) {
           // How does the text fit in the square?
-          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight} = text;
+          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight = 1.2, forbiddenAreas = []} = text;
+          /* // DEBUG: draw forbidden areas
+          forbiddenAreas.forEach(({width:aWidth, top, height:aHeight, isOnRight}) => {
+            ctx.fillStyle='#f604';
+            ctx.fillRect(- width / 2 + (isOnRight ? width - aWidth : 0), top - height / 2, aWidth, aHeight);
+          }) // */
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
-          lines.forEach((line, i) => {
-            const x = - width / 2, y = fontSize * (1.2*i+1) - height / 2;
+          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight, forbiddenAreas});
+          lines.forEach(({text = '', left:lLeft = 0}, i) => {
+            const x = - width / 2, y = fontSize * (lineHeight * i + 1) - height / 2;
             if(strokeSize)
-              ctx.strokeText(line, x, y);
-            ctx.fillText(line, x, y);
+              ctx.strokeText(text, x + lLeft, y);
+            ctx.fillText(text, x + lLeft, y);
           });
         }
         ctx.restore();

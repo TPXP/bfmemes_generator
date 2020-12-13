@@ -149,6 +149,23 @@ const store = new Vuex.Store({
         value: "",
       },
     }, {
+      name: "Détails",
+      centerX: 555,
+      centerY: 685,
+      width: 965,
+      height: 120,
+      angle: 0,
+      text: {
+        colors: ['#000'],
+        font: 'Camber',
+        value: "",
+        maxSize: 33,
+        forbiddenAreas:[
+          {top:0, isOnRight:false, width: 285, height: 35},
+          {top:40, isOnRight:true, width: 250, height: 40}
+        ]
+      },
+    },{
       name: "Détails (1/2)",
       centerX: 700,
       centerY: 645,
