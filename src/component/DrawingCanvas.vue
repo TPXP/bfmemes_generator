@@ -214,15 +214,24 @@ export default {
           return;
         }
       }
+      const currentItemHoldsSelected = element.holdsSelectedUntilMode !== void 0
+          && this.mode <= element.holdsSelectedUntilMode;
       const selected = this.getSelectedIndexesForPosition(this.lastX / this.scale, this.lastY / this.scale)
         .filter((index) => {
+          // If the current item holds selected, we will only accept other items holding selected
+          if(currentItemHoldsSelected && (this.elements[index].holdsSelectedUntilMode === void 0
+            || this.mode > this.elements[index].holdsSelectedUntilMode))
+            return false;
+          // Make sure the current mode accepts modifying this item
           if(this.elements[index].requiresMode === void 0)
             return true;
           return this.elements[index].requiresMode <= this.mode;
         });
+      if(currentItemHoldsSelected && selected.length === 0)
+        selected.push(this.selectedElement);
       this.itemToSelectIfMouseDidNotMouve = selected[0] ?? null;
       // If we clicked on the selected item, switch to move mode immediately
-      if(selected.includes(this.$store.state.selectedElement)) {
+      if(selected.includes(this.selectedElement)) {
         this.currentMode = 'MOVE';
       }
       // Else, select the first item only after after some time (or on mouse up)

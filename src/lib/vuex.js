@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
-import {MODE_ADVANCED, MODE_EXPERT, MODES} from "./constants";
+import {MODE_ADVANCED, MODE_EXPERT, MODE_EXPRESS, MODES} from "./constants";
 
 Vue.use(Vuex);
 
@@ -22,7 +22,8 @@ const store = new Vuex.Store({
       centerX: 640,
       centerY: 360,
       angle: 0,
-      image: {}
+      image: {},
+      holdsSelectedUntilMode: MODE_EXPRESS,
     }, {
       name: "Bandeau blanc",
       backgroundColors: ['#fff'],
