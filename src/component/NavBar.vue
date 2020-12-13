@@ -75,9 +75,13 @@
         <li>Vue, VueX, Vue-Color, Vue-loader, vue-draggable</li>
         <li>Font-Face observer</li>
         <li>Les Material Design Icons</li>
+        <li>Le paquet NPM patch-package</li>
       </ul>
       <p>Les polices et éléments graphiques utilisés appartiennent à leurs auteurs respectifs lorsque applicable.</p>
-      <p>Copyright {{year}} Thomas Pathier et contributeurs</p>
+      <p>Cet outil est fourni à des fins humoristiques. Les auteurs déclinent toute responsabilité résultant d'une
+        utilisation de cet outil à d'autres fins. N'utilisez pas cet outil pour propager des fausses nouvelles, infox
+        ou <em>fake news</em> (rayer la ou les mentions inutiles) s'il vous plaît. 🙏</p>
+      <p>&copy; Copyright {{year}} Thomas Pathier et contributeurs</p>
       <p><a href="https://youtu.be/mVP42Z_7S5M?t=398" target="_blank">FRANCE</a></p>
     </modal>
   </nav>
