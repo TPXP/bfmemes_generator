@@ -1,28 +1,28 @@
 <template>
   <div class="colorPickers">
-    <div class="color" v-for="(color, index) of value" @click="opened = opened === index ? null : index" :key="index"
-         v-on-clickaway="opened === index ? close : () => {}" :data-index="index">
+    <div class="color" v-for="(color, index) of value" @click="opened = index" :key="index">
       <div class="preview" :style="`background:${color}`" />
       <span class="delete material-icons" v-if="value.length > 1" @click="deleteColor(index)">cancel</span>
-      <transition name="pop">
-        <div class="wrapper" v-if="opened === index" @click.stop>
-          <chrome :value="color || '#0000'" @input="setColor(index, $event)" />
-        </div>
-      </transition>
     </div>
     <span class="material-icons add" @click="addColor">add</span>
+    <Modal v-if="value" :visible="opened !== null" @close="opened = null">
+      <template v-slot:title>Couleur</template>
+      <div class="center">
+        <sketch :value="value[opened] || '#0000'" @input="setColor(opened, $event)" />
+      </div>
+    </Modal>
   </div>
 </template>
 
 <script>
-import {Chrome} from 'vue-color';
-import { mixin as clickaway } from 'vue-clickaway2';
+import {Sketch} from 'vue-color';
+import Modal from "@/component/Modal";
 export default {
   name: "ColorsPicker",
   components: {
-    Chrome
+    Modal,
+    Sketch
   },
-  mixins: [clickaway],
   props: {
     value: Array,
   },
@@ -139,5 +139,12 @@ export default {
       top:110%;
       opacity: 1;
     }
+  }
+  .center {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height:100%;
+    justify-content: center;
   }
 </style>
