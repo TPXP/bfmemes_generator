@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
 import BFMemesTVPNG from '../assets/images/bfmemestv.png?size=130';
-import {MODE_ADVANCED, MODE_EXPERT, MODES} from "./constants";
+import {MODE_ADVANCED, MODE_EXPERT, MODE_EXPRESS, MODES} from "./constants";
 
 Vue.use(Vuex);
 
@@ -22,7 +22,8 @@ const store = new Vuex.Store({
       centerX: 640,
       centerY: 360,
       angle: 0,
-      image: {}
+      image: {},
+      holdsSelectedUntilMode: MODE_EXPRESS,
     }, {
       name: "Bandeau blanc",
       backgroundColors: ['#fff'],
@@ -148,6 +149,23 @@ const store = new Vuex.Store({
         value: "",
       },
     }, {
+      name: "Détails",
+      centerX: 555,
+      centerY: 685,
+      width: 965,
+      height: 120,
+      angle: 0,
+      text: {
+        colors: ['#000'],
+        font: 'Camber',
+        value: "",
+        maxSize: 33,
+        forbiddenAreas:[
+          {top:0, isOnRight:false, width: 285, height: 35},
+          {top:40, isOnRight:true, width: 250, height: 40}
+        ]
+      },
+    },{
       name: "Détails (1/2)",
       centerX: 700,
       centerY: 645,

@@ -41,7 +41,7 @@ a {
 }
 
 #app{
-  min-height: 100vh;
+  height: 100vh;
   display: flex;
   flex-direction: column;
 }
@@ -55,12 +55,11 @@ a {
   z-index: 1;
   .logo{
     position: relative;
-    min-width: 250px;
+    min-width: 260px;
     flex:0;
     display: flex;
     align-items: center;
-    margin-bottom: 6px;
-    padding:10px;
+    padding:10px 10px 16px;
     h1{
       margin:0;
       font-size: 20px;
@@ -68,8 +67,8 @@ a {
     }
     em {
       position: absolute;
-      bottom:0;
-      right:0;
+      bottom:4px;
+      right:10px;
       font-size: 10px;
     }
   }
@@ -172,4 +171,11 @@ $buttonRadius: 5px;
 .button.material-icons {
   padding-top:8px;
   padding-bottom: 8px;
+}
+
+@media(max-width: 620px) {
+  #app {
+    height: auto;
+    min-height: 100vh;
+  }
 }

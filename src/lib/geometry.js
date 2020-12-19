@@ -58,7 +58,7 @@ export function tryMatchingMagicAngle(angle, n_divisions, tolerance) {
   return angle;
 }
 
-export function fitTextInRectangle(canvas, {maxSize, text, width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = ''}) {
+export function fitTextInRectangle(canvas, {maxSize, text, width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = '', forbiddenAreas = []}) {
   // This is a dichotomy algorithm between 1 and maxSize - Yes, I studied this in class!
   let a = 1, b = maxSize;
   // If we ever fall back to font size 1, put everything on the same line
@@ -73,28 +73,72 @@ export function fitTextInRectangle(canvas, {maxSize, text, width, height, fontFa
 
   const words = text.split(' ');
 
+  function computeLineDimensions(index, fontSize) {
+    const lTop = index * lineHeight * fontSize;
+    let lLeft = 0, lWidth = width;
+    // We have a rectangle of lWidth * fontSize at (lLeft, lTop). Find intersections with forbiddenAreas
+    for (let {top, isOnRight = false, width: areaWidth, height:areaHeight} of forbiddenAreas){
+      // We only accept rectangles on the sides of the text. No stuff in the middle!
+      // Put the rectangle position relative to the line
+      top -= lTop;
+      // No vertical intersection with the line (above/below)
+      if(top > fontSize /* below */ || top + areaHeight < 0 /* above */)
+        continue;
+      if(isOnRight) {
+        // Crop it on the right if needed
+        if(lLeft + lWidth > width - areaWidth)
+          lWidth = width - areaWidth - lLeft;
+      } else { // The space is on the right
+        if(lLeft < areaWidth) {
+          // Reduce the line width by the space we're taking
+          lWidth -= (areaWidth - lLeft);
+          // And change the left dimension
+          lLeft = areaWidth;
+        }
+      }
+      // We've reached invalid dimensions
+      if(lWidth <= 0 || lLeft >= width)
+        return {left: width, availableWidth: 0, invalid: true};
+    }
+    return {left: lLeft, availableWidth: lWidth};
+  }
+
   while(a !== b) {
     // The dichotomy part - here we only work on integers, which greatly helps in reducing the number of rounds
-    const c = Math.floor((a + b)/2) + 1;
+    const c = Math.floor((a + b)/2) + 1, maxLines = Math.floor(height / (c * lineHeight)), candidate = [];
 
-    let candidate = [''], currentLineWidth = 0, it_fits = true, spaceWidth = 0; // For the very first word, don't add the space width
+    function addNewLine(){
+      candidate.push({
+        ...computeLineDimensions(candidate.length, c),
+        width: 0,
+        text: '',
+      });
+    }
+    addNewLine();
+    let it_fits = true, spaceWidth = 0; // For the very first word, don't add the space width
     canvas.font = `${fontWeight}${c}px ${fontFamily}`;
-    // How big is a space?
     for(let word of words){
       const wordWidth = canvas.measureText(word).width;
-      if(wordWidth + spaceWidth > width){
+      // Trivial case: a full word does not fit!
+      if(wordWidth > width){
         it_fits = false;
         break;
       }
       // If it does not fit on the line, jump a line
-      if(wordWidth + spaceWidth + currentLineWidth > width){
-        candidate.push(word);
-        currentLineWidth = wordWidth;
+      if(wordWidth + spaceWidth + candidate[candidate.length - 1].width > candidate[candidate.length - 1].availableWidth){
+        // Find the next possible line
+        do {
+          addNewLine();
+        } while (candidate[candidate.length - 1].availableWidth < wordWidth && candidate.length < maxLines)
+        // If we added too many lines, it will be caught below (it_fits will be set to false)
+        candidate[candidate.length - 1].width = wordWidth;
+        candidate[candidate.length - 1].text = word;
       } else { // Else, add it at the end
-        currentLineWidth += wordWidth + spaceWidth;
-        candidate[candidate.length - 1] += `${spaceWidth ? ' ' : ''}${word}`;
+        candidate[candidate.length - 1].width += wordWidth + spaceWidth;
+        candidate[candidate.length - 1].text += `${spaceWidth ? ' ' : ''}${word}`;
       }
-      if(candidate.length * c * lineHeight > height) {
+      // Do we have too many lines?
+      if(candidate.length > maxLines) {
         it_fits = false;
         break;
       }

@@ -1,0 +1,35 @@
+diff --git a/node_modules/vue-color/dist/vue-color.js b/node_modules/vue-color/dist/vue-color.js
+index 3ac9633..4b3375e 100644
+--- a/node_modules/vue-color/dist/vue-color.js
++++ b/node_modules/vue-color/dist/vue-color.js
+@@ -1265,8 +1265,8 @@ exports.default = {
+ 
+       var xOffset = container.getBoundingClientRect().left + window.pageXOffset;
+       var yOffset = container.getBoundingClientRect().top + window.pageYOffset;
+-      var pageX = e.pageX || (e.touches ? e.touches[0].pageX : 0);
+-      var pageY = e.pageY || (e.touches ? e.touches[0].pageY : 0);
++      var pageX = (e.touches ? e.touches[0].pageX : 0) || e.pageX;
++      var pageY = (e.touches ? e.touches[0].pageY : 0) || e.pageY;
+       var left = pageX - xOffset;
+       var top = pageY - yOffset;
+ 
+@@ -1602,8 +1602,8 @@ exports.default = {
+ 
+       var xOffset = container.getBoundingClientRect().left + window.pageXOffset;
+       var yOffset = container.getBoundingClientRect().top + window.pageYOffset;
+-      var pageX = e.pageX || (e.touches ? e.touches[0].pageX : 0);
+-      var pageY = e.pageY || (e.touches ? e.touches[0].pageY : 0);
++      var pageX = (e.touches ? e.touches[0].pageX : 0) || e.pageX;
++      var pageY = (e.touches ? e.touches[0].pageY : 0) || e.pageY;
+       var left = (0, _clamp2.default)(pageX - xOffset, 0, containerWidth);
+       var top = (0, _clamp2.default)(pageY - yOffset, 0, containerHeight);
+       var saturation = left / containerWidth;
+@@ -1679,7 +1679,7 @@ exports.default = {
+       var containerWidth = container.clientWidth;
+ 
+       var xOffset = container.getBoundingClientRect().left + window.pageXOffset;
+-      var pageX = e.pageX || (e.touches ? e.touches[0].pageX : 0);
++      var pageX = (e.touches ? e.touches[0].pageX : 0) || e.pageX;
+       var left = pageX - xOffset;
+ 
+       var a;

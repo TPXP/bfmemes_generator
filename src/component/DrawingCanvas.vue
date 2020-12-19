@@ -107,16 +107,21 @@ export default {
         }
         if (text?.value) {
           // How does the text fit in the square?
-          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight} = text;
+          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight = 1.2, forbiddenAreas = []} = text;
+          /* // DEBUG: draw forbidden areas
+          forbiddenAreas.forEach(({width:aWidth, top, height:aHeight, isOnRight}) => {
+            ctx.fillStyle='#f604';
+            ctx.fillRect(- width / 2 + (isOnRight ? width - aWidth : 0), top - height / 2, aWidth, aHeight);
+          }) // */
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
-          lines.forEach((line, i) => {
-            const x = - width / 2, y = fontSize * (1.2*i+1) - height / 2;
+          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight, forbiddenAreas});
+          lines.forEach(({text = '', left:lLeft = 0}, i) => {
+            const x = - width / 2, y = fontSize * (lineHeight * i + 1) - height / 2;
             if(strokeSize)
-              ctx.strokeText(line, x, y);
-            ctx.fillText(line, x, y);
+              ctx.strokeText(text, x + lLeft, y);
+            ctx.fillText(text, x + lLeft, y);
           });
         }
         ctx.restore();
@@ -214,15 +219,24 @@ export default {
           return;
         }
       }
+      const currentItemHoldsSelected = element.holdsSelectedUntilMode !== void 0
+          && this.mode <= element.holdsSelectedUntilMode;
       const selected = this.getSelectedIndexesForPosition(this.lastX / this.scale, this.lastY / this.scale)
         .filter((index) => {
+          // If the current item holds selected, we will only accept other items holding selected
+          if(currentItemHoldsSelected && (this.elements[index].holdsSelectedUntilMode === void 0
+            || this.mode > this.elements[index].holdsSelectedUntilMode))
+            return false;
+          // Make sure the current mode accepts modifying this item
           if(this.elements[index].requiresMode === void 0)
             return true;
           return this.elements[index].requiresMode <= this.mode;
         });
+      if(currentItemHoldsSelected && selected.length === 0)
+        selected.push(this.selectedElement);
       this.itemToSelectIfMouseDidNotMouve = selected[0] ?? null;
       // If we clicked on the selected item, switch to move mode immediately
-      if(selected.includes(this.$store.state.selectedElement)) {
+      if(selected.includes(this.selectedElement)) {
         this.currentMode = 'MOVE';
       }
       // Else, select the first item only after after some time (or on mouse up)

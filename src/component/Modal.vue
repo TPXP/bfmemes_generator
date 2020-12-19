@@ -80,9 +80,11 @@ export default {
       }
     }
     .content {
-      overflow-y: scroll;
+      overflow-y: auto;
       flex:1;
       padding:20px;
+      text-align: justify;
+      position: relative;
 
       h1 {
         margin-top:0;

@@ -132,7 +132,7 @@ export default {
       this.$store.commit('setSelectedElement', null);
     },
     onDragEnd(){ // This will always be called, even if there are no changes. So we want to reset the selected element here
-      // NOTE: The selected element might move, so this is not reliable!
+      // NOTE: The selected element might move, the onDragChange method handles this!
       this.$store.commit('setSelectedElement', this.selectedOnDrag);
       this.selectedOnDrag = null;
     },
