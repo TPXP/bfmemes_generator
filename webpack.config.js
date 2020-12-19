@@ -11,6 +11,8 @@ const {resolve} = require('path');
 
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
 let publicPath = mode === "production" ? "https://generator.bfmemes.com/" : "";
+if(process.env['VERCEL_URL'])
+  publicPath = `https://${process.env['VERCEL_URL']}/`
 process.argv.forEach(v => {
   if(v.startsWith('--url='))
     publicPath = v.substr(6);
