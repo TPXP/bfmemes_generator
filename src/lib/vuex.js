@@ -160,13 +160,12 @@ const store = new Vuex.Store({
         font: 'Camber',
         value: "",
         maxSize: 33,
-        forbiddenAreas:[
-          {top:0, isOnRight:false, width: 285, height: 35},
-          {top:40, isOnRight:true, width: 250, height: 40}
-        ]
+        spreadInTextZones: ["details_1", "details_2"],
       },
+      untilMode: MODE_EXPRESS,
     },{
       name: "Détails (1/2)",
+      id: "details_1",
       centerX: 700,
       centerY: 645,
       width:680,
@@ -177,8 +176,10 @@ const store = new Vuex.Store({
         font: 'Camber',
         value: "",
       },
+      requiresMode: MODE_ADVANCED,
     }, {
       name: "Détails (2/2)",
+      id: "details_2",
       centerX: 425,
       centerY: 685,
       width:700,
@@ -189,6 +190,7 @@ const store = new Vuex.Store({
         font: 'Camber',
         value: "",
       },
+      requiresMode: MODE_ADVANCED,
     }, {
       name: "Source",
       centerX: 920,

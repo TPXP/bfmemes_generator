@@ -80,6 +80,7 @@ import CenteredImagePreview from "./CenteredImagePreview";
 import {getFonts, loadFont} from "../lib/fonts";
 import {mapState} from "vuex";
 import {readBlobAsDataURL} from "@/lib/download";
+import {fitTextInRectangle} from "@/lib/geometry";
 export default {
   name: "ElementForm",
   components: {ColorsPicker, CenteredImagePreview},
@@ -116,17 +117,44 @@ export default {
         currentlyEditing[p] = {...currentValue};
         currentlyEditing = currentlyEditing[p];
       });
-      this.$emit('update', payload);
+      this.$emit('update', {payload});
+      // Spread text in sub zones if needed
+      if(key === 'text.value') {
+        // Shall we spread the text?
+        const spreadZoneIds = this.element?.text?.spreadInTextZones;
+        if(!spreadZoneIds?.length)
+          return false;
+        // Find the corresponding element IDS
+        const matchedZones = {};
+        spreadZoneIds.forEach(id => matchedZones[id] = true);
+        this.$store.state.elements.forEach((element, index) => {
+          if(matchedZones[element.id] && element.text)
+            matchedZones[element.id] = {element, index};
+        });
+        // Determine the zone dimensions
+        const zones = spreadZoneIds.map(id => matchedZones[id]).filter(v => !!v),
+          textOptions = {...this.element.text};
+        delete textOptions.spreadInTextZones;
+        // Set the text for every zone
+        const {zones: zonesText, fontSize} = fitTextInRectangle(
+          document.createElement('canvas').getContext('2d'),
+          {...textOptions, zones: zones.map(({element}) => element), text: val}
+        );
+        zones.forEach(({index}, zoneIndex) => {
+          const value = (zonesText[zoneIndex]?.lines || []).map(v => v?.text ?? '').join(' ');
+          this.$emit('update', {index, payload: {text: {...textOptions, value, maxSize: fontSize+1}}})
+        });
+      }
     },
     addValue(type, value = {}){
-      return this.$emit('update', {[type]: value});
+      return this.$emit('update', {payload: {[type]: value}});
     },
     deleteValue(type){
       if(!confirm('Vous voulez vraiment supprimer ça ?'))
         return;
-      this.$emit('update',{
+      this.$emit('update',{ payload: {
         [type]: null,
-      });
+      }});
     },
     setFont(fontName){
       this.setValue('text.font', fontName);
@@ -156,12 +184,14 @@ export default {
           // No need to update centerX and centerY
 
           this.$emit('update', {
-            height, width,
-            image: {
-              fileName: files[0].name,
-              resource: image,
-              width: image.width,
-              height: image.height,
+            payload: {
+              height, width,
+              image: {
+                fileName: files[0].name,
+                resource: image,
+                width: image.width,
+                height: image.height,
+              }
             }
           })
         };

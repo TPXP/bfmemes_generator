@@ -81,7 +81,7 @@ export default {
       }, ...this.$store.state.elements];
 
       // Start with the background
-      elements.forEach(({centerX, centerY, width, height, angle, image, text, backgroundColors}) => {
+      elements.forEach(({centerX, centerY, width, height, angle, image, text, backgroundColors, ...otherOptions}) => {
         ctx.save();
         // Get to the center of the element and perform the rotation - we'll draw from here
         ctx.translate(centerX, centerY);
@@ -105,23 +105,19 @@ export default {
               /* This may change if we have cropping */ 0, 0,
               image.width, image.height, -width / 2, -height / 2, width, height);
         }
-        if (text?.value) {
+        if (text?.value && !text?.spreadInTextZones) { // Spread text updates the zones when it is changed
           // How does the text fit in the square?
-          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight = 1.2, forbiddenAreas = []} = text;
-          /* // DEBUG: draw forbidden areas
-          forbiddenAreas.forEach(({width:aWidth, top, height:aHeight, isOnRight}) => {
-            ctx.fillStyle='#f604';
-            ctx.fillRect(- width / 2 + (isOnRight ? width - aWidth : 0), top - height / 2, aWidth, aHeight);
-          }) // */
+          const {colors = ['#F60'], value, maxSize = 1000, font, strokeSize, strokeColors, fontWeight, lineHeight = 1.2} = text;
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {lines, fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight, forbiddenAreas});
-          lines.forEach(({text = '', left:lLeft = 0}, i) => {
+          const {zones: [{lines = []}], fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
+
+          lines.forEach(({text=''}, i) => {
             const x = - width / 2, y = fontSize * (lineHeight * i + 1) - height / 2;
             if(strokeSize)
-              ctx.strokeText(text, x + lLeft, y);
-            ctx.fillText(text, x + lLeft, y);
+              ctx.strokeText(text, x, y);
+            ctx.fillText(text, x, y);
           });
         }
         ctx.restore();

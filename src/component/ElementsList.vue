@@ -3,7 +3,7 @@
     <h2>Éléments</h2>
     <draggable :value="elements" @start="onDragStart" @end="onDragEnd" @change="onDragChange" handle=".handle">
       <div :class="['element', index === activeElement && 'active']" v-for="(element, index) in elements" :key="index"
-        v-if="(element.requiresMode || 0) <= mode">
+        v-if="(element.requiresMode || 0) <= mode && mode <= coalesce(element.untilMode, 9e99)">
         <div class="elementTitle" @click="selectElement(index)" v-if="!expressMode">
           <span class="material-icons handle">drag_indicator</span>
           <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
@@ -13,7 +13,7 @@
         </div>
         <element-form v-if="index === activeElement || expressMode"
                       :element="elements[index]"
-                      @update="updateElement(index, $event)"
+                      @update="updateElement(coalesce($event.index, index), $event.payload)"
                       @delete="deleteElement(index)"
                       @forceRedraw="$emit('forceRedraw', $event)" />
       </div>
@@ -86,6 +86,12 @@ export default {
     })
   },
   methods:{
+    coalesce(...args) {
+      for(const arg of args) {
+        if(arg !== void 0)
+          return arg;
+      }
+    },
     getTitle(element, index){
       if(element.name !== void 0)
         return element.name;
