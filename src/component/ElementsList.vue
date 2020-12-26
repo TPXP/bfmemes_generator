@@ -81,7 +81,9 @@ export default {
         // Find the corresponding font and load it
         const fontObject = getFonts().filter(({name, fontName}) => (fontName || name) === text.font)[0];
         if(fontObject)
-          loadFont(fontObject).then(() => this.$emit('forceRender',  {reason: 'initialFontLoaded'}));
+          loadFont(fontObject).then(() => this.$nextTick(() => {
+            this.$emit('forceRender',  {reason: 'initialFontLoaded'});
+          }));
       }
     })
   },
