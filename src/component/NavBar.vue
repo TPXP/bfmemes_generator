@@ -53,6 +53,8 @@
         <li>Toi, pour contribuer au succès de l'outil</li>
         <li>Et tous ceux que j'ai oublié mais qui se reconnaîtront... ou pas&nbsp;?</li>
       </ul>
+      <p>Le projet vous plaît&nbsp;? <a href="https://github.com/TPXP/bfmemes_generator" target="_blank" rel="noreferrer">
+        Joignez-vous à l'aventure&nbsp;!</a></p>
       <h3>Vie privée et confidentialité</h3>
       <p>Le projet est hébergé par la société Ionos.fr, qui collecte les données de visite du site (notamment adresse
         IP et cookies) et les traite conformément à
