@@ -8,8 +8,8 @@
           <span class="material-icons handle">drag_indicator</span>
           <input type="text" :value="getTitle(element, index)" @input="setElementTitle($event.target.value, index)" @blur="onElementTitleBlur(index)" />
           <span class="material-icons" @click.stop="selectElement(index === activeElement ? null : index)">
-          {{index === activeElement ? "expand_less" : "expand_more"}}
-        </span>
+            {{index === activeElement ? "expand_less" : "expand_more"}}
+          </span>
         </div>
         <element-form v-if="index === activeElement || expressMode"
                       :element="elements[index]"
