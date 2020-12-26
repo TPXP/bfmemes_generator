@@ -137,7 +137,7 @@ export default {
         delete textOptions.spreadInTextZones;
         // Set the text for every zone
         const {zones: zonesText, fontSize} = fitTextInRectangle(
-          document.createElement('canvas').getContext('2d'),
+            null,
           {...textOptions, zones: zones.map(({element}) => element), text: val}
         );
         zones.forEach(({index}, zoneIndex) => {

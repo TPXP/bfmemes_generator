@@ -111,8 +111,7 @@ export default {
           ctx.fillStyle = getFillStyle(colors);
           ctx.strokeStyle = getFillStyle(strokeColors);
           ctx.lineWidth = strokeSize;
-          const {zones: [{lines = []}], fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, fontFamily: font, lineHeight, fontWeight});
-
+          const {zones: [{lines = []}], fontSize} = Geometry.fitTextInRectangle(ctx, {maxSize, text:value, width, height, font, lineHeight, fontWeight});
           lines.forEach(({text=''}, i) => {
             const x = - width / 2, y = fontSize * (lineHeight * i + 1) - height / 2;
             if(strokeSize)

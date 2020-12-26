@@ -45,7 +45,7 @@ export function findRectangleCorners(width, height, centerX, centerY, angle) {
 }
 
 export function tryMatchingMagicAngle(angle, n_divisions, tolerance) {
-  angle %= 2 * Math.PI; // Angle is not between -2PI and 2PI
+  angle %= 2 * Math.PI; // Angle is now between -2PI and 2PI
   if(angle < 0) // Angle is now between 0 and 2PI
     angle += 2 * Math.PI;
   // Try to match the angle with a canonic angle
@@ -58,7 +58,12 @@ export function tryMatchingMagicAngle(angle, n_divisions, tolerance) {
   return angle;
 }
 
-export function fitTextInRectangle(canvas, {maxSize, text, zones = [], width, height, fontFamily = 'sans-serif', lineHeight = 1.2, fontWeight = ''}) {
+let lastCanvas = document.createElement('canvas').getContext('2d');
+export function fitTextInRectangle(canvas, {maxSize, text, zones = [], width, height, font = 'sans-serif', lineHeight = 1.2, fontWeight = ''}) {
+  if(canvas)
+    lastCanvas = canvas;
+  else
+    canvas = lastCanvas;
   if(width && height)
     zones = [{width, height}];
   // This is a dichotomy algorithm between 1 and maxSize - Yes, I studied this in class!
@@ -70,8 +75,8 @@ export function fitTextInRectangle(canvas, {maxSize, text, zones = [], width, he
     fontWeight += " ";
 
   // Normalize the font family
-  if(/[ "]/.test(fontFamily))
-    fontFamily = '"' + fontFamily.replace(/"/g, '\\"') + '"';
+  if(/[ "]/.test(font))
+    font = '"' + font.replace(/"/g, '\\"') + '"';
 
   const words = text.split(' '), maxWidth = Math.max(...zones.map(({width}) => width));
 
@@ -108,7 +113,7 @@ export function fitTextInRectangle(canvas, {maxSize, text, zones = [], width, he
       candidate[currentZoneIndex].lines.push(currentLine);
     }
     addNewLine();
-    canvas.font = `${fontWeight}${c}px ${fontFamily}`;
+    canvas.font = `${fontWeight}${c}px ${font}`;
     for(let word of words){
       const wordWidth = canvas.measureText(word).width;
       // Trivial case: a full word does not fit!
@@ -148,7 +153,7 @@ export function fitTextInRectangle(canvas, {maxSize, text, zones = [], width, he
   }
   // Font size is a, words are in bestSolution
   // Set the font size, and return the lines to write (so that they can be centered or whatever)
-  canvas.font = `${fontWeight}${a}px ${fontFamily}`;
+  canvas.font = `${fontWeight}${a}px ${font}`;
   return {
     zones: bestSolution,
     fontSize: a,
