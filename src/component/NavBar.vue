@@ -56,11 +56,14 @@
       <p>Le projet vous plaît&nbsp;? <a href="https://github.com/TPXP/bfmemes_generator" target="_blank" rel="noreferrer">
         Joignez-vous à l'aventure&nbsp;!</a></p>
       <h3>Vie privée et confidentialité</h3>
-      <p>Le projet est hébergé par la société Ionos.fr, qui collecte les données de visite du site (notamment adresse
+      <p>Le projet est hébergé par la société Vercel, qui collecte les données de visite du site (notamment adresse
         IP et cookies) et les traite conformément à
+        <a href="https://vercel.com/legal/privacy-policy" target="_blank" rel="noreferrer">sa politique de confidentialité</a>.</p>
+      <p>Certains éléments du site sont hébergés et fournis par la société Ionos.fr, qui traite les données de visite
+        qu'elle collecte conformément à
         <a href="https://www.ionos.fr/terms-gtc/terms-privacy/" target="_blank" rel="noreferrer">sa politique de confidentialité</a>.</p>
-      <p>L'équipe BFMemes a également accès aux données collectées. Ces données sont anonymes et ne sont utilisées
-        qu'à des fins de statistiques de visite.</p>
+      <p>L'équipe BFMemes peut également avoir accès aux données collectées. Ces données sont anonymes (le cas échéant,
+        elles seront anonymisées) et ne seront utilisées qu'à des fins de statistiques de visite.</p>
       <p>Pour exercer votre doit d'accès et de rectification des données vous concernant, contactez l'équipe BFMemes
         par courriel à l'adresse <a href="mailto:contact@bfmemes.com">contact@bfmemes.com</a>.</p>
       <p>Afin de fournir nos services, nous avons également recours aux partenaires suivants qui peuvent collecter
