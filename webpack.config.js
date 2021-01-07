@@ -10,15 +10,19 @@ const gitRevisionPlugin = new GitRevisionPlugin();
 const {resolve} = require('path');
 
 const mode = process.argv.indexOf('--prod') === -1 ? 'development' : 'production';
-let publicPath = mode === "production" ? "https://generator.bfmemes.com/" : "";
-if(process.env['VERCEL_URL'])
-  publicPath = `https://${process.env['VERCEL_URL']}/`
+let mainUrl = mode === "production" ? "https://generator.bfmemes.com/" : "";
+if(process.env['VERCEL_URL']) // Use the Vercel domain if we know it
+  mainUrl = `https://${process.env['VERCEL_URL']}/`;
+
+if(process.env['MAIN_DOMAIN']) // On some branches we will have a vanity domain defined as an en variable
+  mainUrl = `https://${process.env['MAIN_DOMAIN']}/`;
+
 process.argv.forEach(v => {
   if(v.startsWith('--url='))
-    publicPath = v.substr(6);
+    mainUrl = v.substr(6);
 });
-if(!publicPath.endsWith('/'))
-  publicPath += '/';
+if(!mainUrl.endsWith('/'))
+  mainUrl += '/';
 
 module.exports = {
   mode,
@@ -98,7 +102,7 @@ module.exports = {
     new DefinePlugin({
       __GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       __GIT_BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
-      __MAIN_PATH: JSON.stringify(publicPath),
+      __MAIN_URL: JSON.stringify(mainUrl),
     })
   ],
   resolve: {
