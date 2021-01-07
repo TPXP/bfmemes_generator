@@ -23,7 +23,6 @@ if(!publicPath.endsWith('/'))
 module.exports = {
   mode,
   output:{
-    publicPath,
     filename: '[hash].js',
   },
   module: {
@@ -99,6 +98,7 @@ module.exports = {
     new DefinePlugin({
       __GIT_VERSION: JSON.stringify(gitRevisionPlugin.version()),
       __GIT_BRANCH: JSON.stringify(gitRevisionPlugin.branch()),
+      __MAIN_PATH: JSON.stringify(publicPath),
     })
   ],
   resolve: {
